@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/18 20:58:22 by glegendr          #+#    #+#             */
-/*   Updated: 2017/12/20 14:39:51 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/05/15 17:19:42 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ static int			ft_return_value(t_vec *vec, char **line, int r, int i)
 	{
 		vec2 = v_split(vec, r);
 		pos = v_raw(&vec2);
-		((char *)pos)[r] = 0;
+		((char *)pos)[r + 1] = 0;
 		*line = pos;
 		return (1);
 	}

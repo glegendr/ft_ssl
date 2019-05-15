@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/06 14:48:56 by glegendr          #+#    #+#             */
-/*   Updated: 2019/05/10 19:11:36 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/05/15 19:35:47 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,46 +28,39 @@
 typedef struct	s_hash
 {
 	int	arg;
-	void	(*f)(struct s_hash);
+	void	(*f)(struct s_hash *);
+	char	**folder;
 	uint8_t	**str;
 }		t_hash;
 
-void		md5(t_hash tab);
-void		sha256(t_hash tab);
+void		md5(t_hash *tab);
+void		sha256(t_hash *tab);
 void		print_usage(char *name);
 
 char *const g_tab[NB_HASH] = {"md5", "sha256"};
-void (*const g_hash_fct[NB_HASH])(t_hash) = {md5, sha256};
+void (*const g_hash_fct[NB_HASH])(t_hash *) = {md5, sha256};
 
 
 void		push_original_len(uint8_t **str, int len, uint64_t original_len)
 {
 
-	printf("ori_len : %llu\n", original_len);
-	(*str)[len + 0] = ((original_len >> 56) & 0xff);
-	ft_printf("ori_len : %0.8b\n",((original_len >> 56) & 0xff));
-	(*str)[len + 1] = ((original_len >> 48) & 0xff);
-	ft_printf("ori_len : %0.8b\n",((original_len >> 48) & 0xff));
-	(*str)[len + 2] = ((original_len >> 40) & 0xff);
-	ft_printf("ori_len : %0.8b\n",((original_len >> 40) & 0xff));
-	(*str)[len + 3] = ((original_len >> 32) & 0xff);
-	ft_printf("ori_len : %0.8b\n",((original_len >> 32) & 0xff));
-	(*str)[len + 4] = ((original_len >> 24) & 0xff);
-	ft_printf("ori_len : %0.8b\n",((original_len >> 24) & 0xff));
-	(*str)[len + 5] = ((original_len >> 16) & 0xff);
-	ft_printf("ori_len : %0.8b\n",((original_len >> 16) & 0xff));
-	(*str)[len + 6] = ((original_len >> 8) & 0xff);
-	ft_printf("ori_len : %0.8b\n",((original_len >> 8) & 0xff));
-	(*str)[len + 7] = ((original_len & 0xff));
-	ft_printf("ori_len : %0.8b\n", (original_len & 0xff));
-}
-
-uint32_t to_int32(const uint8_t *bytes)
-{
-	return (uint32_t) bytes[0]
-	| ((uint32_t) bytes[1] << 8)
-	| ((uint32_t) bytes[2] << 16)
-	| ((uint32_t) bytes[3] << 24);
+//	printf("ori_len : %llu\n", original_len);
+	(*str)[len + 7] = ((original_len >> 56) & 0xff);
+//	ft_printf("ori_len : %0.8b\n",((original_len >> 56) & 0xff));
+	(*str)[len + 6] = ((original_len >> 48) & 0xff);
+//	ft_printf("ori_len : %0.8b\n",((original_len >> 48) & 0xff));
+	(*str)[len + 5] = ((original_len >> 40) & 0xff);
+//	ft_printf("ori_len : %0.8b\n",((original_len >> 40) & 0xff));
+	(*str)[len + 4] = ((original_len >> 32) & 0xff);
+//	ft_printf("ori_len : %0.8b\n",((original_len >> 32) & 0xff));
+	(*str)[len + 3] = ((original_len >> 24) & 0xff);
+//	ft_printf("ori_len : %0.8b\n",((original_len >> 24) & 0xff));
+	(*str)[len + 2] = ((original_len >> 16) & 0xff);
+//	ft_printf("ori_len : %0.8b\n",((original_len >> 16) & 0xff));
+	(*str)[len + 1] = ((original_len >> 8) & 0xff);
+//	ft_printf("ori_len : %0.8b\n",((original_len >> 8) & 0xff));
+	(*str)[len + 0] = ((original_len & 0xff));
+//	ft_printf("ori_len : %0.8b\n", (original_len & 0xff));
 }
 
 int		pad_message(uint8_t **tab)
@@ -92,7 +85,7 @@ int		pad_message(uint8_t **tab)
 		str[original_len + len] = (char)0;
 		++len;
 	}
-	push_original_len(&str, original_len + len, (uint64_t)original_len);
+	push_original_len(&str, original_len + len, (uint64_t)original_len * 8);
 	*tab = str;
 	return (original_len + len + 8);
 }
@@ -102,14 +95,14 @@ uint32_t	declare_chunk(uint8_t *ck, int i)
 {
 	int32_t val;
 	val = (ck[i + 3] << 24) + (ck[i + 2] << 16) + (ck[i + 1] << 8) + ck[i + 0];
-	ft_printf("1: %0.8b 2: %0.8b 3: %0.8b 4: %0.8b final: %0.32b\n", ck[i + 3], ck[i + 2], ck[i + 1], ck[i + 0], val);
+//	ft_printf("1: %0.8b 2: %0.8b 3: %0.8b 4: %0.8b final: %0.32b\n", ck[i + 3], ck[i + 2], ck[i + 1], ck[i + 0], val);
 //	ft_printf("1: %.3c 2: %.3c 3: %.3c 4: %.3c final: %0.32b\n", ck[i + 0], ck[i + 1], ck[i + 2], ck[i + 3], val);
 	return (val);
 }
 
 #define LEFTROTATE(x, c) (((x) << (c)) | ((x) >> (32 - (c))))
 
-void		lol(uint8_t *ck)
+uint8_t		*lol(uint8_t *ck)
 {
 	int32_t a0 = 0x67452301;
 	int32_t b0 = 0xefcdab89;
@@ -119,12 +112,7 @@ void		lol(uint8_t *ck)
 
 //	for (int y = 0; y < 4; y++) { // FOR 512 MESSAGE
 	for (int i = 0; i < 16; i++)
-	{
 		M[i] = declare_chunk(ck, i * 4);
-//		M[i] = to_int32(ck + i * 4);
-//		ft_printf("%0.32b\n", M[i]);
-	}
-	printf("\n");
 	int32_t A = a0;
 	int32_t B = b0;
 	int32_t C = c0;
@@ -147,11 +135,6 @@ void		lol(uint8_t *ck)
 		}
 	//Be wary of the below definitions of a,b,c,d
 	
-//		F = F + A + g_k[i] + M[g];
-//		A = D;
-//		D = C;
-//		C = B;
-//		B = B + ((F << g_s[i]) | (F >> (32 - g_s[i])));
 		uint32_t temp = D;
 		D = C;
 		C = B;
@@ -160,15 +143,12 @@ void		lol(uint8_t *ck)
 	}
 	//Add this chunk's hash to result so far:
 	a0 = a0 + A;
-	printf("%0.8x\n", a0);
 	b0 = b0 + B;
-	printf("%0.8x\n", b0);
 	c0 = c0 + C;
-	printf("%0.8x\n", c0);
 	d0 = d0 + D;
-	printf("%0.8x\n", d0);
 //		}
-	uint8_t digest[16];
+	uint8_t *digest;
+	digest = malloc(sizeof(uint8_t) * 16);
 	digest[0] = (a0 & 0xff);
 	digest[1] = ((a0 >> 8) & 0xff);
 	digest[2] = ((a0 >> 16) & 0xff);
@@ -185,67 +165,42 @@ void		lol(uint8_t *ck)
 	digest[13] = ((d0 >> 8) & 0xff);
 	digest[14] = ((d0 >> 16) & 0xff);
 	digest[15] = ((d0 >> 24) & 0xff);
-	printf("MD5(moi)= ");
-	for (int i = 0; i < 16; i++)
-		printf("%0.2x", digest[i]);
-	printf("\n");
+	return (digest);
 }
 
-/*
-unsigned char		*ft_strrev(unsigned char *mess)
+void		md5(t_hash *tab)
 {
-	unsigned char *ret = malloc(8 * ft_strlen((char *)mess));
-	int y = ft_strlen((char *)mess);
-
-	for (int i = 0; mess[i]; i++)
-	{
-		ret[y - 1] = mess[i];
-		y--;
-	}
-	return ret;
-}*/
-
-void		md5(t_hash tab)
-{
+	uint8_t *ret;
 	int i;
 
-	if (!tab.str)
-	{
-		tab.str = malloc(sizeof(uint8_t **) * 2);
-		tab.str[0] = NULL;
-		int tmp = pad_message(&tab.str[0]);
-		for (int y = 0; y < tmp; y++) //                  PRINT
-			ft_printf("%0.8b ", tab.str[0][y]);
-		printf("\n");
-		// Foreach(block de 512 bits)
-		lol(tab.str[0]);
-		return ;
-	}
 	i = 0;
-	while (tab.str[i])
+	while (tab->folder[i])
 	{
-		int tmp = pad_message(&tab.str[i]);
-		for (int y = 0; y < tmp; y++) //                  PRINT
-			ft_printf("%0.8b ", tab.str[i][y]);
+		pad_message(&(tab->str[i]));
+		ret = lol(tab->str[i]);
+		if ((tab->arg & P_FLAG) && !(tab->arg & Q_FLAG))
+			printf("%s\n", tab->str[i]);
+		if (!(tab->arg & R_FLAG) && !(tab->arg & Q_FLAG))
+			printf("MD5(%s)= ", tab->folder[i]);
+		for (int i = 0; i < 16; i++)
+			printf("%0.2x", ret[i]);
+		if ((tab->arg & R_FLAG) && !(tab->arg & Q_FLAG))
+			printf(" %s", tab->folder[i]);
 		printf("\n");
-		// Foreach(block de 512 bits)
-		lol(tab.str[i]);
+		free(ret);
 		++i;
 	}
 }
 
-void		sha256(t_hash tab)
+void		sha256(t_hash *tab)
 {
-	int i;
 
-	if (!tab.str)
+	if (!tab->str)
 		print_usage(NULL);
-	i = 0;
-	while (tab.str[i])
-		ft_printf("sha256: %s -- %b\n", tab.str[i++], tab.arg);
+	ft_printf("sha256: %s -- %b\n", tab->str, tab->arg);
 }
 
-void		(* get_hash_fct(char *name))(t_hash)
+void		(* get_hash_fct(char *name))(t_hash *)
 {
 	int id;
 
@@ -305,23 +260,33 @@ void		print_usage(char *name)
 	exit(1);
 }
 
-int		open_folder(char *flag, uint8_t ***tab)
+int		open_folder(char *flag, t_hash *tab)
 {
 	int fd;
 	char *ret;
+	char *tmp;
+	char *join;
 
+	tab->folder = tab_join(tab->folder, flag, tab_len(tab->folder));
+	join = NULL;
 	if ((fd = open(flag, O_RDONLY)) == -1)
 		return (1);
-	get_next_line(fd, &ret);
-	if (ret == NULL)
-		*tab = NULL;
-	else
-		*tab = (uint8_t **)tab_join((char **)(*tab), ret);
-	free(ret);
+	while (get_next_line(fd, &ret))
+	{
+		if (!join)
+		{
+			join = ft_strdup(ret);
+			continue ;
+		}
+		tmp = join;
+		join = ft_strjoin(tmp, ret);
+		free(tmp);
+	}
+	tab->str = (uint8_t **)tab_join((char **)tab->str, join, tab_len(tab->folder) - 1);
 	return (0);
 }
 
-int		match_flag(char *flag, int *arg, uint8_t ***tab)
+int		match_flag(char *flag, t_hash *tab)
 {
 	int i;
 
@@ -333,21 +298,21 @@ int		match_flag(char *flag, int *arg, uint8_t ***tab)
 	while (flag[i])
 	{
 		if (flag[i] == 'p')
-			*arg |= P_FLAG;
-		else if (flag[i] == 'q')
-			*arg |= Q_FLAG;
-		else if (flag[i] == 'r')
-			*arg |= R_FLAG;
-		else if (flag[i] == 's')
-			*arg |= S_FLAG;
-		else
-			return (1);
-		++i;
-	}
-	return (0);
+				tab->arg |= P_FLAG;
+			else if (flag[i] == 'q')
+				tab->arg |= Q_FLAG;
+			else if (flag[i] == 'r')
+				tab->arg |= R_FLAG;
+			else if (flag[i] == 's')
+				tab->arg |= S_FLAG;
+			else
+				return (1);
+			++i;
+		}
+		return (0);
 }
 
-t_hash		parse_argv(int argc, char *argv[])
+void		parse_argv(int argc, char *argv[])
 {
 	t_hash tab;
 	int i;
@@ -355,34 +320,32 @@ t_hash		parse_argv(int argc, char *argv[])
 	if (argc < 2)
 		print_usage(NULL);
 	tab.f = get_hash_fct(argv[1]);
-	tab.str = NULL;
 	tab.arg = 0;
+	tab.folder = NULL;
+	tab.str = NULL;
 	i = 2;
 	while (i < argc)
 	{
-		if (match_flag(argv[i], &tab.arg, &tab.str))
+		if (match_flag(argv[i], &tab))
 			print_usage(NULL);
 		if ((tab.arg & S_FLAG) != 0)
 		{
 			if (++i >= argc)
 				print_usage(NULL);
-			tab.str = (uint8_t **)tab_join((char **)tab.str, argv[i]);
+			tab.folder = tab_join(tab.folder, argv[i], tab_len(tab.folder));
+			tab.str = (uint8_t **)tab_join((char **)tab.str, argv[i], tab_len(tab.folder) - 1);
 			tab.arg ^= S_FLAG;
 		}
 		++i;
 	}
-	return (tab);
+	tab.f(&tab);
 }
 
 #include <fcntl.h>
 
 int		main(int argc, char *argv[])
 {
-	t_hash tab;
 
-//	printf("%i -- %s\n", get_next_line(0, &ret), ret);
-
-	tab = parse_argv(argc, argv);
-	tab.f(tab);
+	parse_argv(argc, argv);
 	return (0);
 }

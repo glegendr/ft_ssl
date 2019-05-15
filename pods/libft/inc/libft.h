@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/13 14:28:31 by glegendr          #+#    #+#             */
-/*   Updated: 2018/04/03 19:06:12 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/05/15 19:31:50 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,7 +121,8 @@ int					ft_toupper(int c);
 ** random
 */
 int					ft_sqrt(int i);
-char				**tab_join(char **tab, char *s);
+char				**tab_join(char **tab, char *s, int size);
+int				tab_len(char **tab);
 int					ft_recursive_factorial(int nb);
 int					ft_abs(int i);
 void				ft_bzero(void *s, size_t n);

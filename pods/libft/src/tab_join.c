@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/03 18:50:47 by glegendr          #+#    #+#             */
-/*   Updated: 2019/05/07 19:36:22 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/05/15 19:35:27 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,24 +25,33 @@ void		del_tab(char **tab)
 	free(tab);
 }
 
-char		**tab_join(char **tab, char *s)
+int		tab_len(char **tab)
+{
+	int i;
+
+	i = 0;
+	if (!tab)
+		return (0);
+	while (tab[i])
+		++i;
+	return (i);
+}
+
+char		**tab_join(char **tab, char *s, int size)
 {
 	int		i;
 	char	**tmp;
 
 	i = 0;
-	if (tab == NULL)
+	if (size == 0)
 	{
 		tab = (char **)malloc(sizeof(char *) * 2);
 		tab[0] = ft_strdup(s);
 		tab[1] = NULL;
 		return (tab);
 	}
-	while (tab[i])
-		++i;
-	tmp = (char **)malloc(sizeof(char *) * (i + 2));
-	i = 0;
-	while (tab[i])
+	tmp = (char **)malloc(sizeof(char *) * (size + 2));
+	while (i < size)
 	{
 		tmp[i] = ft_strdup(tab[i]);
 		++i;
