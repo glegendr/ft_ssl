@@ -1,12 +1,12 @@
 .PHONY: all re fclean clean
-NAME= a.out
+NAME= ft_ssl
 CC=gcc
 CFLAG=
 CFLAG+= -Werror
 CFLAG+= -Wextra
 CFLAG+= -Wall
 #CFLAG+= -fsanitize=address
-SRCNAME= main get_next_line
+SRCNAME= main get_next_line md5 sha256
 
 LIBS= ./pods/libvec/libvec.a ./pods/libft/libft.a ./pods/ft_printf/libftprintf.a
 

@@ -6,11 +6,15 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/18 20:58:22 by glegendr          #+#    #+#             */
-/*   Updated: 2019/05/15 17:19:42 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/05/16 21:10:59 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
+#include <vector.h>
+#include <libft.h>
+#include <unistd.h>
+#include <fcntl.h>
 
 static int			ft_return_value(t_vec *vec, char **line, int r, int i)
 {
