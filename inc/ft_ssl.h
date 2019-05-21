@@ -2,16 +2,15 @@
 # define FT_SSL_H
 
 #include <stdint.h>
+#include <stdbool.h>
 
 typedef struct	s_hash
 {
-	int	arg;
-	void	(*f)(struct s_hash *);
-	char	**folder;
-	uint8_t	**str;
-}		t_hash;
-
-
+	int			arg;
+	void		(*f)(struct s_hash *);
+	char		**folder;
+	uint8_t		**str;
+}				t_hash;
 
 #define NB_HASH 2
 #define P_FLAG 1
@@ -21,5 +20,6 @@ typedef struct	s_hash
 
 void		md5(t_hash *);
 void		sha256(t_hash *);
-void		print_usage(char *name);
+void		print_usage(char *);
+int			pad_message(uint8_t **, bool);
 #endif

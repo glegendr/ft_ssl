@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/06 14:48:56 by glegendr          #+#    #+#             */
-/*   Updated: 2019/05/16 21:12:51 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/05/20 17:33:49 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ void		(* get_hash_fct(char *name))(t_hash *)
 	}
 	if (id == NB_HASH)
 		print_usage(name);
+	printf("%i\n", id);
 	return (g_hash_fct[id]);
 }
 

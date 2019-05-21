@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/16 18:27:36 by glegendr          #+#    #+#             */
-/*   Updated: 2019/05/16 21:12:56 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/05/21 18:18:16 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,19 +20,30 @@
 
 #define LEFTROTATE(x, c) (((x) << (c)) | ((x) >> (32 - (c))))
 
-void		push_original_len(uint8_t **str, int len, uint64_t original_len)
+static void		push_original_len(uint8_t **str, int len,
+								  uint64_t original_len, bool endian)
 {
-	(*str)[len + 7] = ((original_len >> 56) & 0xff);
-	(*str)[len + 6] = ((original_len >> 48) & 0xff);
-	(*str)[len + 5] = ((original_len >> 40) & 0xff);
-	(*str)[len + 4] = ((original_len >> 32) & 0xff);
-	(*str)[len + 3] = ((original_len >> 24) & 0xff);
-	(*str)[len + 2] = ((original_len >> 16) & 0xff);
-	(*str)[len + 1] = ((original_len >> 8) & 0xff);
-	(*str)[len + 0] = ((original_len & 0xff));
+	int i;
+	int loop;
+
+	printf("%llu\n", original_len / 8);
+	loop = 0;
+	if (endian)
+		i = 0;
+	else
+		i = 7;
+	while (i < 8 && i >= 0)
+	{
+		(*str)[len + i] = ((original_len >> (8 * loop)) & 0xff);
+		if (endian)
+			++i;
+		else
+			--i;
+		++loop;
+	}
 }
 
-int			pad_message(uint8_t **tab)
+int			pad_message(uint8_t **tab, bool endian)
 {
 	uint8_t	*str;
 	int		len;
@@ -50,7 +61,7 @@ int			pad_message(uint8_t **tab)
 	*tab = ft_realloc(*tab, original_len, len);
 	str = *tab;
 	len -= 8;
-	push_original_len(&str, len, (uint64_t)original_len * 8);
+	push_original_len(&str, len, (uint64_t)original_len * 8, endian);
 	str[original_len] = (char)128;
 	while (original_len < len - 1)
 	{
@@ -61,19 +72,20 @@ int			pad_message(uint8_t **tab)
 	return (len + 8);
 }
 
-uint32_t	declare_chunk(uint8_t *ck, int i)
+static uint32_t	declare_chunk(uint8_t *ck, int i)
 {
 	int32_t	val;
 
 	val = (ck[i + 3] << 24) + (ck[i + 2] << 16) + (ck[i + 1] << 8) + ck[i + 0];
+	ft_printf("%0.8b %0.8b %0.8b %0.8b %0.32b\n", ck[i], ck[i + 1], ck[i + 2], ck[i + 3], val);
 	return (val);
 }
 
-void		lol2(int32_t *tab[4], int32_t m[16])
+static void		lol2(int32_t *tab[4], int32_t m[16])
 {
 	int32_t		f;
 	int32_t		g;
-	uint32_t	temp;
+	int32_t		temp;
 
 	for (int i = 0; i < 64; i++) {
 		if (i < 16) {
@@ -98,7 +110,7 @@ void		lol2(int32_t *tab[4], int32_t m[16])
 	}
 }
 
-uint8_t		*digest(int32_t a0, int32_t b0, int32_t c0, int32_t d0)
+static uint8_t		*digest(int32_t a0, int32_t b0, int32_t c0, int32_t d0)
 {
 	uint8_t	*digest;
 
@@ -122,7 +134,7 @@ uint8_t		*digest(int32_t a0, int32_t b0, int32_t c0, int32_t d0)
 	return (digest);
 }
 
-uint8_t		*lol(uint8_t *ck, int loop)
+static uint8_t		*lol(uint8_t *ck, int loop)
 {
 	int32_t	a0 = 0x67452301;
 	int32_t	b0 = 0xefcdab89;
@@ -157,7 +169,7 @@ void		md5(t_hash *tab)
 	i = 0;
 	while (tab->folder[i])
 	{
-		tmp = pad_message(&(tab->str[i]));
+		tmp = pad_message(&(tab->str[i]), true);
 		ret = lol(tab->str[i], tmp / 64);
 		if ((tab->arg & P_FLAG) && !(tab->arg & Q_FLAG))
 			printf("%s\n", tab->str[i]);
@@ -171,4 +183,6 @@ void		md5(t_hash *tab)
 		free(ret);
 		++i;
 	}
+	del_tab(tab->folder);
+	del_tab((char **)tab->str);
 }
