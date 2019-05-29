@@ -6,18 +6,17 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/06 14:48:56 by glegendr          #+#    #+#             */
-/*   Updated: 2019/05/20 17:33:49 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/05/29 18:03:23 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <vector.h>
 #include <libft.h>
 #include <fcntl.h>
-#include "get_next_line.h"
 #include "ft_ssl.h"
 
-char *const g_tab[NB_HASH] = {"md5", "sha256"};
-void (*const g_hash_fct[NB_HASH])(t_hash *) = {md5, sha256};
+char *const g_tab[NB_HASH] = {"md5", "sha256", "sha512"};
+void (*const g_hash_fct[NB_HASH])(t_hash *) = {md5, sha256, sha512};
 
 void		(* get_hash_fct(char *name))(t_hash *)
 {
@@ -32,7 +31,6 @@ void		(* get_hash_fct(char *name))(t_hash *)
 	}
 	if (id == NB_HASH)
 		print_usage(name);
-	printf("%i\n", id);
 	return (g_hash_fct[id]);
 }
 
@@ -82,27 +80,23 @@ void		print_usage(char *name)
 
 int		open_folder(char *flag, t_hash *tab)
 {
-	int fd;
-	char *ret;
-	char *tmp;
-	char *join;
+	int		fd;
+	t_vec	vec;
+	char	ret[BUFF_SIZE];
+	int		val;
 
-	tab->folder = tab_join(tab->folder, flag, tab_len(tab->folder));
-	join = NULL;
 	if ((fd = open(flag, O_RDONLY)) == -1)
-		return (1);
-	while (get_next_line(fd, &ret))
 	{
-		if (!join)
-		{
-			join = ft_strdup(ret);
-			continue ;
-		}
-		tmp = join;
-		join = ft_strjoin(tmp, ret);
-		free(tmp);
+		printf("ft_ssl: %s: No such file or directory\n", flag);
+		return (0);
 	}
-	tab->str = (uint8_t **)tab_join((char **)tab->str, join, tab_len(tab->folder) - 1);
+	tab->folder = tab_join(tab->folder, flag, tab_len(tab->folder));
+	vec = v_new(sizeof(char));
+	while ((val = read(fd, ret, BUFF_SIZE)) > 0)
+		v_append_raw(&vec, ret, val);
+	v_push_int(&vec, '\0');
+	tab->str = (uint8_t **)tab_join((char **)tab->str, (char *)v_raw(&vec), tab_len(tab->folder) - 1);
+	v_del(&vec);
 	return (0);
 }
 
@@ -137,7 +131,7 @@ void		parse_argv(int argc, char *argv[])
 	t_hash tab;
 	int i;
 
-	if (argc < 3)
+	if (argc < 2)
 		print_usage(NULL);
 	tab.f = get_hash_fct(argv[1]);
 	tab.arg = 0;

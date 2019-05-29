@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/12 20:26:53 by glegendr          #+#    #+#             */
-/*   Updated: 2018/08/10 00:35:24 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/05/28 16:52:24 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -189,6 +189,7 @@ void			v_join(t_vec *vec1, t_vec *vec2);
 **     index: the index where you have to cut.
 */
 t_vec			v_split(t_vec *vec, int index);
+void			*v_split_raw(t_vec *vec, int index);
 
 /*
 ** Give the raw.
