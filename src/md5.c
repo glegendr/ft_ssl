@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/16 18:27:36 by glegendr          #+#    #+#             */
-/*   Updated: 2019/05/21 18:18:16 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/05/29 19:39:16 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,17 +21,22 @@
 #define LEFTROTATE(x, c) (((x) << (c)) | ((x) >> (32 - (c))))
 
 static void		push_original_len(uint8_t **str, int len,
-								  uint64_t original_len, bool endian)
+								  uint64_t original_len, bool endian, int mult)
 {
 	int i;
 	int loop;
 
-	printf("%llu\n", original_len / 8);
 	loop = 0;
 	if (endian)
 		i = 0;
 	else
 		i = 7;
+	while (mult > 8)
+	{
+		(*str)[len] = 0;
+		++len;
+		--mult;
+	}
 	while (i < 8 && i >= 0)
 	{
 		(*str)[len + i] = ((original_len >> (8 * loop)) & 0xff);
@@ -43,7 +48,7 @@ static void		push_original_len(uint8_t **str, int len,
 	}
 }
 
-int			pad_message(uint8_t **tab, bool endian)
+int			pad_message(uint8_t **tab, bool endian, int mod)
 {
 	uint8_t	*str;
 	int		len;
@@ -54,14 +59,14 @@ int			pad_message(uint8_t **tab, bool endian)
 	else
 		original_len = ft_strlen((char *)(*tab));
 	len = original_len + 1;
-	while (len % 64)
+	while (len % mod)
 		++len;
 	if (original_len + 8 >= len)
-		len += 64;
+		len += mod;
 	*tab = ft_realloc(*tab, original_len, len);
 	str = *tab;
-	len -= 8;
-	push_original_len(&str, len, (uint64_t)original_len * 8, endian);
+	len -= mod / 8;
+	push_original_len(&str, len, (uint64_t)original_len * 8, endian, mod / 8);
 	str[original_len] = (char)128;
 	while (original_len < len - 1)
 	{
@@ -69,7 +74,7 @@ int			pad_message(uint8_t **tab, bool endian)
 		str[original_len] = (char)0;
 	}
 	*tab = str;
-	return (len + 8);
+	return (len + mod / 8);
 }
 
 static uint32_t	declare_chunk(uint8_t *ck, int i)
@@ -77,7 +82,7 @@ static uint32_t	declare_chunk(uint8_t *ck, int i)
 	int32_t	val;
 
 	val = (ck[i + 3] << 24) + (ck[i + 2] << 16) + (ck[i + 1] << 8) + ck[i + 0];
-	ft_printf("%0.8b %0.8b %0.8b %0.8b %0.32b\n", ck[i], ck[i + 1], ck[i + 2], ck[i + 3], val);
+//	ft_printf("%0.8b %0.8b %0.8b %0.8b %0.32b\n", ck[i], ck[i + 1], ck[i + 2], ck[i + 3], val);
 	return (val);
 }
 
@@ -167,12 +172,17 @@ void		md5(t_hash *tab)
 	int		tmp;
 
 	i = 0;
+	if (!tab->folder)
+		print_usage(NULL);
 	while (tab->folder[i])
 	{
-		tmp = pad_message(&(tab->str[i]), true);
+		tmp = pad_message(&(tab->str[i]), true, 64);
 		ret = lol(tab->str[i], tmp / 64);
 		if ((tab->arg & P_FLAG) && !(tab->arg & Q_FLAG))
-			printf("%s\n", tab->str[i]);
+		{
+			write(1, tab->str[i], ft_strlen((char *)tab->str[i]) - 1);
+			write(1, "\n", 1);
+		}
 		if (!(tab->arg & R_FLAG) && !(tab->arg & Q_FLAG))
 			printf("MD5(%s)= ", tab->folder[i]);
 		for (int i = 0; i < 16; i++)

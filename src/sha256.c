@@ -15,7 +15,7 @@ uint32_t g_k2[64] = {
 #define ROTR(x, n) ((x >> n) | (x << (32 - n)))
 #define SHR(x, n) (x >> n)
 
-void		print_hash(uint8_t *hash, t_hash *tab, int i)
+static void		print_hash(uint8_t *hash, t_hash *tab, int i)
 {
 	if ((tab->arg & P_FLAG) && !(tab->arg & Q_FLAG))
 		printf("%s\n", tab->str[i]);
@@ -46,7 +46,7 @@ static uint32_t	declare_chunk(uint8_t *ck, int i, uint32_t *w)
 	return (w[i - 16] + s0 + w[i - 7] + s1);
 }
 
-void to_bytes(uint32_t val, uint8_t *bytes)
+static void to_bytes(uint32_t val, uint8_t *bytes)
 {
 	bytes[3] = (uint8_t) val;
 	bytes[2] = (uint8_t) (val >> 8);
@@ -120,14 +120,19 @@ void		sha256(t_hash *tab)
 	uint8_t	ret[32];
 
 	i = 0;
+	if (!tab->folder)
+		print_usage(NULL);
 	while (tab->folder[i])
 	{
-		tmp = pad_message(&(tab->str[i]), false);
+		tmp = pad_message(&(tab->str[i]), false, 64);
 		lol(tab->str[i], tmp / 64, ret);
+		for (int y = 0; y < 64; ++y)
+			ft_printf("%0.8b ", tab->str[i][y]);
+		printf("\n");
 		print_hash(ret, tab, i);
 //		free(ret);
 		++i;
 	}
 	del_tab(tab->folder);
 	del_tab((char **)tab->str);
-
+}
