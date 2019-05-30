@@ -2,7 +2,7 @@
 #include <libft.h>
 #include <ft_printf.h>
 
-uint64_t g_k3[80] = {
+uint64_t g_k512[80] = {
 	0x428a2f98d728ae22, 0x7137449123ef65cd, 0xb5c0fbcfec4d3b2f, 0xe9b5dba58189dbbc, 0x3956c25bf348b538, 
 	0x59f111f1b605d019, 0x923f82a4af194f9b, 0xab1c5ed5da6d8118, 0xd807aa98a3030242, 0x12835b0145706fbe, 
 	0x243185be4ee4b28c, 0x550c7dc3d5ffb4e2, 0x72be5d74f27b896f, 0x80deb1fe3b1696b1, 0x9bdc06a725c71235, 
@@ -24,13 +24,13 @@ uint64_t g_k3[80] = {
 #define ROTR(x, n) ((x >> n) | (x << (64 - n)))
 #define SHR(x, n) (x >> n)
 
-static void		print_hash(uint8_t *hash, t_hash *tab, int i)
+void		print_hash(uint8_t *hash, t_hash *tab, int i, int algo)
 {
 	if ((tab->arg & P_FLAG) && !(tab->arg & Q_FLAG))
 		printf("%s\n", tab->str[i]);
 	if (!(tab->arg & R_FLAG) && !(tab->arg & Q_FLAG))
-		printf("SHA256(%s)= ", tab->folder[i]);
-	for (int i = 0; i < 64; i++)
+		printf("SHA%i(%s)= ", algo, tab->folder[i]);
+	for (int i = 0; i < algo / 8; i++)
 		printf("%0.2x", hash[i]);
 	if ((tab->arg & R_FLAG) && !(tab->arg & Q_FLAG))
 		printf(" %s", tab->folder[i]);
@@ -47,14 +47,13 @@ static uint64_t	declare_chunk(uint8_t *ck, int i, uint64_t *w)
 		s0 = 0;
 		y = 0;
 	if (i < 16) {
-		i *= 4;
+		i *= 8;
 		while (y < 8)
 		{
 			s0 = s0 << 8;
 			s0 = s0 + ck[i + y];
 			++y;
 		}
-		ft_printf("%c %c %c %c %c %c %c %c %0.64b\n", ck[i], ck[i + 1], ck[i + 2], ck[i + 3], ck[i + 4], ck[i + 5], ck[i + 6], ck[i + 7], s0);
 		return (s0);
 	}
 	x = w[i - 15];
@@ -76,21 +75,42 @@ static void to_bytes(uint64_t val, uint8_t *bytes)
 	bytes[0] = (uint8_t) (val >> 56);
 }
 
-static void		lol(uint8_t *ck, int loop, uint8_t *ret)
+static void		lol(uint8_t *ck, int loop, uint8_t *ret, int type)
 {
 	uint64_t m[80];
-	uint64_t h0 = 0x6a09e667f3bcc908;
-	uint64_t h1 = 0xbb67ae8584caa73b;
-	uint64_t h2 = 0x3c6ef372fe94f82b;
-	uint64_t h3 = 0xa54ff53a5f1d36f1;
-	uint64_t h4 = 0x510e527fade682d1;
-	uint64_t h5 = 0x9b05688c2b3e6c1f;
-	uint64_t h6 = 0x1f83d9abfb41bd6b;
-	uint64_t h7 = 0x5be0cd19137e2179;
+	uint64_t h0;
+	uint64_t h1;
+	uint64_t h2;
+	uint64_t h3;
+	uint64_t h4;
+	uint64_t h5;
+	uint64_t h6;
+	uint64_t h7;
+
+	if (type == 512)
+	{
+	h0 = 0x6a09e667f3bcc908;
+	h1 = 0xbb67ae8584caa73b;
+	h2 = 0x3c6ef372fe94f82b;
+	h3 = 0xa54ff53a5f1d36f1;
+	h4 = 0x510e527fade682d1;
+	h5 = 0x9b05688c2b3e6c1f;
+	h6 = 0x1f83d9abfb41bd6b;
+	h7 = 0x5be0cd19137e2179;
+	} else {
+	h0 = 0xcbbb9d5dc1059ed8;
+	h1 = 0x629a292a367cd507;
+	h2 = 0x9159015a3070dd17;
+	h3 = 0x152fecd8f70e5939;
+	h4 = 0x67332667ffc00b31;
+	h5 = 0x8eb44a8768581511;
+	h6 = 0xdb0c2e0d64f98fa7;
+	h7 = 0x47b5481dbefa4fa4;
+	}
 
 	for (int y = 0; y < loop; ++y) {
 		for (int i = 0; i < 80; ++i)
-			m[i] = declare_chunk(i < 16 ? ck + 128 * y : NULL, i * 2, m);
+			m[i] = declare_chunk(i < 16 ? ck + 128 * y : NULL, i, m);
 		uint64_t a = h0;
 		uint64_t b = h1;
 		uint64_t c = h2;
@@ -99,10 +119,10 @@ static void		lol(uint8_t *ck, int loop, uint8_t *ret)
 		uint64_t f = h5;
 		uint64_t g = h6;
 		uint64_t h = h7;
-		for (int i = 0; i < 64; ++i) {
+		for (int i = 0; i < 80; ++i) {
 			uint64_t s1 = ROTR(e, 14) ^ ROTR(e, 18) ^ ROTR(e, 41);
 			uint64_t ch = (e & f) ^ ((~e) & g);
-			uint64_t temp1 = h + s1 + ch + g_k3[i] + m[i];
+			uint64_t temp1 = h + s1 + ch + g_k512[i] + m[i];
 			uint64_t s0 = ROTR(a, 28) ^ ROTR(a, 34) ^ ROTR(a, 39);
 			uint64_t maj = (a & b) ^ (a & c) ^ (b & c);
 			uint64_t temp2 = s0 + maj;
@@ -131,8 +151,10 @@ static void		lol(uint8_t *ck, int loop, uint8_t *ret)
 	to_bytes(h3, ret + 24);
 	to_bytes(h4, ret + 32);
 	to_bytes(h5, ret + 40);
+	if (type == 512) {
 	to_bytes(h6, ret + 48);
 	to_bytes(h7, ret + 56);
+	}
 }
 
 void		sha512(t_hash *tab)
@@ -147,11 +169,29 @@ void		sha512(t_hash *tab)
 	while (tab->folder[i])
 	{
 		tmp = pad_message(&(tab->str[i]), false, 128);
-		for (int y = 0; y < 128; ++y)
-			ft_printf("%0.8b ", tab->str[i][y]);
-		printf("\n");
-		lol(tab->str[i], tmp / 128, ret);
-		print_hash(ret, tab, i);
+		lol(tab->str[i], tmp / 128, ret, 512);
+		print_hash(ret, tab, i, 512);
+//		free(ret);
+		++i;
+	}
+	del_tab(tab->folder);
+	del_tab((char **)tab->str);
+}
+
+void		sha384(t_hash *tab)
+{
+	int		i;
+	int		tmp;
+	uint8_t	ret[48];
+
+	i = 0;
+	if (!tab->folder)
+		print_usage(NULL);
+	while (tab->folder[i])
+	{
+		tmp = pad_message(&(tab->str[i]), false, 128);
+		lol(tab->str[i], tmp / 128, ret, 384);
+		print_hash(ret, tab, i, 384);
 //		free(ret);
 		++i;
 	}

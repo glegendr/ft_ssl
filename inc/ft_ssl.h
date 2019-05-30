@@ -13,7 +13,7 @@ typedef struct	s_hash
 }				t_hash;
 
 #define BUFF_SIZE 12
-#define NB_HASH 3
+#define NB_HASH 5
 #define P_FLAG 1
 #define Q_FLAG 1 << 1
 #define R_FLAG 1 << 2
@@ -24,11 +24,14 @@ typedef struct	s_hash
 */
 void		md5(t_hash *);
 void		sha256(t_hash *);
+void		sha224(t_hash *);
 void		sha512(t_hash *);
+void		sha384(t_hash *);
 
 /*
 ** Generic Functions
 */
 void		print_usage(char *);
 int			pad_message(uint8_t **, bool, int);
+void		print_hash(uint8_t *, t_hash *, int, int);
 #endif

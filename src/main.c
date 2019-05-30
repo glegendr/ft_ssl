@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/06 14:48:56 by glegendr          #+#    #+#             */
-/*   Updated: 2019/05/29 18:03:23 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/05/30 15:48:32 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,8 @@
 #include <fcntl.h>
 #include "ft_ssl.h"
 
-char *const g_tab[NB_HASH] = {"md5", "sha256", "sha512"};
-void (*const g_hash_fct[NB_HASH])(t_hash *) = {md5, sha256, sha512};
+char *const g_tab[NB_HASH] = {"md5", "sha256", "sha512", "sha384", "sha224"};
+void (*const g_hash_fct[NB_HASH])(t_hash *) = {md5, sha256, sha512, sha384, sha224};
 
 void		(* get_hash_fct(char *name))(t_hash *)
 {
