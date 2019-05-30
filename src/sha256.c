@@ -24,6 +24,7 @@ static uint32_t	declare_chunk(uint8_t *ck, int i, uint32_t *w)
 	if (i < 16) {
 		i *= 4;
 		s0 = (ck[i] << 24) + (ck[i + 1] << 16) + (ck[i + 2] << 8) + ck[i + 3];
+		ft_printf("%0.8b %0.8b %0.8b %0.8b %0.32b\n", ck[i],ck[i+1],ck[i+2],ck[i+3],s0);
 		return (s0);
 	}
 	x = w[i - 15];
@@ -40,6 +41,8 @@ static void to_bytes(uint32_t val, uint8_t *bytes)
 	bytes[1] = (uint8_t) (val >> 16);
 	bytes[0] = (uint8_t) (val >> 24);
 }
+
+#define WTF 4
 
 static void		lol(uint8_t *ck, int loop, uint8_t *ret, int type)
 {
@@ -84,6 +87,7 @@ static void		lol(uint8_t *ck, int loop, uint8_t *ret, int type)
 		uint32_t f = h5;
 		uint32_t g = h6;
 		uint32_t h = h7;
+//			printf(" ---------- BEF: %x %x %x %x %x %x %x %x\n", a, b, c, d, e, f, g, h);
 		for (int i = 0; i < 64; ++i) {
 			uint32_t s1 = ROTR(e, 6) ^ ROTR(e, 11) ^ ROTR(e, 25);
 			uint32_t ch = (e & f) ^ ((~e) & g);
@@ -100,7 +104,10 @@ static void		lol(uint8_t *ck, int loop, uint8_t *ret, int type)
 			c = b;
 			b = a;
 			a = temp1 + temp2;
+			if (i == WTF)
+			printf(" ---------- IN: %x %x %x %x %x %x %x %x\n", a, b, c, d, e, f, temp1,m[i]);
 		}
+//			printf(" ---------- AFT: %x %x %x %x %x %x %x %x\n", a, b, c, d, e, f, g, h);
 		h0 = h0 + a;
 		h1 = h1 + b;
 		h2 = h2 + c;
@@ -121,25 +128,113 @@ static void		lol(uint8_t *ck, int loop, uint8_t *ret, int type)
 		to_bytes(h7, ret + 28);
 }
 
-void		sha256(t_hash *tab)
+static void		digest(uint64_t *h, uint8_t *ret)
 {
-	int		i;
-	int		tmp;
-	uint8_t	ret[32];
+	to_bytes(h[0], ret);
+	to_bytes(h[1], ret + 4);
+	to_bytes(h[2], ret + 8);
+	to_bytes(h[3], ret + 12);
+	to_bytes(h[4], ret + 16);
+	to_bytes(h[5], ret + 20);
+	to_bytes(h[6], ret + 24);
+	to_bytes(h[7], ret + 28);
+}
 
-	i = 0;
-	if (!tab->folder)
-		print_usage(NULL);
-	while (tab->folder[i])
-	{
-		tmp = pad_message(&(tab->str[i]), false, 64);
-		lol(tab->str[i], tmp / 64, ret, 256);
-		print_hash(ret, tab, i, 256);
-//		free(ret);
-		++i;
+static void		binop(uint64_t *lul, uint64_t *m)
+{
+	uint32_t s1;
+	uint32_t ch;
+	uint32_t temp1;
+	uint32_t s0;
+	uint32_t maj;
+	uint32_t temp2;
+	uint32_t tmp[8] = {lul[0], lul[1], lul[2], lul[3], lul[4], lul[5], lul[6], lul[7]};
+
+
+
+//		printf(" ---------- BEF: %x %x %x %x %x %x %x %x\n", tmp[0],tmp[1],tmp[2],tmp[3],tmp[4],tmp[5],tmp[6], tmp[7]);
+	for (int i = 0; i < 64; ++i) {
+		s1 = ROTR(tmp[4], 6) ^ ROTR(tmp[4], 11) ^ ROTR(tmp[4], 25);
+		ch = (tmp[4] & tmp[5]) ^ ((~tmp[4]) & tmp[6]);
+		temp1 = tmp[7] + s1 + ch + g_k256[i] + ((uint32_t)m[i]);
+		s0 = ROTR(tmp[0], 2) ^ ROTR(tmp[0], 13) ^ ROTR(tmp[0], 22);
+		maj = (tmp[0] & tmp[1]) ^ (tmp[0] & tmp[2]) ^ (tmp[1] & tmp[2]);
+		temp2 = s0 + maj;
+
+		tmp[7] = tmp[6];
+		tmp[6] = tmp[5];
+		tmp[5] = tmp[4];
+		tmp[4] = tmp[3] + temp1;
+		tmp[3] = tmp[2];
+		tmp[2] = tmp[1];
+		tmp[1] = tmp[0];
+		tmp[0] = temp1 + temp2;
+//		if (i == WTF)
+//		printf(" ---------- IN: %x %x %x %x %x %x %x %llx\n", tmp[0],tmp[1],tmp[2],tmp[3],tmp[4],tmp[5],temp1,m[i]);
 	}
-	del_tab(tab->folder);
-	del_tab((char **)tab->str);
+	lul[0] = tmp[0];
+	lul[1] = tmp[1];
+	lul[2] = tmp[2];
+	lul[3] = tmp[3];
+	lul[4] = tmp[4];
+	lul[5] = tmp[5];
+	lul[6] = tmp[6];
+	lul[7] = tmp[7];
+//		printf(" ---------- AFT: %llx %llx %llx %llx %llx %llx %llx %llx\n", lul[0],lul[1],lul[2],lul[3],lul[4],lul[5],lul[6],lul[7]);
+}
+
+static void		declare_chunk2(uint8_t *ck_init, int y, uint64_t *m)
+{
+	uint32_t		s0;
+	uint32_t		s1;
+	uint32_t		x;
+	uint8_t			*ck;
+	uint32_t		w[64];
+
+	ck = ck_init + 64 * y;
+	for (int i = 0; i < 64; ++i) {
+		if (i < 16) {
+			s0 = (ck[i*4] << 24) + (ck[i*4 + 1] << 16) + (ck[i*4 + 2] << 8) + ck[i*4 + 3];
+			w[i] = s0;
+			m[i] = w[i];
+			continue ;
+		}
+		x = w[i - 15];
+		s0 = (ROTR(x, 7)) ^ (ROTR(x, 18)) ^ (SHR(x, 3));
+		x = w[i - 2];
+		s1 = (ROTR(x, 17)) ^ (ROTR(x, 19)) ^ (SHR(x, 10));
+		w[i] = w[i - 16] + s0 + w[i - 7] + s1;
+		m[i] = w[i];
+	}
+}
+
+static void		init_h(uint64_t *h)
+{
+	h[0] = 0x6a09e667;
+	h[1] = 0xbb67ae85;
+	h[2] = 0x3c6ef372;
+	h[3] = 0xa54ff53a;
+	h[4] = 0x510e527f;
+	h[5] = 0x9b05688c;
+	h[6] = 0x1f83d9ab;
+	h[7] = 0x5be0cd19;
+}
+
+void			sha256(t_hash *tab)
+{
+	t_ops ops;
+
+	ops.name = "sha256";
+	ops.endian = false;
+	ops.loop = 64;
+	ops.message_len = 32;
+	ops.encodage_len = 64;
+	ops.init_h = init_h;
+	ops.declare_chunk = declare_chunk2;
+	ops.binary_operation = binop;
+	ops.digest = digest;
+	tab->ops = ops;
+	launch_hash(tab);
 }
 
 void		sha224(t_hash *tab)
