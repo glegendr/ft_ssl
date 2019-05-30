@@ -49,4 +49,14 @@ void		launch_hash(t_hash *);
 void		print_usage(char *);
 int			pad_message(uint8_t **, bool, int);
 void		print_hash(uint8_t *, t_hash *, int, int);
+void		to_bytes32(uint32_t, uint8_t *);
+void		to_bytes64(uint64_t, uint8_t *);
+
+/*
+** SHA Functions
+*/
+void		declare_chunk256(uint8_t *, int , uint64_t *);
+void		binop256(uint64_t *, uint64_t *);
+void		declare_chunk512(uint8_t *, int , uint64_t *);
+void		binop512(uint64_t *, uint64_t *);
 #endif

@@ -24,46 +24,7 @@ uint64_t g_k512[80] = {
 #define ROTR(x, n) ((x >> n) | (x << (64 - n)))
 #define SHR(x, n) (x >> n)
 
-void		print_hash(uint8_t *hash, t_hash *tab, int i, int algo)
-{
-	if ((tab->arg & P_FLAG) && !(tab->arg & Q_FLAG))
-		printf("%s\n", tab->str[i]);
-	if (!(tab->arg & R_FLAG) && !(tab->arg & Q_FLAG))
-		printf("SHA%i(%s)= ", algo, tab->folder[i]);
-	for (int i = 0; i < algo / 8; i++)
-		printf("%0.2x", hash[i]);
-	if ((tab->arg & R_FLAG) && !(tab->arg & Q_FLAG))
-		printf(" %s", tab->folder[i]);
-	printf("\n");
-}
-
-static uint64_t	declare_chunk(uint8_t *ck, int i, uint64_t *w)
-{
-	uint64_t		s0;
-	uint64_t		s1;
-	uint64_t		x;
-	int				y;
-
-		s0 = 0;
-		y = 0;
-	if (i < 16) {
-		i *= 8;
-		while (y < 8)
-		{
-			s0 = s0 << 8;
-			s0 = s0 + ck[i + y];
-			++y;
-		}
-		return (s0);
-	}
-	x = w[i - 15];
-	s0 = (ROTR(x, 1)) ^ (ROTR(x, 8)) ^ (SHR(x, 7));
-	x = w[i - 2];
-	s1 = (ROTR(x, 19)) ^ (ROTR(x, 61)) ^ (SHR(x, 6));
-	return (w[i - 16] + s0 + w[i - 7] + s1);
-}
-
-static void to_bytes(uint64_t val, uint8_t *bytes)
+void to_bytes64(uint64_t val, uint8_t *bytes)
 {
 	bytes[7] = (uint8_t) val;
 	bytes[6] = (uint8_t) (val >> 8);
@@ -75,126 +36,101 @@ static void to_bytes(uint64_t val, uint8_t *bytes)
 	bytes[0] = (uint8_t) (val >> 56);
 }
 
-static void		lol(uint8_t *ck, int loop, uint8_t *ret, int type)
+static void	digest(uint64_t *h, uint8_t *ret)
 {
-	uint64_t m[80];
-	uint64_t h0;
-	uint64_t h1;
-	uint64_t h2;
-	uint64_t h3;
-	uint64_t h4;
-	uint64_t h5;
-	uint64_t h6;
-	uint64_t h7;
+	to_bytes64(h[0], ret);
+	to_bytes64(h[1], ret + 8);
+	to_bytes64(h[2], ret + 16);
+	to_bytes64(h[3], ret + 24);
+	to_bytes64(h[4], ret + 32);
+	to_bytes64(h[5], ret + 40);
+	to_bytes64(h[6], ret + 48);
+	to_bytes64(h[7], ret + 56);
+}
 
-	if (type == 512)
-	{
-	h0 = 0x6a09e667f3bcc908;
-	h1 = 0xbb67ae8584caa73b;
-	h2 = 0x3c6ef372fe94f82b;
-	h3 = 0xa54ff53a5f1d36f1;
-	h4 = 0x510e527fade682d1;
-	h5 = 0x9b05688c2b3e6c1f;
-	h6 = 0x1f83d9abfb41bd6b;
-	h7 = 0x5be0cd19137e2179;
-	} else {
-	h0 = 0xcbbb9d5dc1059ed8;
-	h1 = 0x629a292a367cd507;
-	h2 = 0x9159015a3070dd17;
-	h3 = 0x152fecd8f70e5939;
-	h4 = 0x67332667ffc00b31;
-	h5 = 0x8eb44a8768581511;
-	h6 = 0xdb0c2e0d64f98fa7;
-	h7 = 0x47b5481dbefa4fa4;
-	}
+void		binop512(uint64_t *tmp, uint64_t *m)
+{
+	uint64_t s1;
+	uint64_t ch;
+	uint64_t temp1;
+	uint64_t s0;
+	uint64_t maj;
+	uint64_t temp2;
 
-	for (int y = 0; y < loop; ++y) {
-		for (int i = 0; i < 80; ++i)
-			m[i] = declare_chunk(i < 16 ? ck + 128 * y : NULL, i, m);
-		uint64_t a = h0;
-		uint64_t b = h1;
-		uint64_t c = h2;
-		uint64_t d = h3;
-		uint64_t e = h4;
-		uint64_t f = h5;
-		uint64_t g = h6;
-		uint64_t h = h7;
 		for (int i = 0; i < 80; ++i) {
-			uint64_t s1 = ROTR(e, 14) ^ ROTR(e, 18) ^ ROTR(e, 41);
-			uint64_t ch = (e & f) ^ ((~e) & g);
-			uint64_t temp1 = h + s1 + ch + g_k512[i] + m[i];
-			uint64_t s0 = ROTR(a, 28) ^ ROTR(a, 34) ^ ROTR(a, 39);
-			uint64_t maj = (a & b) ^ (a & c) ^ (b & c);
-			uint64_t temp2 = s0 + maj;
+			s1 = ROTR(tmp[4], 14) ^ ROTR(tmp[4], 18) ^ ROTR(tmp[4], 41);
+			ch = (tmp[4] & tmp[5]) ^ ((~tmp[4]) & tmp[6]);
+			temp1 = tmp[7] + s1 + ch + g_k512[i] + m[i];
+			s0 = ROTR(tmp[0], 28) ^ ROTR(tmp[0], 34) ^ ROTR(tmp[0], 39);
+			maj = (tmp[0] & tmp[1]) ^ (tmp[0] & tmp[2]) ^ (tmp[1] & tmp[2]);
+			temp2 = s0 + maj;
 
-			h = g;
-			g = f;
-			f = e;
-			e = d + temp1;
-			d = c;
-			c = b;
-			b = a;
-			a = temp1 + temp2;
+			tmp[7] = tmp[6];
+			tmp[6] = tmp[5];
+			tmp[5] = tmp[4];
+			tmp[4] = tmp[3] + temp1;
+			tmp[3] = tmp[2];
+			tmp[2] = tmp[1];
+			tmp[1] = tmp[0];
+			tmp[0] = temp1 + temp2;
 		}
-		h0 = h0 + a;
-		h1 = h1 + b;
-		h2 = h2 + c;
-		h3 = h3 + d;
-		h4 = h4 + e;
-		h5 = h5 + f;
-		h6 = h6 + g;
-		h7 = h7 + h;
+}
+
+void		declare_chunk512(uint8_t *ck_init, int y, uint64_t *m)
+{
+	uint64_t		s0;
+	uint64_t		s1;
+	uint64_t		x;
+	uint8_t			*ck;
+
+	ck = ck_init + 128 * y;
+	for (int i = 0; i < 80; ++i)
+	{
+		s0 = 0;
+		y = 0;
+		if (i < 16) {
+			while (y < 8)
+			{
+				s0 = s0 << 8;
+				s0 = s0 + ck[i * 8 + y];
+				++y;
+			}
+			m[i] = s0;
+			continue ;
+		}
+		x = m[i - 15];
+		s0 = (ROTR(x, 1)) ^ (ROTR(x, 8)) ^ (SHR(x, 7));
+		x = m[i - 2];
+		s1 = (ROTR(x, 19)) ^ (ROTR(x, 61)) ^ (SHR(x, 6));
+		m[i] = m[i - 16] + s0 + m[i - 7] + s1;
 	}
-	to_bytes(h0, ret);
-	to_bytes(h1, ret + 8);
-	to_bytes(h2, ret + 16);
-	to_bytes(h3, ret + 24);
-	to_bytes(h4, ret + 32);
-	to_bytes(h5, ret + 40);
-	if (type == 512) {
-	to_bytes(h6, ret + 48);
-	to_bytes(h7, ret + 56);
-	}
+}
+
+static void	init_h(uint64_t *h)
+{
+	h[0] = 0x6a09e667f3bcc908;
+	h[1] = 0xbb67ae8584caa73b;
+	h[2] = 0x3c6ef372fe94f82b;
+	h[3] = 0xa54ff53a5f1d36f1;
+	h[4] = 0x510e527fade682d1;
+	h[5] = 0x9b05688c2b3e6c1f;
+	h[6] = 0x1f83d9abfb41bd6b;
+	h[7] = 0x5be0cd19137e2179;
 }
 
 void		sha512(t_hash *tab)
 {
-	int		i;
-	int		tmp;
-	uint8_t	ret[64];
+	t_ops ops;
 
-	i = 0;
-	if (!tab->folder)
-		print_usage(NULL);
-	while (tab->folder[i])
-	{
-		tmp = pad_message(&(tab->str[i]), false, 128);
-		lol(tab->str[i], tmp / 128, ret, 512);
-		print_hash(ret, tab, i, 512);
-//		free(ret);
-		++i;
-	}
-	del_tab(tab->folder);
-	del_tab((char **)tab->str);
-}
-
-void		sha384(t_hash *tab)
-{
-	int		i;
-	int		tmp;
-	uint8_t	ret[48];
-
-	i = 0;
-	if (!tab->folder)
-		print_usage(NULL);
-	while (tab->folder[i])
-	{
-		tmp = pad_message(&(tab->str[i]), false, 128);
-		lol(tab->str[i], tmp / 128, ret, 384);
-		print_hash(ret, tab, i, 384);
-//		free(ret);
-		++i;
-	}
-	del_tab(tab->folder);
-	del_tab((char **)tab->str);
+	ops.name = "SHA512";
+	ops.endian = false;
+	ops.loop = 80;
+	ops.message_len = 64;
+	ops.encodage_len = 128;
+	ops.init_h = init_h;
+	ops.declare_chunk = declare_chunk512;
+	ops.binary_operation = binop512;
+	ops.digest = digest;
+	tab->ops = ops;
+	launch_hash(tab);
 }
