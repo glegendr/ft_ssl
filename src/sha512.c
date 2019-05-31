@@ -21,9 +21,6 @@ uint64_t g_k512[80] = {
 	0x431d67c49c100d4c, 0x4cc5d4becb3e42b6, 0x597f299cfc657e2a, 0x5fcb6fab3ad6faec, 0x6c44198c4a475817
 };
 
-#define ROTR(x, n) ((x >> n) | (x << (64 - n)))
-#define SHR(x, n) (x >> n)
-
 void to_bytes64(uint64_t val, uint8_t *bytes)
 {
 	bytes[7] = (uint8_t) val;
@@ -58,10 +55,10 @@ void		binop512(uint64_t *tmp, uint64_t *m)
 	uint64_t temp2;
 
 		for (int i = 0; i < 80; ++i) {
-			s1 = ROTR(tmp[4], 14) ^ ROTR(tmp[4], 18) ^ ROTR(tmp[4], 41);
+			s1 = ROTR(tmp[4], 14, 64) ^ ROTR(tmp[4], 18, 64) ^ ROTR(tmp[4], 41, 64);
 			ch = (tmp[4] & tmp[5]) ^ ((~tmp[4]) & tmp[6]);
 			temp1 = tmp[7] + s1 + ch + g_k512[i] + m[i];
-			s0 = ROTR(tmp[0], 28) ^ ROTR(tmp[0], 34) ^ ROTR(tmp[0], 39);
+			s0 = ROTR(tmp[0], 28, 64) ^ ROTR(tmp[0], 34, 64) ^ ROTR(tmp[0], 39, 64);
 			maj = (tmp[0] & tmp[1]) ^ (tmp[0] & tmp[2]) ^ (tmp[1] & tmp[2]);
 			temp2 = s0 + maj;
 
@@ -99,9 +96,9 @@ void		declare_chunk512(uint8_t *ck_init, int y, uint64_t *m)
 			continue ;
 		}
 		x = m[i - 15];
-		s0 = (ROTR(x, 1)) ^ (ROTR(x, 8)) ^ (SHR(x, 7));
+		s0 = (ROTR(x, 1, 64)) ^ (ROTR(x, 8, 64)) ^ (SHR(x, 7));
 		x = m[i - 2];
-		s1 = (ROTR(x, 19)) ^ (ROTR(x, 61)) ^ (SHR(x, 6));
+		s1 = (ROTR(x, 19, 64)) ^ (ROTR(x, 61, 64)) ^ (SHR(x, 6));
 		m[i] = m[i - 16] + s0 + m[i - 7] + s1;
 	}
 }

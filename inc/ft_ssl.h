@@ -32,6 +32,9 @@ typedef struct	s_hash
 #define Q_FLAG 1 << 1
 #define R_FLAG 1 << 2
 #define S_FLAG 1 << 3
+#define ROTL(x, c, size) (((x) << (c)) | ((x) >> (size - (c))))
+#define ROTR(x, n, size) ((x >> n) | (x << (size - n)))
+#define SHR(x, n) (x >> n)
 
 /*
 ** All Hash Functions

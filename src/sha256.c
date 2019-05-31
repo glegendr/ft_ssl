@@ -12,9 +12,6 @@ uint32_t g_k256[64] = {
 0x19a4c116, 0x1e376c08, 0x2748774c, 0x34b0bcb5, 0x391c0cb3, 0x4ed8aa4a, 0x5b9cca4f, 0x682e6ff3,
 0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208, 0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2 };
 
-#define ROTR(x, n) ((x >> n) | (x << (32 - n)))
-#define SHR(x, n) (x >> n)
-
 void to_bytes32(uint32_t val, uint8_t *bytes)
 {
 	bytes[3] = (uint8_t) val;
@@ -45,13 +42,11 @@ void		binop256(uint64_t *lul, uint64_t *m)
 	uint32_t temp2;
 	uint32_t tmp[8] = {lul[0], lul[1], lul[2], lul[3], lul[4], lul[5], lul[6], lul[7]};
 
-
-
 	for (int i = 0; i < 64; ++i) {
-		s1 = ROTR(tmp[4], 6) ^ ROTR(tmp[4], 11) ^ ROTR(tmp[4], 25);
+		s1 = ROTR(tmp[4], 6, 32) ^ ROTR(tmp[4], 11, 32) ^ ROTR(tmp[4], 25, 32);
 		ch = (tmp[4] & tmp[5]) ^ ((~tmp[4]) & tmp[6]);
 		temp1 = tmp[7] + s1 + ch + g_k256[i] + ((uint32_t)m[i]);
-		s0 = ROTR(tmp[0], 2) ^ ROTR(tmp[0], 13) ^ ROTR(tmp[0], 22);
+		s0 = ROTR(tmp[0], 2, 32) ^ ROTR(tmp[0], 13, 32) ^ ROTR(tmp[0], 22, 32);
 		maj = (tmp[0] & tmp[1]) ^ (tmp[0] & tmp[2]) ^ (tmp[1] & tmp[2]);
 		temp2 = s0 + maj;
 
@@ -91,9 +86,9 @@ void		declare_chunk256(uint8_t *ck_init, int y, uint64_t *m)
 			continue ;
 		}
 		x = w[i - 15];
-		s0 = (ROTR(x, 7)) ^ (ROTR(x, 18)) ^ (SHR(x, 3));
+		s0 = (ROTR(x, 7, 32)) ^ (ROTR(x, 18, 32)) ^ (SHR(x, 3));
 		x = w[i - 2];
-		s1 = (ROTR(x, 17)) ^ (ROTR(x, 19)) ^ (SHR(x, 10));
+		s1 = (ROTR(x, 17, 32)) ^ (ROTR(x, 19, 32)) ^ (SHR(x, 10));
 		w[i] = w[i - 16] + s0 + w[i - 7] + s1;
 		m[i] = w[i];
 	}
