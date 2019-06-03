@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/16 18:27:36 by glegendr          #+#    #+#             */
-/*   Updated: 2019/05/31 13:50:50 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/06/03 17:38:27 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,61 +18,44 @@
 #include "ft_ssl.h"
 #include "md5.h"
 
-static void		push_original_len(uint8_t **str, int len,
+static void		push_original_len(t_vec *tab,
 								  uint64_t original_len, bool endian, int mult)
 {
-	int i;
 	int loop;
 
 	loop = 0;
-	if (endian)
-		i = 0;
-	else
-		i = 7;
 	while (mult > 8)
 	{
-		(*str)[len] = 0;
-		++len;
+		v_push_int(tab, 0);
 		--mult;
 	}
-	while (i < 8 && i >= 0)
+	while (loop < 8)
 	{
-		(*str)[len + i] = ((original_len >> (8 * loop)) & 0xff);
 		if (endian)
-			++i;
+			v_push_int(tab, ((original_len >> (8 * loop)) & 0xff));
 		else
-			--i;
+			v_push_int(tab, (original_len >> (56 - (8 * loop)) & 0xff));
 		++loop;
 	}
 }
 
-int			pad_message(uint8_t **tab, bool endian, int mod)
+int			pad_message(t_vec *tab, bool endian, int mod)
 {
-	uint8_t	*str;
 	int		len;
 	int		original_len;
 
-	if (*tab == NULL)
-		original_len = 0;
-	else
-		original_len = ft_strlen((char *)(*tab));
+	original_len = v_size(tab);
 	len = original_len + 1;
 	while (len % mod)
 		++len;
 	if (original_len + 8 >= len)
 		len += mod;
-	*tab = ft_realloc(*tab, original_len, len);
-	str = *tab;
 	len -= mod / 8;
-	push_original_len(&str, len, (uint64_t)original_len * 8, endian, mod / 8);
-	str[original_len] = (char)128;
-	while (original_len < len - 1)
-	{
-		++original_len;
-		str[original_len] = (char)0;
-	}
-	*tab = str;
-	return (len + mod / 8);
+	v_push_int(tab, (char)128);
+	while (v_size(tab) < len)
+		v_push_int(tab, 0);
+	push_original_len(tab, (uint64_t)original_len * 8, endian, mod / 8);
+	return (v_size(tab));
 }
 
 static void to_bytes32_endian(uint32_t val, uint8_t *bytes)
@@ -125,11 +108,11 @@ static void		binop(uint64_t *lul, uint64_t *m)
 	}
 }
 
-static void		declare_chunk(uint8_t *ck_init, int y, uint64_t *m)
+static void		declare_chunk(t_vec *ck_init, int y, uint64_t *m)
 {
 	uint8_t		*ck;
 
-	ck = ck_init + 64 * y;
+	ck = v_raw(ck_init) + 64 * y;
 	for (int i = 0; i < 16; ++i)
 		m[i] = (ck[i * 4 + 3] << 24) + (ck[i * 4 + 2] << 16)
 				+ (ck[i * 4 + 1] << 8) + ck[i * 4];

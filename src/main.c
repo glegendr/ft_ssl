@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/06 14:48:56 by glegendr          #+#    #+#             */
-/*   Updated: 2019/05/30 18:22:24 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/06/03 15:27:00 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,9 +94,9 @@ int		open_folder(char *flag, t_hash *tab)
 	vec = v_new(sizeof(char));
 	while ((val = read(fd, ret, BUFF_SIZE)) > 0)
 		v_append_raw(&vec, ret, val);
-	v_push_int(&vec, '\0');
-	tab->str = (uint8_t **)tab_join((char **)tab->str, (char *)v_raw(&vec), tab_len(tab->folder) - 1);
-	v_del(&vec);
+	v_push(&tab->str, &vec);
+	//tab->str = (uint8_t **)tab_join((char **)tab->str, (char *)v_raw(&vec), tab_len(tab->folder) - 1);
+//	v_del(&vec);
 	return (0);
 }
 
@@ -136,7 +136,7 @@ void		parse_argv(int argc, char *argv[])
 	tab.f = get_hash_fct(argv[1]);
 	tab.arg = 0;
 	tab.folder = NULL;
-	tab.str = NULL;
+	tab.str = v_new(sizeof(t_vec));
 	i = 2;
 	while (i < argc)
 	{
@@ -147,7 +147,11 @@ void		parse_argv(int argc, char *argv[])
 			if (++i >= argc)
 				print_usage(NULL);
 			tab.folder = tab_join(tab.folder, argv[i], tab_len(tab.folder));
-			tab.str = (uint8_t **)tab_join((char **)tab.str, argv[i], tab_len(tab.folder) - 1);
+			t_vec tmp;
+			tmp = v_new(sizeof(uint8_t));
+			v_append_raw(&tmp, argv[i], ft_strlen(argv[i]));
+			v_push(&tab.str, &tmp);
+		//	tab.str = (uint8_t **)tab_join((char **)tab.str, argv[i], tab_len(tab.folder) - 1);
 			tab.arg ^= S_FLAG;
 		}
 		++i;

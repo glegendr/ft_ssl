@@ -5,7 +5,7 @@
 void	print_hash_tmp(uint8_t *ret, t_hash *hash, int i, t_ops ops)
 {
 	if ((hash->arg & P_FLAG) && !(hash->arg & Q_FLAG))
-		printf("%s\n", hash->str[i]);
+		printf("%s\n", v_raw(v_get(&hash->str, i)));
 	if (!(hash->arg & R_FLAG) && !(hash->arg & Q_FLAG))
 		printf("%s(%s)= ", ops.name, hash->folder[i]);
 	for (int i = 0; i < ops.message_len; i++)
@@ -15,7 +15,7 @@ void	print_hash_tmp(uint8_t *ret, t_hash *hash, int i, t_ops ops)
 	printf("\n");
 }
 
-static void	GOO(uint8_t *ck, t_ops ops, uint8_t *ret, int loop)
+static void	GOO(t_vec *ck, t_ops ops, uint8_t *ret, int loop)
 {
 	uint64_t m[80];
 	uint64_t h[8];
@@ -58,11 +58,12 @@ void		launch_hash(t_hash *hash)
 		print_usage(NULL);
 	while (hash->folder[i])
 	{
-		final_len = pad_message(&(hash->str[i]), ops.endian, ops.encodage_len);
-		GOO(hash->str[i], ops, ret, final_len / ops.encodage_len);
+		final_len = pad_message(v_get(&hash->str, i), ops.endian, ops.encodage_len);
+		GOO(v_get(&hash->str, i), ops, ret, final_len / ops.encodage_len);
 		print_hash_tmp(ret, hash, i, ops);
 		++i;
 	}
-//	del_tab(hash->folder);
+	del_tab(hash->folder);
+	v_del_all(&hash->str);
 //	del_tab((char **)hash->str);
 }

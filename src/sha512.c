@@ -73,14 +73,14 @@ void		binop512(uint64_t *tmp, uint64_t *m)
 		}
 }
 
-void		declare_chunk512(uint8_t *ck_init, int y, uint64_t *m)
+void		declare_chunk512(t_vec *ck_init, int y, uint64_t *m)
 {
 	uint64_t		s0;
 	uint64_t		s1;
 	uint64_t		x;
 	uint8_t			*ck;
 
-	ck = ck_init + 128 * y;
+	ck = v_raw(ck_init) + 128 * y;
 	for (int i = 0; i < 80; ++i)
 	{
 		s0 = 0;

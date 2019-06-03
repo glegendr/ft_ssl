@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/12 20:26:53 by glegendr          #+#    #+#             */
-/*   Updated: 2019/05/28 16:52:24 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/06/03 16:20:44 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -162,6 +162,14 @@ int				v_size(t_vec *vec);
 */
 void			v_del(t_vec *vec);
 void			st_del(t_string *string);
+
+/*
+** Free the vector and all vector in.
+**
+** Param:
+**    vec: the vector to delete.
+*/
+void			v_del_all(t_vec *vec);
 
 /*
 ** Del the last Param.

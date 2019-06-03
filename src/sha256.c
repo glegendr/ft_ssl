@@ -69,7 +69,7 @@ void		binop256(uint64_t *lul, uint64_t *m)
 	lul[7] = tmp[7];
 }
 
-void		declare_chunk256(uint8_t *ck_init, int y, uint64_t *m)
+void		declare_chunk256(t_vec *ck_init, int y, uint64_t *m)
 {
 	uint32_t		s0;
 	uint32_t		s1;
@@ -77,12 +77,13 @@ void		declare_chunk256(uint8_t *ck_init, int y, uint64_t *m)
 	uint8_t			*ck;
 	uint32_t		w[64];
 
-	ck = ck_init + 64 * y;
+	ck = v_raw(ck_init) + 64 * y;
 	for (int i = 0; i < 64; ++i) {
 		if (i < 16) {
 			s0 = (ck[i*4] << 24) + (ck[i*4 + 1] << 16) + (ck[i*4 + 2] << 8) + ck[i*4 + 3];
 			w[i] = s0;
 			m[i] = w[i];
+			ft_printf("%0.8b %0.8b %0.8b %0.8b %0.32b\n", ck[i*4], ck[i*4 + 1], ck[i*4]+2, ck[i*4]+3, m[i]);
 			continue ;
 		}
 		x = w[i - 15];
