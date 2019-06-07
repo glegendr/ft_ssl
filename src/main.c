@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/06 14:48:56 by glegendr          #+#    #+#             */
-/*   Updated: 2019/06/03 15:27:00 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/06/07 15:22:05 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,8 @@
 #include <fcntl.h>
 #include "ft_ssl.h"
 
-char *const g_tab[NB_HASH] = {"md5", "sha256", "sha512", "sha384", "sha224"};
-void (*const g_hash_fct[NB_HASH])(t_hash *) = {md5, sha256, sha512, sha384, sha224};
+char *const g_tab[NB_HASH] = {"md5", "sha256", "sha512", "sha384", "sha224", "base64", "base64url"};
+void (*const g_hash_fct[NB_HASH])(t_hash *) = {md5, sha256, sha512, sha384, sha224, base64, base64url};
 
 void		(* get_hash_fct(char *name))(t_hash *)
 {
@@ -119,6 +119,14 @@ int		match_flag(char *flag, t_hash *tab)
 				tab->arg |= R_FLAG;
 			else if (flag[i] == 's')
 				tab->arg |= S_FLAG;
+			else if (flag[i] == 'd')
+				tab->arg |= D_FLAG;
+			else if (flag[i] == 'e')
+				tab->arg |= E_FLAG;
+			else if (flag[i] == 'i')
+				tab->arg |= I_FLAG;
+			else if (flag[i] == 'o')
+				tab->arg |= O_FLAG;
 			else
 				return (1);
 			++i;

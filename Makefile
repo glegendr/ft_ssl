@@ -6,7 +6,7 @@ CFLAG+= -Werror
 CFLAG+= -Wextra
 CFLAG+= -Wall
 #CFLAG+= -fsanitize=address
-SRCNAME= main md5 sha256 sha224 sha512 sha384 generic
+SRCNAME= main md5 sha256 sha224 sha512 sha384 generic base64
 
 LIBS= ./pods/libvec/libvec.a ./pods/libft/libft.a ./pods/ft_printf/libftprintf.a
 

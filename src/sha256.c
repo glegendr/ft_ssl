@@ -83,7 +83,6 @@ void		declare_chunk256(t_vec *ck_init, int y, uint64_t *m)
 			s0 = (ck[i*4] << 24) + (ck[i*4 + 1] << 16) + (ck[i*4 + 2] << 8) + ck[i*4 + 3];
 			w[i] = s0;
 			m[i] = w[i];
-			ft_printf("%0.8b %0.8b %0.8b %0.8b %0.32b\n", ck[i*4], ck[i*4 + 1], ck[i*4]+2, ck[i*4]+3, m[i]);
 			continue ;
 		}
 		x = w[i - 15];

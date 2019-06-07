@@ -28,11 +28,15 @@ typedef struct	s_hash
 }				t_hash;
 
 #define BUFF_SIZE 12
-#define NB_HASH 5
+#define NB_HASH 7
 #define P_FLAG 1
 #define Q_FLAG 1 << 1
 #define R_FLAG 1 << 2
 #define S_FLAG 1 << 3
+#define D_FLAG 1 << 4
+#define E_FLAG 1 << 5
+#define I_FLAG 1 << 6
+#define O_FLAG 1 << 7
 #define ROTL(x, c, size) (((x) << (c)) | ((x) >> (size - (c))))
 #define ROTR(x, n, size) ((x >> n) | (x << (size - n)))
 #define SHR(x, n) (x >> n)
@@ -45,6 +49,12 @@ void		sha256(t_hash *);
 void		sha224(t_hash *);
 void		sha512(t_hash *);
 void		sha384(t_hash *);
+
+/*
+** All Base Functions
+*/
+void		base64(t_hash *);
+void		base64url(t_hash *);
 
 /*
 ** Generic Functions
