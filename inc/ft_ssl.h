@@ -16,6 +16,7 @@ typedef struct	s_hash_ops
 	void		(*declare_chunk)(t_vec *, int, uint64_t *);
 	void		(*binary_operation)(uint64_t *, uint64_t *);
 	void		(*digest)(uint64_t *, uint8_t *);
+	int			fd;
 }				t_ops;
 
 typedef struct	s_hash
@@ -28,7 +29,7 @@ typedef struct	s_hash
 }				t_hash;
 
 #define BUFF_SIZE 12
-#define NB_HASH 7
+#define NB_HASH 8
 #define P_FLAG 1
 #define Q_FLAG 1 << 1
 #define R_FLAG 1 << 2
@@ -51,7 +52,7 @@ void		sha512(t_hash *);
 void		sha384(t_hash *);
 
 /*
-** All Base Functions
+** All Cipher Functions
 */
 void		base64(t_hash *);
 void		base64url(t_hash *);

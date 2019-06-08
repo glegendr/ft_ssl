@@ -30,6 +30,7 @@ SRCNAME= ft_realloc\
 	 v_push_int\
 	 v_sort_size\
 	 v_raw\
+	 v_reset\
 	 v_reverse_rotate\
 	 v_rotate\
 	 v_size\

@@ -12,7 +12,7 @@ LIBS= ./pods/libvec/libvec.a ./pods/libft/libft.a ./pods/ft_printf/libftprintf.a
 
 CC_LIBS= make -C ./pods/libvec/; make -C ./pods/libft/; make -C ./pods/ft_printf/;
 
-INC_DIR_LIBS= -I ./pods/libvec/inc -I ./pods/libft/inc -I ./pods/ft_printf/inc
+INC_DIR_LIBS= -I ./pods/libvec/inc/ -I ./pods/libft/inc -I ./pods/ft_printf/inc
 
 INC_DIR=./inc/
 
@@ -25,7 +25,7 @@ OBJ= $(addprefix $(OBJDIR), $(addsuffix .o, $(SRCNAME)))
 
 all: $(NAME)
 
-$(NAME): $(OBJDIR) $(OBJ) $(LIBS)
+$(NAME): $(LIBS) $(OBJDIR) $(OBJ)
 	@$(CC) -o $@ $(OBJ) $(LIBS)
 	@(echo "[ \033[35m$@\033[00m ]")
 	
