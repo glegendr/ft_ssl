@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/12 22:19:28 by glegendr          #+#    #+#             */
-/*   Updated: 2019/06/03 16:23:08 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/06/08 13:26:53 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,4 +35,9 @@ void		v_del_all(t_vec *vec)
 		++i;
 	}
 	v_del(vec);
+}
+
+void		v_reset(t_vec *vec)
+{
+	vec->private_elem_nb = 0;
 }

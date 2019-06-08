@@ -8,11 +8,11 @@ CFLAG+= -Wall
 #CFLAG+= -fsanitize=address
 SRCNAME= ft_print_hex ft_pars wchar_t_to_str ft_print_dec ft_str_is_null ft_convertissor ft_push_point ft_printf ft_print_flags ft_flags ft_rawtoi
 
-LIBS= ./pods/libvec/libvec.a ./pods/libft/libft.a
+LIBS= ./../libvec/libvec.a ./../libft/libft.a
 
-CC_LIBS= make -C ./pods/libvec/; make -C ./pods/libft/;
+CC_LIBS= make -C ./../libvec/; make -C ./../libft/;
 
-INC_DIR_LIBS= -I ./pods/libvec/inc -I ./pods/libft/inc
+INC_DIR_LIBS= -I ./../libvec/inc -I ./../libft/inc
 
 INC_DIR=./inc/
 

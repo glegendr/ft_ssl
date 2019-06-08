@@ -10,7 +10,6 @@ SRCNAME= ft_realloc\
 	 ft_memcpy\
 	 st_copy\
 	 st_del\
-	 st_del_last\
 	 st_get\
 	 st_new\
 	 st_print\

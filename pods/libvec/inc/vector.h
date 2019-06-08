@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/12 20:26:53 by glegendr          #+#    #+#             */
-/*   Updated: 2019/06/03 16:20:44 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/06/08 13:44:13 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -179,6 +179,14 @@ void			v_del_all(t_vec *vec);
 */
 void			v_del_last(t_vec *vec);
 void			st_del_last(t_string *string);
+
+/*
+** Reset the current vector.
+**
+** Param:
+**    vec: the vector to reset.
+*/
+void			v_reset(t_vec *vec);
 
 /*
 ** Add the second vector at the end of the first.
