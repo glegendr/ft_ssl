@@ -128,6 +128,7 @@ void		sha512(t_hash *tab)
 	ops.declare_chunk = declare_chunk512;
 	ops.binary_operation = binop512;
 	ops.digest = digest;
+	ops.fd = tab->ops.fd;
 	tab->ops = ops;
 	launch_hash(tab);
 }

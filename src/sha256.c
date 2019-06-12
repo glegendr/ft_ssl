@@ -119,6 +119,7 @@ void			sha256(t_hash *tab)
 	ops.declare_chunk = declare_chunk256;
 	ops.binary_operation = binop256;
 	ops.digest = digest;
+	ops.fd = tab->ops.fd;
 	tab->ops = ops;
 	launch_hash(tab);
 }

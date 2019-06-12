@@ -110,7 +110,9 @@ void		bases(t_hash *tab, char *base)
 			}
 			else
 				launch_base(tmp + z, base, v_size(vec) - z, &print);
-		write(tab->ops.fd, v_raw(&print), v_size(&print));
+		tab->ops.message_len = v_size(&print);
+		print_hash(&print, tab, i, tab->ops);
+//		write(tab->ops.fd, v_raw(&print), v_size(&print));
 		v_reset(&print);
 		++i;
 	}
@@ -122,6 +124,7 @@ void		base64(t_hash *tab)
 	char base[65];
 
 	generate_base(base, false);
+	tab->ops.name = "BASE64";
 	bases(tab, base);
 }
 
@@ -130,5 +133,6 @@ void		base64url(t_hash *tab)
 	char base[65];
 
 	generate_base(base, true);
+	tab->ops.name = "BASE64url";
 	bases(tab, base);
 }

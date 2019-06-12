@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/30 20:49:14 by glegendr          #+#    #+#             */
-/*   Updated: 2019/05/30 20:49:16 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/06/12 11:59:57 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,7 @@ void			sha224(t_hash *tab)
 	ops.declare_chunk = declare_chunk256;
 	ops.binary_operation = binop256;
 	ops.digest = digest;
+	ops.fd = tab->ops.fd;
 	tab->ops = ops;
 	launch_hash(tab);
 }

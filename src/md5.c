@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/16 18:27:36 by glegendr          #+#    #+#             */
-/*   Updated: 2019/06/03 17:38:27 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/06/12 11:58:55 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,6 +140,7 @@ void		md5(t_hash *tab)
 	ops.declare_chunk = declare_chunk;
 	ops.binary_operation = binop;
 	ops.digest = digest;
+	ops.fd = tab->ops.fd;
 	tab->ops = ops;
 	launch_hash(tab);
 }

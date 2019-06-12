@@ -2,20 +2,52 @@
 #include <libft.h>
 #include <ft_printf.h>
 
-void	print_hash_tmp(uint8_t *ret, t_hash *hash, int i, t_ops ops)
+void	print_hash(t_vec *ret, t_hash *hash, int i, t_ops ops)
 {
-	if ((hash->arg & P_FLAG) && !(hash->arg & Q_FLAG))
-		printf("%s\n", v_raw(v_get(&hash->str, i)));
-	if (!(hash->arg & R_FLAG) && !(hash->arg & Q_FLAG))
-		printf("%s(%s)= ", ops.name, hash->folder[i]);
-	for (int i = 0; i < ops.message_len; i++)
-		printf("%0.2x", ret[i]);
-	if ((hash->arg & R_FLAG) && !(hash->arg & Q_FLAG))
-		printf(" %s", hash->folder[i]);
-	printf("\n");
+	t_vec vec;
+	t_vec *init;
+
+	init = v_get(&hash->str, i);
+	vec = v_new(sizeof(char));
+	if ((hash->arg & P_FLAG) && !(hash->arg & Q_FLAG)) {
+		v_append_raw(&vec, v_raw(init), v_size(init));
+		v_push_int(&vec, '\n');
+	}
+	if (!(hash->arg & R_FLAG) && !(hash->arg & Q_FLAG)) {
+		v_append_raw(&vec, (void *)ops.name, ft_strlen(ops.name));
+		v_push_int(&vec, '(');
+		v_append_raw(&vec, hash->folder[i], ft_strlen(hash->folder[i]));
+		v_append_raw(&vec, ")= ", 3);
+	}
+	v_append_raw(&vec, v_raw(ret), v_size(ret));
+	if ((hash->arg & R_FLAG) && !(hash->arg & Q_FLAG)) {
+		v_push_int(&vec, ' ');
+		v_append_raw(&vec, hash->folder[i], ft_strlen(hash->folder[i]));
+	}
+	if (!(hash->arg & D_FLAG))
+		v_push_int(&vec, '\n');
+	write(ops.fd, v_raw(&vec), v_size(&vec));
+	v_del(&vec);
 }
 
-static void	GOO(t_vec *ck, t_ops ops, uint8_t *ret, int loop)
+static void	transform_hash(uint8_t *ret, t_hash *hash, int i, t_ops ops)
+{
+	t_vec vec;
+	char *hex;
+
+	vec = v_new(sizeof(char));
+	for (int i = 0; i < ops.message_len; i++) {
+		hex = ft_itoa_base(ret[i], 16, 'x');
+		if (ft_strlen(hex) == 1)
+			v_push_int(&vec, '0');
+		v_append_raw(&vec, hex, ft_strlen(hex));
+		free(hex);
+	}
+	print_hash(&vec, hash, i, ops);
+	v_del(&vec);
+}
+
+static void	encript(t_vec *ck, t_ops ops, uint8_t *ret, int loop)
 {
 	uint64_t m[80];
 	uint64_t h[8];
@@ -59,8 +91,8 @@ void		launch_hash(t_hash *hash)
 	while (hash->folder[i])
 	{
 		final_len = pad_message(v_get(&hash->str, i), ops.endian, ops.encodage_len);
-		GOO(v_get(&hash->str, i), ops, ret, final_len / ops.encodage_len);
-		print_hash_tmp(ret, hash, i, ops);
+		encript(v_get(&hash->str, i), ops, ret, final_len / ops.encodage_len);
+		transform_hash(ret, hash, i, ops);
 		++i;
 	}
 	del_tab(hash->folder);

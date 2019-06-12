@@ -29,7 +29,7 @@ typedef struct	s_hash
 }				t_hash;
 
 #define BUFF_SIZE 12
-#define NB_HASH 8
+#define NB_HASH 7
 #define P_FLAG 1
 #define Q_FLAG 1 << 1
 #define R_FLAG 1 << 2
@@ -63,7 +63,7 @@ void		base64url(t_hash *);
 void		launch_hash(t_hash *);
 void		print_usage(char *);
 int			pad_message(t_vec *, bool, int);
-void		print_hash(uint8_t *, t_hash *, int, int);
+void		print_hash(t_vec *, t_hash *, int, t_ops);
 void		to_bytes32(uint32_t, uint8_t *);
 void		to_bytes64(uint64_t, uint8_t *);
 
