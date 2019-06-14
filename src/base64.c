@@ -112,7 +112,6 @@ void		bases(t_hash *tab, char *base)
 				launch_base(tmp + z, base, v_size(vec) - z, &print);
 		tab->ops.message_len = v_size(&print);
 		print_hash(&print, tab, i, tab->ops);
-//		write(tab->ops.fd, v_raw(&print), v_size(&print));
 		v_reset(&print);
 		++i;
 	}

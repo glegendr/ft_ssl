@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/06 14:48:56 by glegendr          #+#    #+#             */
-/*   Updated: 2019/06/08 15:39:36 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/06/14 15:45:40 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 char *const g_tab[NB_HASH] = {"md5", "sha256", "sha512", "sha384", "sha224", "base64", "base64url"};
 void (*const g_hash_fct[NB_HASH])(t_hash *) = {md5, sha256, sha512, sha384, sha224, base64, base64url};
 
-void		(* get_hash_fct(char *name))(t_hash *)
+static void		(* get_hash_fct(char *name))(t_hash *)
 {
 	int id;
 
@@ -34,7 +34,7 @@ void		(* get_hash_fct(char *name))(t_hash *)
 	return (g_hash_fct[id]);
 }
 
-char		*get_all_hash(void)
+static char		*get_all_hash(void)
 {
 	t_vec vec;
 	char *ret;
@@ -81,7 +81,7 @@ void		print_usage(char *name)
 	exit(1);
 }
 
-void	read_file(t_hash *tab, int fd)
+static void	read_file(t_hash *tab, int fd, bool print)
 {
 	t_vec	vec;
 	char	ret[BUFF_SIZE];
@@ -91,11 +91,15 @@ void	read_file(t_hash *tab, int fd)
 		print_usage(NULL);
 	vec = v_new(sizeof(char));
 	while ((val = read(fd, ret, BUFF_SIZE)) > 0)
+	{
 		v_append_raw(&vec, ret, val);
+		if (print == true)
+			write(1, ret, BUFF_SIZE);
+	}
 	v_push(&tab->str, &vec);
 }
 
-int		open_file(char *argv, int flag, int perm)
+static int		open_file(char *argv, int flag, int perm)
 {
 	int		fd;
 	int		o_flag;
@@ -111,7 +115,16 @@ int		open_file(char *argv, int flag, int perm)
 	return (fd);
 }
 
-int		match_flag(char *flag, t_hash *tab)
+static void		into_vec(t_vec *to_push, char *str)
+{
+	t_vec vec;
+
+	vec = v_new(sizeof(char));
+	v_append_raw(&vec, str, ft_strlen(str));
+	v_push(to_push, &vec);
+}
+
+static int		match_flag(char *flag, t_hash *tab)
 {
 	int i;
 
@@ -119,8 +132,8 @@ int		match_flag(char *flag, t_hash *tab)
 		return (1);
 	else if (flag[0] != '-')
 	{
-		read_file(tab, open_file(flag, 0, 0));
-		tab->folder = tab_join(tab->folder, flag, tab_len(tab->folder));
+		read_file(tab, open_file(flag, 0, 0), false);
+		into_vec(&tab->folder, flag);
 		return (0);
 	}
 	i = 1;
@@ -153,7 +166,7 @@ int		match_flag(char *flag, t_hash *tab)
 		return (0);
 }
 
-void		o_flag(t_hash *tab, char *argv)
+static void		o_flag(t_hash *tab, char *argv)
 {
 	int fd;
 
@@ -164,18 +177,18 @@ void		o_flag(t_hash *tab, char *argv)
 	tab->arg ^= O_FLAG;
 }
 
-void		s_flag(t_hash *tab, char *argv)
+static void		s_flag(t_hash *tab, char *argv)
 {
 	t_vec tmp;
 
-	tab->folder = tab_join(tab->folder, argv, tab_len(tab->folder));
+	into_vec(&tab->folder, argv);
 	tmp = v_new(sizeof(uint8_t));
 	v_append_raw(&tmp, argv, ft_strlen(argv));
 	v_push(&tab->str, &tmp);
 	tab->arg ^= S_FLAG;
 }
 
-void		parse_argv(int argc, char *argv[])
+static void		parse_argv(int argc, char *argv[])
 {
 	t_hash tab;
 	int i;
@@ -184,7 +197,7 @@ void		parse_argv(int argc, char *argv[])
 		print_usage(NULL);
 	tab.f = get_hash_fct(argv[1]);
 	tab.arg = 0;
-	tab.folder = NULL;
+	tab.folder = v_new(sizeof(t_vec));
 	tab.str = v_new(sizeof(t_vec));
 	tab.ops.fd = 1;
 	i = 2;
@@ -207,6 +220,11 @@ void		parse_argv(int argc, char *argv[])
 			}
 		}
 		++i;
+	}
+	if (!v_size(&tab.folder) || (tab.arg & P_FLAG))
+	{
+		read_file(&tab, 0, true);
+		v_push(&tab.folder, NULL);
 	}
 	tab.f(&tab);
 }

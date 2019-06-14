@@ -22,7 +22,7 @@ typedef struct	s_hash_ops
 typedef struct	s_hash
 {
 	int			arg;
-	char		**folder;
+	t_vec		folder;
 	t_vec		str;
 	void		(*f)(struct s_hash *);
 	t_ops		ops;
