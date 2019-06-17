@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/06 14:48:56 by glegendr          #+#    #+#             */
-/*   Updated: 2019/06/14 15:45:40 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/06/17 11:38:38 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,15 +88,18 @@ static void	read_file(t_hash *tab, int fd, bool print)
 	int		val;
 
 	if (fd == -1)
-		print_usage(NULL);
+		return ;
 	vec = v_new(sizeof(char));
 	while ((val = read(fd, ret, BUFF_SIZE)) > 0)
 	{
 		v_append_raw(&vec, ret, val);
 		if (print == true)
-			write(1, ret, BUFF_SIZE);
+			write(1, ret, val);
 	}
-	v_push(&tab->str, &vec);
+	if (fd == 0)
+		v_push_first(&tab->str, &vec);
+	else
+		v_push(&tab->str, &vec);
 }
 
 static int		open_file(char *argv, int flag, int perm)
@@ -119,9 +122,17 @@ static void		into_vec(t_vec *to_push, char *str)
 {
 	t_vec vec;
 
-	vec = v_new(sizeof(char));
-	v_append_raw(&vec, str, ft_strlen(str));
-	v_push(to_push, &vec);
+	if (str)
+	{
+		vec = v_new(sizeof(char));
+		v_append_raw(&vec, str, ft_strlen(str));
+		v_push(to_push, &vec);
+	}
+	else
+	{
+		vec = v_new_null(sizeof(char));
+		v_push_first(to_push, &vec);
+	}
 }
 
 static int		match_flag(char *flag, t_hash *tab)
@@ -170,7 +181,8 @@ static void		o_flag(t_hash *tab, char *argv)
 {
 	int fd;
 
-	fd = open_file(argv, O_RDWR | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR | S_IWGRP |  S_IROTH);
+	fd = open_file(argv, O_RDWR | O_CREAT | O_TRUNC,
+				   S_IRUSR | S_IWUSR | S_IWGRP | S_IROTH);
 	if (fd == -1)
 		print_usage(NULL);
 	tab->ops.fd = fd;
@@ -223,8 +235,8 @@ static void		parse_argv(int argc, char *argv[])
 	}
 	if (!v_size(&tab.folder) || (tab.arg & P_FLAG))
 	{
-		read_file(&tab, 0, true);
-		v_push(&tab.folder, NULL);
+		read_file(&tab, 0, (tab.arg & P_FLAG) ? true : false);
+		into_vec(&tab.folder, NULL);
 	}
 	tab.f(&tab);
 }

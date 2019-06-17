@@ -11,19 +11,19 @@ void	print_hash(t_vec *ret, t_hash *hash, int i, t_ops ops)
 	folder = v_get(&hash->folder, i);
 	init = v_get(&hash->str, i);
 	vec = v_new(sizeof(char));
-	if (!v_size(&hash->folder)) {
+	if (!v_raw(folder)) {
 		v_append_raw(&vec, v_raw(ret), v_size(ret));
 	} else {
 		if (!(hash->arg & R_FLAG) && !(hash->arg & Q_FLAG)) {
 			v_append_raw(&vec, (void *)ops.name, ft_strlen(ops.name));
 			v_push_int(&vec, '(');
-			v_append_raw(&vec, folder, v_size(folder));
+			v_append_raw(&vec, v_raw(folder), v_size(folder));
 			v_append_raw(&vec, ")= ", 3);
 		}
 		v_append_raw(&vec, v_raw(ret), v_size(ret));
 		if ((hash->arg & R_FLAG) && !(hash->arg & Q_FLAG)) {
 			v_push_int(&vec, ' ');
-			v_append_raw(&vec, folder, v_size(folder));
+			v_append_raw(&vec, v_raw(folder), v_size(folder));
 		}
 	}
 	if (!(hash->arg & D_FLAG))
@@ -93,14 +93,10 @@ void		launch_hash(t_hash *hash)
 	while (i < v_size(&hash->str))
 	{
 		final_len = pad_message(v_get(&hash->str, i), ops.endian, ops.encodage_len);
-	printf("HELLO\n");
 		encript(v_get(&hash->str, i), ops, ret, final_len / ops.encodage_len);
-	printf("HELLO\n");
 		transform_hash(ret, hash, i, ops);
-	printf("HELLO\n");
 		++i;
 	}
 	v_del_all(&hash->folder);
 	v_del_all(&hash->str);
-//	del_tab((char **)hash->str);
 }
