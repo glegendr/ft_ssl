@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/12 20:26:53 by glegendr          #+#    #+#             */
-/*   Updated: 2019/06/08 13:44:13 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/06/17 10:57:50 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,6 +95,14 @@ void			*ft_realloc(void *dst, int mem_size, int new_size);
 */
 t_vec			v_new(int elem_size);
 t_string		st_new(void);
+
+/*
+** Create a new vector but don't malloc it.
+**
+** Param:
+**    elem_size: the size of each element of the vector.
+*/
+t_vec			v_new_null(int elem_size);
 
 /*
 ** Copy a new element at the end of the vector.
