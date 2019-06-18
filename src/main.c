@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/06 14:48:56 by glegendr          #+#    #+#             */
-/*   Updated: 2019/06/17 11:38:38 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/06/17 16:30:23 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ void		print_usage(char *name)
 		v_append_raw(&vec, s, ft_strlen(s));
 		s = get_all_hash();
 		v_append_raw(&vec, s, ft_strlen(s));
-		s = "Allowed flags are:\n   -p print string before hash\n   -q only print hash\n   -r reverse the output\n   -d decode hash -base64 only-\n   -e encode hash -base64 only-\n   -s hash the string\n   -i input file  -optional-\n   -o output file -default: stdout- -can only be used once-\n";
+		s = "Allowed flags are:\n   -p echo STDIN to STDOUT and append the checksum to STDOUT\n   -q only print hash\n   -r reverse the output\n   -d decode hash -base64 only-\n   -e encode hash -base64 only-\n   -s hash the string\n   -i input file  -optional-\n   -o output file -default: stdout- -can only be used once-\n";
 		v_append_raw(&vec, s, ft_strlen(s));
 		write(2, (char *)v_raw(&vec), v_size(&vec));
 		v_del(&vec);
@@ -91,11 +91,9 @@ static void	read_file(t_hash *tab, int fd, bool print)
 		return ;
 	vec = v_new(sizeof(char));
 	while ((val = read(fd, ret, BUFF_SIZE)) > 0)
-	{
 		v_append_raw(&vec, ret, val);
-		if (print == true)
-			write(1, ret, val);
-	}
+	if (print == true)
+		write(1, v_raw(&vec), v_size(&vec));
 	if (fd == 0)
 		v_push_first(&tab->str, &vec);
 	else
@@ -191,12 +189,9 @@ static void		o_flag(t_hash *tab, char *argv)
 
 static void		s_flag(t_hash *tab, char *argv)
 {
-	t_vec tmp;
 
 	into_vec(&tab->folder, argv);
-	tmp = v_new(sizeof(uint8_t));
-	v_append_raw(&tmp, argv, ft_strlen(argv));
-	v_push(&tab->str, &tmp);
+	into_vec(&tab->str, argv);
 	tab->arg ^= S_FLAG;
 }
 

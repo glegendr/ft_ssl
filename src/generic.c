@@ -26,8 +26,7 @@ void	print_hash(t_vec *ret, t_hash *hash, int i, t_ops ops)
 			v_append_raw(&vec, v_raw(folder), v_size(folder));
 		}
 	}
-	if (!(hash->arg & D_FLAG))
-		v_push_int(&vec, '\n');
+	v_push_int(&vec, '\n');
 	write(ops.fd, v_raw(&vec), v_size(&vec));
 	v_del(&vec);
 }

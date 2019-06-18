@@ -26,12 +26,14 @@ void		generate_base(char *base, bool url)
 	base[y + 2] = '=';
 }
 
-void		launch_base(uint8_t *raw, char *base, int len, t_vec *print)
+static void		encript_base(uint8_t *raw, char *base, int len, t_vec *print)
 {
 	uint8_t	ret[4];
+	uint8_t x;
 
+	x = len == 1 ? 0 : ((raw[1] & 0xf0) >> 2);
 	ret[0] = (raw[0] & 0xfc) >> 2;
-	ret[1] = (((raw[0] & 0x3) << 6) | ((raw[1] & 0xf0) >> 2)) >> 2;
+	ret[1] = (((raw[0] & 0x3) << 6) | x) >> 2;
 	if (len > 2) {
 		ret[2] = (((raw[1] & 0xf) << 4) | ((raw[2] & 0xc0) >> 4)) >> 2;
 		ret[3] = (raw[2] & 0x3f);
@@ -45,24 +47,23 @@ void		launch_base(uint8_t *raw, char *base, int len, t_vec *print)
 	v_push_int(print, base[ret[3]]);
 }
 
-// ECHO AVANT
 // Enlever 0 dans le hash
 // Whirlpool
 
 int			decript_base(uint8_t *raw, char *base, int len, int *z, t_vec *print)
 {
-	uint8_t ret[3] = {0};
+	uint8_t ret[3] = {0, 0, 0};
 	uint8_t index[4] = {255, 255, 255, 255};
-	size_t i;
+	int i;
 
-	for (i = 0; i < 4; ++i) {
+	for (i = 0; i < 4 && *z + i < len; ++i) {
 		while (ft_isspace(raw[i]) && *z < len)
 		{
 			++raw;
 			++(*z);
 		}
 		if (*z >= len)
-			break;
+			break ;
 		for (size_t y = 0; y < 65; ++y) {
 			if (raw[i] == base[y])
 			{
@@ -94,12 +95,10 @@ void		bases(t_hash *tab, char *base)
 	int i;
 	t_vec print;
 
-	print = v_new(sizeof(char));
 	i = 0;
+	print = v_new(sizeof(char));
 	while (i < v_size(&tab->str)) {
 		t_vec *vec = v_get(&tab->str, i);
-		if (i > 0)
-		v_push_int(&print, '\n');
 		uint8_t *tmp = (uint8_t *)v_raw(vec);
 		for (int z = 0; z < v_size(vec); z += 3)
 			if (tab->arg & D_FLAG)
@@ -109,7 +108,7 @@ void		bases(t_hash *tab, char *base)
 				++z;
 			}
 			else
-				launch_base(tmp + z, base, v_size(vec) - z, &print);
+				encript_base(tmp + z, base, v_size(vec) - z, &print);
 		tab->ops.message_len = v_size(&print);
 		print_hash(&print, tab, i, tab->ops);
 		v_reset(&print);
