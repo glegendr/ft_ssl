@@ -1,8 +1,19 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   generic.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2019/06/19 16:13:33 by glegendr          #+#    #+#             */
+/*   Updated: 2019/06/19 17:37:00 by glegendr         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "ft_ssl.h"
 #include <libft.h>
-#include <ft_printf.h>
 
-void	print_hash(t_vec *ret, t_hash *hash, int i, t_ops ops)
+void		print_hash(t_vec *ret, t_hash *hash, int i, t_ops ops)
 {
 	t_vec vec;
 	t_vec *init;
@@ -11,17 +22,20 @@ void	print_hash(t_vec *ret, t_hash *hash, int i, t_ops ops)
 	folder = v_get(&hash->folder, i);
 	init = v_get(&hash->str, i);
 	vec = v_new(sizeof(char));
-	if (!v_raw(folder)) {
+	if (!v_raw(folder))
 		v_append_raw(&vec, v_raw(ret), v_size(ret));
-	} else {
-		if (!(hash->arg & R_FLAG) && !(hash->arg & Q_FLAG)) {
+	else
+	{
+		if (!(hash->arg & R_FLAG) && !(hash->arg & Q_FLAG))
+		{
 			v_append_raw(&vec, (void *)ops.name, ft_strlen(ops.name));
 			v_push_int(&vec, '(');
 			v_append_raw(&vec, v_raw(folder), v_size(folder));
 			v_append_raw(&vec, ")= ", 3);
 		}
 		v_append_raw(&vec, v_raw(ret), v_size(ret));
-		if ((hash->arg & R_FLAG) && !(hash->arg & Q_FLAG)) {
+		if ((hash->arg & R_FLAG) && !(hash->arg & Q_FLAG))
+		{
 			v_push_int(&vec, ' ');
 			v_append_raw(&vec, v_raw(folder), v_size(folder));
 		}
@@ -33,16 +47,20 @@ void	print_hash(t_vec *ret, t_hash *hash, int i, t_ops ops)
 
 static void	transform_hash(uint8_t *ret, t_hash *hash, int i, t_ops ops)
 {
-	t_vec vec;
-	char *hex;
+	t_vec	vec;
+	char	*hex;
+	int		y;
 
+	y = 0;
 	vec = v_new(sizeof(char));
-	for (int i = 0; i < ops.message_len; i++) {
-		hex = ft_itoa_base(ret[i], 16, 'x');
+	while (y < ops.message_len)
+	{
+		hex = ft_itoa_base(ret[y], 16, 'x');
 		if (ft_strlen(hex) == 1)
 			v_push_int(&vec, '0');
 		v_append_raw(&vec, hex, ft_strlen(hex));
 		free(hex);
+		++y;
 	}
 	print_hash(&vec, hash, i, ops);
 	v_del(&vec);
@@ -50,12 +68,15 @@ static void	transform_hash(uint8_t *ret, t_hash *hash, int i, t_ops ops)
 
 static void	encript(t_vec *ck, t_ops ops, uint8_t *ret, int loop)
 {
-	uint64_t m[80];
-	uint64_t h[8];
-	uint64_t tmp[8];
+	uint64_t	m[80];
+	uint64_t	h[8];
+	uint64_t	tmp[8];
+	int			y;
 
+	y = 0;
 	ops.init_h(h);
-	for (int y = 0; y < loop; ++y) {
+	while (y < loop)
+	{
 		ops.declare_chunk(ck, y, m);
 		tmp[0] = h[0];
 		tmp[1] = h[1];
@@ -74,6 +95,7 @@ static void	encript(t_vec *ck, t_ops ops, uint8_t *ret, int loop)
 		h[5] += tmp[5];
 		h[6] += tmp[6];
 		h[7] += tmp[7];
+		++y;
 	}
 	ops.digest(h, ret);
 }
@@ -91,7 +113,8 @@ void		launch_hash(t_hash *hash)
 		print_usage(NULL);
 	while (i < v_size(&hash->str))
 	{
-		final_len = pad_message(v_get(&hash->str, i), ops.endian, ops.encodage_len);
+		final_len = pad_message(v_get(&hash->str, i), ops.endian,
+								ops.encodage_len);
 		encript(v_get(&hash->str, i), ops, ret, final_len / ops.encodage_len);
 		transform_hash(ret, hash, i, ops);
 		++i;

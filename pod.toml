@@ -1,4 +1,3 @@
 [dependencies]
 libvec="https://github.com/glegendr/libvec.git"
 libft="https://github.com/glegendr/libft.git"
-ft_printf="https://github.com/glegendr/ft_printf.git"

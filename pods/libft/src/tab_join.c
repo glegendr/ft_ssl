@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/03 18:50:47 by glegendr          #+#    #+#             */
-/*   Updated: 2019/05/15 19:35:27 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/06/19 17:40:06 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ void		del_tab(char **tab)
 	free(tab);
 }
 
-int		tab_len(char **tab)
+int			tab_len(char **tab)
 {
 	int i;
 

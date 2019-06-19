@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/06 14:48:56 by glegendr          #+#    #+#             */
-/*   Updated: 2019/06/17 16:30:23 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/06/19 17:46:35 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,10 +15,12 @@
 #include <fcntl.h>
 #include "ft_ssl.h"
 
-char *const g_tab[NB_HASH] = {"md5", "sha256", "sha512", "sha384", "sha224", "base64", "base64url"};
-void (*const g_hash_fct[NB_HASH])(t_hash *) = {md5, sha256, sha512, sha384, sha224, base64, base64url};
+char *const g_tab[NB_HASH] = {"md5", "sha256", "sha512", "sha384", "sha224",
+	"base64", "base64url"};
+void (*const g_hash_fct[NB_HASH])(t_hash *) = {md5, sha256, sha512, sha384,
+	sha224, base64, base64url};
 
-static void		(* get_hash_fct(char *name))(t_hash *)
+static void		(*get_hash_fct(char *name))(t_hash *)
 {
 	int id;
 
@@ -36,9 +38,9 @@ static void		(* get_hash_fct(char *name))(t_hash *)
 
 static char		*get_all_hash(void)
 {
-	t_vec vec;
-	char *ret;
-	int i;
+	t_vec	vec;
+	char	*ret;
+	int		i;
 
 	i = 0;
 	vec = v_new(sizeof(char));
@@ -55,25 +57,36 @@ static char		*get_all_hash(void)
 	return (ret);
 }
 
-void		print_usage(char *name)
+void			print_usage(char *name)
 {
-	t_vec vec;
-	char *s;
+	t_vec	vec;
+	char	*s;
 
 	if (!name)
 		write(2,
-		"usage: ft_ssl command [command opts] [command args]\nft_ssl -h for more help\n", 76);
+		"usage: ft_ssl command [command opts] [command args]\n"
+		"ft_ssl -h for more help\n", 76);
 	else
 	{
 		vec = v_new(sizeof(char));
 		s = "ft_ssl: Error: '";
 		v_append_raw(&vec, s, ft_strlen(s));
 		v_append_raw(&vec, name, ft_strlen(name));
-		s = "' is an invalid command\nUsage: ft_ssl hash_fct [-pqrde] [-s string] [-i in_file] [-o out_file]\nAllowed hash_fct are:\n";
+		s = "' is an invalid command\n"
+			"Usage: ft_ssl hash_fct [-pqrde] [-s string] [-i in_file]"
+			"[-o out_file]\nAllowed hash_fct are:\n";
 		v_append_raw(&vec, s, ft_strlen(s));
 		s = get_all_hash();
 		v_append_raw(&vec, s, ft_strlen(s));
-		s = "Allowed flags are:\n   -p echo STDIN to STDOUT and append the checksum to STDOUT\n   -q only print hash\n   -r reverse the output\n   -d decode hash -base64 only-\n   -e encode hash -base64 only-\n   -s hash the string\n   -i input file  -optional-\n   -o output file -default: stdout- -can only be used once-\n";
+		s = "Allowed flags are:\n"
+			" -p echo STDIN to STDOUT and append the checksum to STDOUT\n"
+			" -q only print hash\n"
+			" -r reverse the output\n"
+			" -d decode hash -base64 only-\n"
+			" -e encode hash -base64 only-\n"
+			" -s hash the string\n"
+			" -i input file  -optional-\n"
+			" -o output file -default: stdout- -can only be used once-\n";
 		v_append_raw(&vec, s, ft_strlen(s));
 		write(2, (char *)v_raw(&vec), v_size(&vec));
 		v_del(&vec);
@@ -81,7 +94,7 @@ void		print_usage(char *name)
 	exit(1);
 }
 
-static void	read_file(t_hash *tab, int fd, bool print)
+static void		read_file(t_hash *tab, int fd, bool print)
 {
 	t_vec	vec;
 	char	ret[BUFF_SIZE];
@@ -149,30 +162,30 @@ static int		match_flag(char *flag, t_hash *tab)
 	while (flag[i])
 	{
 		if (flag[i] == 'p')
-				tab->arg |= P_FLAG;
-			else if (flag[i] == 'q')
-				tab->arg |= Q_FLAG;
-			else if (flag[i] == 'r')
-				tab->arg |= R_FLAG;
-			else if (flag[i] == 's')
-				tab->arg |= S_FLAG;
-			else if (flag[i] == 'd')
-				tab->arg |= D_FLAG;
-			else if (flag[i] == 'e')
-				tab->arg |= E_FLAG;
-			else if (flag[i] == 'i')
-				tab->arg |= I_FLAG;
-			else if (flag[i] == 'o')
-			{
-				if (tab->ops.fd != 1)
-					print_usage(NULL);
-				tab->arg |= O_FLAG;
-			}
-			else
-				return (1);
-			++i;
+			tab->arg |= P_FLAG;
+		else if (flag[i] == 'q')
+			tab->arg |= Q_FLAG;
+		else if (flag[i] == 'r')
+			tab->arg |= R_FLAG;
+		else if (flag[i] == 's')
+			tab->arg |= S_FLAG;
+		else if (flag[i] == 'd')
+			tab->arg |= D_FLAG;
+		else if (flag[i] == 'e')
+			tab->arg |= E_FLAG;
+		else if (flag[i] == 'i')
+			tab->arg |= I_FLAG;
+		else if (flag[i] == 'o')
+		{
+			if (tab->ops.fd != 1)
+				print_usage(NULL);
+			tab->arg |= O_FLAG;
 		}
-		return (0);
+		else
+			return (1);
+		++i;
+	}
+	return (0);
 }
 
 static void		o_flag(t_hash *tab, char *argv)
@@ -180,7 +193,7 @@ static void		o_flag(t_hash *tab, char *argv)
 	int fd;
 
 	fd = open_file(argv, O_RDWR | O_CREAT | O_TRUNC,
-				   S_IRUSR | S_IWUSR | S_IWGRP | S_IROTH);
+					S_IRUSR | S_IWUSR | S_IWGRP | S_IROTH);
 	if (fd == -1)
 		print_usage(NULL);
 	tab->ops.fd = fd;
@@ -189,7 +202,6 @@ static void		o_flag(t_hash *tab, char *argv)
 
 static void		s_flag(t_hash *tab, char *argv)
 {
-
 	into_vec(&tab->folder, argv);
 	into_vec(&tab->str, argv);
 	tab->arg ^= S_FLAG;
@@ -197,8 +209,8 @@ static void		s_flag(t_hash *tab, char *argv)
 
 static void		parse_argv(int argc, char *argv[])
 {
-	t_hash tab;
-	int i;
+	t_hash	tab;
+	int		i;
 
 	if (argc < 2)
 		print_usage(NULL);
@@ -236,7 +248,7 @@ static void		parse_argv(int argc, char *argv[])
 	tab.f(&tab);
 }
 
-int		main(int argc, char *argv[])
+int				main(int argc, char *argv[])
 {
 	parse_argv(argc, argv);
 	return (0);
