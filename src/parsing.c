@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/20 16:11:40 by glegendr          #+#    #+#             */
-/*   Updated: 2019/06/20 16:17:42 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/06/24 10:58:55 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,6 +82,8 @@ void			argument_flags(t_hash *tab, char **argv, int argc, int *i)
 		s_flag(tab, str);
 	else if (tab->arg & O_FLAG)
 		o_flag(tab, str);
+	else if (tab.arg & P_FLAG)
+		tab.ops.pwd = str;
 	else if (tab->arg & I_FLAG)
 	{
 		match_flag(str, tab);
@@ -101,16 +103,18 @@ void			parse_argv(int argc, char *argv[])
 	tab.folder = v_new(sizeof(t_vec));
 	tab.str = v_new(sizeof(t_vec));
 	tab.ops.fd = 1;
+	tab.ops.pwd = NULL;
 	i = 2;
 	while (i < argc)
 	{
 		if (match_flag(argv[i], &tab))
 			print_usage(NULL);
-		if ((tab.arg & S_FLAG) || (tab.arg & O_FLAG) || (tab.arg & I_FLAG))
+		if ((tab.arg & S_FLAG) || (tab.arg & O_FLAG) || (tab.arg & I_FLAG)
+				|| ((tab.arg & P_FLAG) && tab.f == des_ecb))
 			argument_flags(&tab, argv, argc, &i);
 		++i;
 	}
-	if (!v_size(&tab.folder) || (tab.arg & P_FLAG))
+	if ((!v_size(&tab.folder) || (tab.arg & P_FLAG)) && tab.f != des_ecb)
 	{
 		read_file(&tab, 0, (tab.arg & P_FLAG) ? true : false);
 		into_vec(&tab.folder, NULL);

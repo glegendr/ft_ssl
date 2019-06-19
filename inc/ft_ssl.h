@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/19 17:32:20 by glegendr          #+#    #+#             */
-/*   Updated: 2019/06/21 13:28:10 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/06/24 10:53:00 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 typedef struct	s_hash_ops
 {
 	const char	*name;
+	const char	*pwd;
 	bool		endian;
 	int			loop;
 	int			message_len;
@@ -42,7 +43,7 @@ typedef struct	s_hash
 
 typedef void	(*t_fct)(t_hash *);
 # define BUFF_SIZE 12
-# define NB_HASH 7
+# define NB_HASH 9
 # define P_FLAG 1
 # define Q_FLAG 1 << 1
 # define R_FLAG 1 << 2
@@ -67,8 +68,10 @@ void			sha384(t_hash *a);
 /*
 ** All Cipher Functions
 */
-void			base64(t_hash *a);
-void			base64url(t_hash *a);
+void		base64(t_hash *a);
+void		base64url(t_hash *a);
+void		des(t_hash *a);
+void		des_ecb(t_hash *a);
 
 /*
 ** Generic Functions
