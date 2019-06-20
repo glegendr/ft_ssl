@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/19 16:23:20 by glegendr          #+#    #+#             */
-/*   Updated: 2019/06/19 17:36:54 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/06/20 15:51:05 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,66 +16,41 @@
 #include <libft.h>
 #include "ft_ssl.h"
 
-void			generate_base(char *base, bool url)
+void			append_ret(uint8_t *ret, uint8_t *index, t_vec *print, int i)
 {
-	int y;
-	int i;
-
-	y = 0;
-	i = 0;
-	while ('A' + i <= 'Z')
-		base[y++] = 'A' + i++;
-	i = 0;
-	while ('a' + i <= 'z')
-		base[y++] = 'a' + i++;
-	i = 0;
-	while ('0' + i <= '9')
-		base[y++] = '0' + i++;
-	if (url)
-	{
-		base[y] = '-';
-		base[y + 1] = '_';
-	}
-	else
-	{
-		base[y] = '+';
-		base[y + 1] = '/';
-	}
-	base[y + 2] = '=';
+	if (i > 0)
+		ret[0] = (index[0] << 2) | ((index[1] & 0x30) >> 4);
+	if (i > 1)
+		ret[1] = ((index[1] & 0xf) << 4) | ((index[2] & 0x3c) >> 2);
+	if (i > 2)
+		ret[2] = ((index[2] & 0x3) << 6) | index[3];
+	if (ret[2] == '@')
+		ret[2] = '\0';
+	v_append_raw(print, ret, 3);
 }
 
-static void		encript_base(uint8_t *raw, char *base, int len, t_vec *print)
+void			init_tabs(uint8_t *ret, uint8_t *index)
 {
-	uint8_t	ret[4];
-	uint8_t x;
-
-	x = len == 1 ? 0 : ((raw[1] & 0xf0) >> 2);
-	ret[0] = (raw[0] & 0xfc) >> 2;
-	ret[1] = (((raw[0] & 0x3) << 6) | x) >> 2;
-	if (len > 2)
-	{
-		ret[2] = (((raw[1] & 0xf) << 4) | ((raw[2] & 0xc0) >> 4)) >> 2;
-		ret[3] = (raw[2] & 0x3f);
-	}
-	else
-	{
-		ret[2] = len == 2 ? (((raw[1] & 0xf) << 4) | 0) >> 2 : 64;
-		ret[3] = 64;
-	}
-	v_push_int(print, base[ret[0]]);
-	v_push_int(print, base[ret[1]]);
-	v_push_int(print, base[ret[2]]);
-	v_push_int(print, base[ret[3]]);
+	ret[0] = 0;
+	ret[1] = 0;
+	ret[2] = 0;
+	index[0] = 255;
+	index[1] = 255;
+	index[2] = 255;
+	index[3] = 255;
 }
 
-int				decript_base(uint8_t *raw, char *base, int len,
-								int *z, t_vec *print)
+int				decript_base(t_vec *vec, char *base, int *z, t_vec *print)
 {
-	uint8_t	ret[3] = {0, 0, 0};
-	uint8_t	index[4] = {255, 255, 255, 255};
-	size_t	y;
+	uint8_t	ret[3];
+	uint8_t	index[4];
 	int		i;
+	uint8_t	*raw;
+	int		len;
 
+	len = v_size(vec);
+	raw = (uint8_t *)v_raw(vec) + *z;
+	init_tabs(ret, index);
 	i = 0;
 	while (i < 4 && *z + i < len)
 	{
@@ -86,61 +61,33 @@ int				decript_base(uint8_t *raw, char *base, int len,
 		}
 		if (*z >= len)
 			break ;
-		y = 0;
-		while (y < 65)
-		{
-			if (raw[i] == base[y])
-			{
-				index[i] = y;
-				break ;
-			}
-			++y;
-		}
-		if (index[i] == 255 && raw[i] != '\n' && raw[i] != '\0')
-		{
-			v_reset(print);
-			v_append_raw(print, "Invalid character in input stream.\n", 35);
-			return (1);
-		}
+		if (get_index(raw, base, index, i))
+			return (append_error(print));
 		++i;
 	}
-	if (i > 0)
-		ret[0] = (index[0] << 2) | ((index[1] & 0x30) >> 4);
-	if (i > 1)
-		ret[1] = ((index[1] & 0xf) << 4) | ((index[2] & 0x3c) >> 2);
-	if (i > 2)
-		ret[2] = ((index[2] & 0x3) << 6) | index[3];
-	if (ret[2] == '@')
-		ret[2] = '\0';
-	v_append_raw(print, ret, 3);
+	append_ret(ret, index, print, i);
 	return (0);
 }
 
-void			bases(t_hash *tab, char *base)
+void			bases(t_hash *tab, char *base, int i, int z)
 {
-	int		i;
 	t_vec	print;
 	t_vec	*vec;
-	uint8_t	*tmp;
-	int		z;
 
-	z = 0;
-	i = 0;
 	print = v_new(sizeof(char));
 	while (i < v_size(&tab->str))
 	{
 		vec = v_get(&tab->str, i);
-		tmp = (uint8_t *)v_raw(vec);
 		while (z < v_size(vec))
 		{
 			if (tab->arg & D_FLAG)
 			{
-				if (decript_base(tmp + z, base, v_size(vec), &z, &print))
+				if (decript_base(vec, base, &z, &print))
 					break ;
 				++z;
 			}
 			else
-				encript_base(tmp + z, base, v_size(vec) - z, &print);
+				encript_base(v_raw(vec) + z, base, v_size(vec) - z, &print);
 			z += 3;
 		}
 		tab->ops.message_len = v_size(&print);
@@ -157,14 +104,5 @@ void			base64(t_hash *tab)
 
 	generate_base(base, false);
 	tab->ops.name = "BASE64";
-	bases(tab, base);
-}
-
-void			base64url(t_hash *tab)
-{
-	char base[65];
-
-	generate_base(base, true);
-	tab->ops.name = "BASE64url";
-	bases(tab, base);
+	bases(tab, base, 0, 0);
 }

@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/19 16:13:33 by glegendr          #+#    #+#             */
-/*   Updated: 2019/06/19 17:37:00 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/06/20 12:07:01 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,13 +16,10 @@
 void		print_hash(t_vec *ret, t_hash *hash, int i, t_ops ops)
 {
 	t_vec vec;
-	t_vec *init;
 	t_vec *folder;
 
-	folder = v_get(&hash->folder, i);
-	init = v_get(&hash->str, i);
 	vec = v_new(sizeof(char));
-	if (!v_raw(folder))
+	if ((folder = v_get(&hash->folder, i)) && !v_raw(folder))
 		v_append_raw(&vec, v_raw(ret), v_size(ret));
 	else
 	{
@@ -66,6 +63,30 @@ static void	transform_hash(uint8_t *ret, t_hash *hash, int i, t_ops ops)
 	v_del(&vec);
 }
 
+static void	attribute_value(uint64_t *dst, uint64_t *src, bool addition)
+{
+	if (!addition)
+	{
+		dst[0] = src[0];
+		dst[1] = src[1];
+		dst[2] = src[2];
+		dst[3] = src[3];
+		dst[4] = src[4];
+		dst[5] = src[5];
+		dst[6] = src[6];
+		dst[7] = src[7];
+		return ;
+	}
+	dst[0] += src[0];
+	dst[1] += src[1];
+	dst[2] += src[2];
+	dst[3] += src[3];
+	dst[4] += src[4];
+	dst[5] += src[5];
+	dst[6] += src[6];
+	dst[7] += src[7];
+}
+
 static void	encript(t_vec *ck, t_ops ops, uint8_t *ret, int loop)
 {
 	uint64_t	m[80];
@@ -78,23 +99,9 @@ static void	encript(t_vec *ck, t_ops ops, uint8_t *ret, int loop)
 	while (y < loop)
 	{
 		ops.declare_chunk(ck, y, m);
-		tmp[0] = h[0];
-		tmp[1] = h[1];
-		tmp[2] = h[2];
-		tmp[3] = h[3];
-		tmp[4] = h[4];
-		tmp[5] = h[5];
-		tmp[6] = h[6];
-		tmp[7] = h[7];
+		attribute_value(tmp, h, false);
 		ops.binary_operation(tmp, m);
-		h[0] += tmp[0];
-		h[1] += tmp[1];
-		h[2] += tmp[2];
-		h[3] += tmp[3];
-		h[4] += tmp[4];
-		h[5] += tmp[5];
-		h[6] += tmp[6];
-		h[7] += tmp[7];
+		attribute_value(h, tmp, true);
 		++y;
 	}
 	ops.digest(h, ret);
