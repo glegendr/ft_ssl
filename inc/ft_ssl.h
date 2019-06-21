@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/19 17:32:20 by glegendr          #+#    #+#             */
-/*   Updated: 2019/06/20 16:29:35 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/06/21 13:28:10 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,7 @@ typedef struct	s_hash
 	t_ops		ops;
 }				t_hash;
 
+typedef void	(*t_fct)(t_hash *);
 # define BUFF_SIZE 12
 # define NB_HASH 7
 # define P_FLAG 1
@@ -115,5 +116,5 @@ void			read_file(t_hash *tab, int fd, bool print);
 int				open_file(char *argv, int flag, int perm);
 void			into_vec(t_vec *to_push, char *str);
 void			o_flag(t_hash *tab, char *argv);
-void			(*get_hash_fct(char *name))(t_hash *);
+t_fct			get_hash_fct(char *name);
 #endif

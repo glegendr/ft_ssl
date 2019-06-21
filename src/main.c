@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/06 14:48:56 by glegendr          #+#    #+#             */
-/*   Updated: 2019/06/20 16:18:32 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/06/21 13:48:42 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,10 @@ int				open_file(char *argv, int flag, int perm)
 	s_perm = 0 | perm;
 	if ((fd = open(argv, o_flag, s_perm)) == -1)
 	{
-		printf("ft_ssl: %s: No such file or directory\n", argv);
+		if (perm)
+			printf("ft_ssl: %s: Permition denied\n", argv);
+		else
+			printf("ft_ssl: %s: No such file or directory\n", argv);
 		return (fd);
 	}
 	return (fd);
