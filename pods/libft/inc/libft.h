@@ -6,14 +6,13 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/13 14:28:31 by glegendr          #+#    #+#             */
-/*   Updated: 2019/06/19 17:41:08 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/06/23 15:48:17 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef LIBFT_H
 # define LIBFT_H
 # include <stdlib.h>
-# include <stdio.h>
 # include <unistd.h>
 # include <string.h>
 # include "libmem.h"

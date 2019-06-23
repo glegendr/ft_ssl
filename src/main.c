@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/06 14:48:56 by glegendr          #+#    #+#             */
-/*   Updated: 2019/06/21 13:48:42 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/06/23 15:52:15 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,17 +37,19 @@ void			read_file(t_hash *tab, int fd, bool print)
 int				open_file(char *argv, int flag, int perm)
 {
 	int		fd;
-	int		o_flag;
-	int		s_perm;
+	t_vec	print;
 
-	o_flag = O_RDONLY | flag;
-	s_perm = 0 | perm;
-	if ((fd = open(argv, o_flag, s_perm)) == -1)
+	if ((fd = open(argv, O_RDONLY | flag, 0 | perm)) == -1)
 	{
+		print = v_new(sizeof(char));
+		v_append_raw(&print, "ft_ssl: Unable to create ", perm ? 25 : 8);
+		v_append_raw(&print, argv, ft_strlen(argv));
 		if (perm)
-			printf("ft_ssl: %s: Permition denied\n", argv);
+			v_append_raw(&print, ": Permition denied\n", 19);
 		else
-			printf("ft_ssl: %s: No such file or directory\n", argv);
+			v_append_raw(&print, ": No such file or directory\n", 28);
+		write(2, v_raw(&print), v_size(&print));
+		v_del(&print);
 		return (fd);
 	}
 	return (fd);

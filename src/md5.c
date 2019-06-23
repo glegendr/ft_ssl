@@ -6,12 +6,11 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/16 18:27:36 by glegendr          #+#    #+#             */
-/*   Updated: 2019/06/20 16:03:47 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/06/23 15:49:24 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <unistd.h>
-#include <stdio.h>
 #include <stdint.h>
 #include <libft.h>
 #include "ft_ssl.h"
