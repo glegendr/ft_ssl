@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/20 16:11:40 by glegendr          #+#    #+#             */
-/*   Updated: 2019/06/24 10:58:55 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/06/25 12:08:21 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,8 +82,8 @@ void			argument_flags(t_hash *tab, char **argv, int argc, int *i)
 		s_flag(tab, str);
 	else if (tab->arg & O_FLAG)
 		o_flag(tab, str);
-	else if (tab.arg & P_FLAG)
-		tab.ops.pwd = str;
+	else if (tab->arg & P_FLAG)
+		tab->ops.pwd = str;
 	else if (tab->arg & I_FLAG)
 	{
 		match_flag(str, tab);
