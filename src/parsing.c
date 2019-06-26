@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/20 16:11:40 by glegendr          #+#    #+#             */
-/*   Updated: 2019/06/25 13:35:07 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/06/26 17:35:23 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,7 +114,7 @@ void			parse_argv(int argc, char *argv[])
 			argument_flags(&tab, argv, argc, &i);
 		++i;
 	}
-	if (!v_size(&tab.folder) || (tab.arg & P_FLAG))
+	if (!v_size(&tab.folder) || ((tab.arg & P_FLAG) && tab.f != des_ecb))
 	{
 		read_file(&tab, 0, (tab.arg & P_FLAG) ? true : false);
 		into_vec(&tab.folder, NULL);

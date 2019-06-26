@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/19 17:32:20 by glegendr          #+#    #+#             */
-/*   Updated: 2019/06/25 13:26:43 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/06/26 17:48:50 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,6 +83,7 @@ void			print_hash(t_vec *a, t_hash *b, int c, t_ops d);
 void			to_bytes32(uint32_t a, uint8_t *b);
 void			to_bytes64(uint64_t a, uint8_t *c);
 void			to_bytes32_endian(uint32_t a, uint8_t *b);
+void			bit(uint8_t *ret, int i, uint8_t *str, int pos);
 
 /*
 ** MD5 Functions
@@ -102,6 +103,7 @@ void			make_512_pseudo_random(uint64_t *a, uint64_t *b,
 										int c, uint64_t d);
 void			binop512(uint64_t *a, uint64_t *b);
 uint64_t		init_s0(uint8_t *ck, int i);
+
 /*
 ** Bases Functions
 */
@@ -110,6 +112,14 @@ int				get_index(uint8_t *a, char *b, uint8_t *c, int d);
 int				append_error(t_vec *a);
 void			encript_base(uint8_t *a, char *b, int c, t_vec *d);
 void			generate_base(char *a, bool b);
+
+/*
+** DES Functions
+*/
+void			pc1(uint8_t *str);
+void			pc2(uint32_t *str);
+void			rotate_key(uint8_t *pwd, uint32_t *div_key);
+void			hash_des_message(uint8_t *str, uint32_t *div_key);
 
 /*
 ** Parse Functions
