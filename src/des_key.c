@@ -80,11 +80,10 @@ void		def_in(uint8_t *in, uint32_t cn, uint32_t dn)
 	in[6] = dn & 0xff;
 }
 
-void		pc2(uint32_t *str)
+void		pc2(uint32_t *str, uint8_t ret[16][6])
 {
 	int i;
 	int y;
-	uint8_t ret[16][6];
 	uint8_t in[7];
 
 	y = 0;

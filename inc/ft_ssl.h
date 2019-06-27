@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/19 17:32:20 by glegendr          #+#    #+#             */
-/*   Updated: 2019/06/26 17:48:50 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/06/27 11:13:39 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,9 +117,9 @@ void			generate_base(char *a, bool b);
 ** DES Functions
 */
 void			pc1(uint8_t *str);
-void			pc2(uint32_t *str);
+void			pc2(uint32_t *str, uint8_t key[16][6]);
 void			rotate_key(uint8_t *pwd, uint32_t *div_key);
-void			hash_des_message(uint8_t *str, uint32_t *div_key);
+void			hash_des_message(uint8_t *str, uint8_t div_key[16][6]);
 
 /*
 ** Parse Functions

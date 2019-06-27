@@ -46,6 +46,7 @@ void		des_ecb(t_hash *hash)
 	t_vec *vec;
 	uint8_t true_pwd[8];
 	uint32_t divided_key[32];
+	uint8_t final_keys[16][6];
 
 	if (!ops.pwd)
 		ops.pwd = get_pwd();
@@ -56,8 +57,8 @@ void		des_ecb(t_hash *hash)
 	get_true_pwd(ops.pwd, true_pwd);
 	pc1(true_pwd);
 	rotate_key(true_pwd, divided_key);
-	pc2(divided_key);
-	hash_des_message(str, divided_key);
+	pc2(divided_key, final_keys);
+	hash_des_message(str, final_keys);
 }
 
 void		des(t_hash *tab)
