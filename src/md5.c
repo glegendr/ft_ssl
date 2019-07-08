@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/16 18:27:36 by glegendr          #+#    #+#             */
-/*   Updated: 2019/06/23 15:49:24 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/07/08 16:58:23 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,7 @@ static void		init_h(uint64_t *h)
 	h[3] = 0x10325476;
 }
 
-void			md5(t_hash *tab)
+uint8_t			*md5(t_hash *tab, bool print)
 {
 	t_ops ops;
 
@@ -89,5 +89,5 @@ void			md5(t_hash *tab)
 	ops.digest = digest;
 	ops.fd = tab->ops.fd;
 	tab->ops = ops;
-	launch_hash(tab);
+	return (launch_hash(tab, print));
 }

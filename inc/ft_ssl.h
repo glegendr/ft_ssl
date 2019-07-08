@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/19 17:32:20 by glegendr          #+#    #+#             */
-/*   Updated: 2019/06/27 11:13:39 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/07/08 19:31:55 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,9 @@ typedef struct	s_hash_ops
 {
 	const char	*name;
 	const char	*pwd;
+	uint8_t		*salt;
+	uint8_t		*init_vec;
+	uint8_t		*key;
 	bool		endian;
 	int			loop;
 	int			message_len;
@@ -37,11 +40,11 @@ typedef struct	s_hash
 	int			arg;
 	t_vec		folder;
 	t_vec		str;
-	void		(*f)(struct s_hash *);
+	uint8_t		*(*f)(struct s_hash *, bool);
 	t_ops		ops;
 }				t_hash;
 
-typedef void	(*t_fct)(t_hash *);
+typedef uint8_t		*(*t_fct)(t_hash *, bool);
 # define BUFF_SIZE 12
 # define NB_HASH 9
 # define P_FLAG 1
@@ -52,6 +55,9 @@ typedef void	(*t_fct)(t_hash *);
 # define E_FLAG 1 << 5
 # define I_FLAG 1 << 6
 # define O_FLAG 1 << 7
+# define A_FLAG 1 << 8
+# define K_FLAG 1 << 9
+# define V_FLAG 1 << 10
 # define ROTL(x, c, size) (((x) << (c)) | ((x) >> (size - (c))))
 # define ROTR(x, n, size) ((x >> n) | (x << (size - n)))
 # define SHR(x, n) (x >> n)
@@ -59,24 +65,24 @@ typedef void	(*t_fct)(t_hash *);
 /*
 ** All Hash Functions
 */
-void			md5(t_hash *a);
-void			sha256(t_hash *a);
-void			sha224(t_hash *a);
-void			sha512(t_hash *a);
-void			sha384(t_hash *a);
+uint8_t			*md5(t_hash *a, bool print);
+uint8_t			*sha256(t_hash *a, bool print);
+uint8_t			*sha224(t_hash *a, bool print);
+uint8_t			*sha512(t_hash *a, bool print);
+uint8_t			*sha384(t_hash *a, bool print);
 
 /*
 ** All Cipher Functions
 */
-void		base64(t_hash *a);
-void		base64url(t_hash *a);
-void		des(t_hash *a);
-void		des_ecb(t_hash *a);
+uint8_t			*base64(t_hash *a, bool print);
+uint8_t			*base64url(t_hash *a, bool print);
+uint8_t			*des(t_hash *a, bool print);
+uint8_t			*des_ecb(t_hash *a, bool print);
 
 /*
 ** Generic Functions
 */
-void			launch_hash(t_hash *a);
+uint8_t			*launch_hash(t_hash *a, bool print);
 void			print_usage(char *a);
 int				pad_message(t_vec *a, bool b, int c);
 void			print_hash(t_vec *a, t_hash *b, int c, t_ops d);
@@ -130,4 +136,5 @@ int				open_file(char *argv, int flag, int perm);
 void			into_vec(t_vec *to_push, char *str);
 void			o_flag(t_hash *tab, char *argv);
 t_fct			get_hash_fct(char *name);
+void			get_help(t_hash *tab);
 #endif

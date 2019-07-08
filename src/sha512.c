@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/19 16:47:57 by glegendr          #+#    #+#             */
-/*   Updated: 2019/06/20 16:30:39 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/07/08 15:23:22 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ static void		init_h(uint64_t *h)
 	h[7] = 0x5be0cd19137e2179;
 }
 
-void			sha512(t_hash *tab)
+uint8_t			*sha512(t_hash *tab, bool print)
 {
 	t_ops ops;
 
@@ -88,5 +88,5 @@ void			sha512(t_hash *tab)
 	ops.digest = digest;
 	ops.fd = tab->ops.fd;
 	tab->ops = ops;
-	launch_hash(tab);
+	return (launch_hash(tab, print));
 }

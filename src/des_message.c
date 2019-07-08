@@ -233,12 +233,13 @@ void		divide_message(uint8_t *str, uint8_t fin_keys[16][6])
 	i = 0;
 	while (i < 64)
 		end = (end << 1) | ((tmp >> (64 - g_ip1[i++])) & 0x1);
-	ft_printf("%llx -- %llx\n", end, tmp);
+	for (i = 0; i < 8; ++i)
+		ft_printf("%c", ((end >> (64 - (8*(i+1)))) & 0xff));
+//	ft_printf("%0.64b -- %llx\n", end, tmp);
 }
 
 void		hash_des_message(uint8_t *str, uint8_t div_key[16][6])
 {
-	(void)div_key;
 	ip(str);
 	divide_message(str, div_key);
 }

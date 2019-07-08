@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/19 16:13:33 by glegendr          #+#    #+#             */
-/*   Updated: 2019/06/20 12:07:01 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/07/08 17:03:11 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,7 +107,23 @@ static void	encript(t_vec *ck, t_ops ops, uint8_t *ret, int loop)
 	ops.digest(h, ret);
 }
 
-void		launch_hash(t_hash *hash)
+uint8_t		*copy_ret(uint8_t *ret, int len)
+{
+	uint8_t *cpy;
+	int i;
+
+	i = 0;
+	if ((cpy = (uint8_t *)malloc(len * sizeof(uint8_t))) == NULL)
+		return (NULL);
+	while (i < len)
+	{
+		cpy[i] = ret[i];
+		++i;
+	}
+	return (cpy);
+}
+
+uint8_t		*launch_hash(t_hash *hash, bool print)
 {
 	int		i;
 	int		final_len;
@@ -123,9 +139,12 @@ void		launch_hash(t_hash *hash)
 		final_len = pad_message(v_get(&hash->str, i), ops.endian,
 								ops.encodage_len);
 		encript(v_get(&hash->str, i), ops, ret, final_len / ops.encodage_len);
+		if (!print)
+			return (copy_ret(ret, ops.message_len));
 		transform_hash(ret, hash, i, ops);
 		++i;
 	}
 	v_del_all(&hash->folder);
 	v_del_all(&hash->str);
+	return (NULL);
 }

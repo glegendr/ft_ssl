@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/30 20:49:14 by glegendr          #+#    #+#             */
-/*   Updated: 2019/06/20 15:34:19 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/07/08 15:21:46 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,7 @@ static void		init_h(uint64_t *h)
 	h[7] = 0xbefa4fa4;
 }
 
-void			sha224(t_hash *tab)
+uint8_t			*sha224(t_hash *tab, bool print)
 {
 	t_ops ops;
 
@@ -96,5 +96,5 @@ void			sha224(t_hash *tab)
 	ops.digest = digest;
 	ops.fd = tab->ops.fd;
 	tab->ops = ops;
-	launch_hash(tab);
+	return (launch_hash(tab, print));
 }

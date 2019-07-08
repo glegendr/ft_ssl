@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/19 16:23:20 by glegendr          #+#    #+#             */
-/*   Updated: 2019/06/23 15:49:09 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/07/08 15:18:38 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,11 +97,13 @@ void			bases(t_hash *tab, char *base, int i, int z)
 	v_del(&print);
 }
 
-void			base64(t_hash *tab)
+uint8_t			*base64(t_hash *tab, bool print)
 {
 	char base[65];
 
+	(void)print;
 	generate_base(base, false);
 	tab->ops.name = "BASE64";
 	bases(tab, base, 0, 0);
+	return (NULL);
 }

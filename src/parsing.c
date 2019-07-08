@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/20 16:11:40 by glegendr          #+#    #+#             */
-/*   Updated: 2019/06/26 17:35:23 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/07/08 19:19:00 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,12 @@ int				add_flag(char flag, t_hash *tab)
 			print_usage(NULL);
 		tab->arg |= O_FLAG;
 	}
+	else if (flag == 'k')
+		tab->arg |= K_FLAG;
+	else if (flag == 'v')
+		tab->arg |= V_FLAG;
+	else if (flag == 'h')
+		get_help(tab);
 	else
 		return (1);
 	return (0);
@@ -63,10 +69,51 @@ static int		match_flag(char *flag, t_hash *tab)
 	return (0);
 }
 
-static void		s_flag(t_hash *tab, char *argv)
+static void		hex_flag(t_hash *tab, char *str, int flag)
 {
-	into_vec(&tab->folder, argv);
-	into_vec(&tab->str, argv);
+	uint8_t key[8];
+	int len;
+	int i;
+	char in;
+
+	i = 0;
+	len = ft_strlen(str);
+	while (i < 16)
+	{
+		if (i < len)
+		{
+			in = str[i];
+			if (in >= 'a' && in <= 'f')
+				in -= 97 - 10;
+			else if (in >= 'A' && in <= 'F')
+				in -= 65 - 10;
+			else if (in >= '0' && in <= '9')
+				in -= 48;
+		}
+		else
+			in = 0;
+		key[i / 2] = key[i / 2] << 4;
+		key[i / 2] = key[i / 2] | in;
+		++i;
+	}
+	if (flag == K_FLAG)
+		tab->ops.key = key;
+	else if (flag == V_FLAG)
+		tab->ops.init_vec = key;
+	else
+		tab->ops.salt = key;
+}
+
+static void		s_flag(t_hash *tab, char *str)
+{
+	if (tab->f != des || tab->f != des_ecb)
+	{
+		into_vec(&tab->folder, str);
+		into_vec(&tab->str, str);
+		tab->arg ^= S_FLAG;
+		return ;
+	}
+	hex_flag(tab, str, S_FLAG);
 	tab->arg ^= S_FLAG;
 }
 
@@ -75,10 +122,10 @@ void			argument_flags(t_hash *tab, char **argv, int argc, int *i)
 	char *str;
 
 	*i += 1;
-	str = argv[*i];
 	if (*i >= argc)
 		print_usage(NULL);
-	else if (tab->arg & S_FLAG)
+	str = argv[*i];
+	if (tab->arg & S_FLAG)
 		s_flag(tab, str);
 	else if (tab->arg & O_FLAG)
 		o_flag(tab, str);
@@ -89,6 +136,10 @@ void			argument_flags(t_hash *tab, char **argv, int argc, int *i)
 		match_flag(str, tab);
 		tab->arg ^= I_FLAG;
 	}
+	else if (tab->arg & K_FLAG)
+		hex_flag(tab, str, K_FLAG);
+	else if (tab->arg & V_FLAG)
+		hex_flag(tab, str, V_FLAG);
 }
 
 void			parse_argv(int argc, char *argv[])
@@ -104,13 +155,17 @@ void			parse_argv(int argc, char *argv[])
 	tab.str = v_new(sizeof(t_vec));
 	tab.ops.fd = 1;
 	tab.ops.pwd = NULL;
+	tab.ops.salt = NULL;
+	tab.ops.init_vec = NULL;
+	tab.ops.key = NULL;
 	i = 2;
 	while (i < argc)
 	{
 		if (match_flag(argv[i], &tab))
 			print_usage(NULL);
 		if ((tab.arg & S_FLAG) || (tab.arg & O_FLAG) || (tab.arg & I_FLAG)
-				|| ((tab.arg & P_FLAG) && tab.f == des_ecb))
+				|| ((tab.arg & P_FLAG) && (tab.f == des_ecb || tab.f == des))
+				|| (tab.arg & K_FLAG) || (tab.arg & V_FLAG))
 			argument_flags(&tab, argv, argc, &i);
 		++i;
 	}
@@ -119,5 +174,5 @@ void			parse_argv(int argc, char *argv[])
 		read_file(&tab, 0, (tab.arg & P_FLAG) ? true : false);
 		into_vec(&tab.folder, NULL);
 	}
-	tab.f(&tab);
+	tab.f(&tab, true);
 }

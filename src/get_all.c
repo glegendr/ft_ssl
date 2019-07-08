@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/20 16:10:07 by glegendr          #+#    #+#             */
-/*   Updated: 2019/06/25 12:07:57 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/07/08 19:32:26 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,10 +17,10 @@
 
 char *const g_tab[NB_HASH] = {"md5", "sha256", "sha512", "sha384", "sha224",
 	"base64", "base64url", "des", "des-ecb"};
-void (*const g_hash_fct[NB_HASH])(t_hash *) = {md5, sha256, sha512, sha384,
+uint8_t *(*const g_hash_fct[NB_HASH])(t_hash *, bool) = {md5, sha256, sha512, sha384,
 	sha224, base64, base64url, des, des_ecb};
 
-void			(*get_hash_fct(char *name))(t_hash *)
+uint8_t			*(*get_hash_fct(char *name))(t_hash *, bool)
 {
 	int id;
 
@@ -59,13 +59,11 @@ static char		*get_all_hash(void)
 
 char			*get_usage(void)
 {
-	return ("Allowed flags are:\n"
+	return ("Generics flags are:\n"
 	" -p echo STDIN to STDOUT and append the checksum to STDOUT\n"
 	" -q only print hash\n"
 	" -r reverse the output\n"
-	" -d decode hash -base64 only-\n"
-	" -e encode hash -base64 only-\n"
-	" -s hash the string\n"
+	" -s hash the string -don't work with des, des-ecb-\n"
 	" -i input file  -optional-\n"
 	" -o output file -default: stdout- -can only be used once-\n");
 }
@@ -87,7 +85,7 @@ void			print_usage(char *name)
 		v_append_raw(&vec, name, ft_strlen(name));
 		s = "' is an invalid command\n"
 			"Usage: ft_ssl hash_fct [-pqrde] [-s string] [-i in_file]"
-			"[-o out_file]\nAllowed hash_fct are:\n";
+			" [-o out_file]\nAllowed hash_fct are:\n";
 		v_append_raw(&vec, s, ft_strlen(s));
 		s = get_all_hash();
 		v_append_raw(&vec, s, ft_strlen(s));
@@ -96,6 +94,31 @@ void			print_usage(char *name)
 		write(2, (char *)v_raw(&vec), v_size(&vec));
 		v_del(&vec);
 	}
+	exit(1);
+}
+
+void			get_help(t_hash *tab)
+{
+	t_vec	vec;
+	char	*s;
+
+	vec = v_new(sizeof(char));
+	s = get_usage();
+	v_append_raw(&vec, s, ft_strlen(s));
+	s = "Specific flags for your function are:\n";
+	v_append_raw(&vec, s, ft_strlen(s));
+	if (tab->f == base64 || tab->f == base64url || tab->f == des || tab->f == des_ecb)
+	{
+		s = " -d decode hash\n -e encode hash\n";
+		v_append_raw(&vec, s, ft_strlen(s));
+	}
+	if (tab->f == des || tab->f == des_ecb)
+	{
+		s = " -k key in hex\n -s salt in hex\n -v initialization vector in hex\n";
+		v_append_raw(&vec, s, ft_strlen(s));
+	}
+	write(2, (char *)v_raw(&vec), v_size(&vec));
+	v_del(&vec);
 	exit(1);
 }
 
