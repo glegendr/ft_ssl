@@ -209,7 +209,7 @@ int const g_ip1[64] =
 	33,     1,   41,     9,    49,   17,    57,   25
 };
 
-void		divide_message(uint8_t *str, uint8_t fin_keys[16][6])
+uint64_t	divide_message(uint8_t *str, uint8_t fin_keys[16][6])
 {
 	uint32_t ln;
 	uint32_t rn;
@@ -233,13 +233,47 @@ void		divide_message(uint8_t *str, uint8_t fin_keys[16][6])
 	i = 0;
 	while (i < 64)
 		end = (end << 1) | ((tmp >> (64 - g_ip1[i++])) & 0x1);
-	for (i = 0; i < 8; ++i)
-		ft_printf("%c", ((end >> (64 - (8*(i+1)))) & 0xff));
-//	ft_printf("%0.64b -- %llx\n", end, tmp);
+	return (end);
 }
 
-void		hash_des_message(uint8_t *str, uint8_t div_key[16][6])
+void		hash_des_message(t_hash *hash, uint8_t div_key[16][6])
 {
-	ip(str);
-	divide_message(str, div_key);
+	t_ops ops;
+	int i;
+	uint64_t div_ret;
+	uint8_t *str;
+	t_vec print;
+
+	print = v_new(sizeof(uint8_t));
+	ops = hash->ops;
+	i = 0;
+	while (i < v_size(&hash->str))
+	{
+		str = v_raw(v_get(&hash->str, i));
+	//	pad_str
+		ip(str);
+		div_ret = divide_message(str, div_key);
+	if (ops.salt)
+	{
+		v_append_raw(&print, "Salted__", 8);
+		v_append_raw(&print, ops.salt, 8);
+	}
+	for (int y = 0; y < 8; ++y)
+		v_push_int(&print, ((div_ret >> (64 - ( 8 * (y + 1)))) & 0xff));
+	if (hash->arg & A_FLAG)
+	{
+		t_hash tmp;
+		t_vec vec;
+
+		vec = v_new(sizeof(t_vec));
+		v_push(&vec, &print);
+		tmp = *hash;
+		tmp.str = vec;
+		tmp.arg |= Q_FLAG;
+		base64(&tmp, true);
+	}
+	else
+		write(ops.fd, v_raw(&print), v_size(&print));
+		++i;
+	}
 }

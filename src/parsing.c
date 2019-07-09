@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/20 16:11:40 by glegendr          #+#    #+#             */
-/*   Updated: 2019/07/08 19:19:00 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/07/09 18:46:34 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,11 @@
 int				add_flag(char flag, t_hash *tab)
 {
 	if (flag == 'p')
+	{
+		if (tab->ops.pwd)
+			print_usage(NULL);
 		tab->arg |= P_FLAG;
+	}
 	else if (flag == 'q')
 		tab->arg |= Q_FLAG;
 	else if (flag == 'r')
@@ -38,9 +42,19 @@ int				add_flag(char flag, t_hash *tab)
 		tab->arg |= O_FLAG;
 	}
 	else if (flag == 'k')
+	{
+		if (tab->ops.key)
+			print_usage(NULL);
 		tab->arg |= K_FLAG;
+	}
 	else if (flag == 'v')
+	{
+		if (tab->ops.init_vec)
+			print_usage(NULL);
 		tab->arg |= V_FLAG;
+	}
+	else if (flag == 'a')
+		tab->arg |= A_FLAG;
 	else if (flag == 'h')
 		get_help(tab);
 	else
@@ -69,13 +83,17 @@ static int		match_flag(char *flag, t_hash *tab)
 	return (0);
 }
 
-static void		hex_flag(t_hash *tab, char *str, int flag)
+#include <stdio.h>
+
+static void		hex_flag(t_hash *hash, char *str, int flag)
 {
-	uint8_t key[8];
+	uint8_t *key;
 	int len;
 	int i;
 	char in;
 
+	if (!(key = malloc(sizeof(uint8_t) * 8)))
+		return ;
 	i = 0;
 	len = ft_strlen(str);
 	while (i < 16)
@@ -89,6 +107,11 @@ static void		hex_flag(t_hash *tab, char *str, int flag)
 				in -= 65 - 10;
 			else if (in >= '0' && in <= '9')
 				in -= 48;
+			else
+			{
+				write(2, "non-hex digit\n", 14);
+				exit(1);
+			}
 		}
 		else
 			in = 0;
@@ -97,16 +120,17 @@ static void		hex_flag(t_hash *tab, char *str, int flag)
 		++i;
 	}
 	if (flag == K_FLAG)
-		tab->ops.key = key;
+		hash->ops.key = key;
 	else if (flag == V_FLAG)
-		tab->ops.init_vec = key;
+		hash->ops.init_vec = key;
 	else
-		tab->ops.salt = key;
+		hash->ops.salt = key;
+	hash->arg ^= flag;
 }
 
 static void		s_flag(t_hash *tab, char *str)
 {
-	if (tab->f != des || tab->f != des_ecb)
+	if (tab->f != des_ecb)
 	{
 		into_vec(&tab->folder, str);
 		into_vec(&tab->str, str);
@@ -114,7 +138,6 @@ static void		s_flag(t_hash *tab, char *str)
 		return ;
 	}
 	hex_flag(tab, str, S_FLAG);
-	tab->arg ^= S_FLAG;
 }
 
 void			argument_flags(t_hash *tab, char **argv, int argc, int *i)
@@ -130,7 +153,10 @@ void			argument_flags(t_hash *tab, char **argv, int argc, int *i)
 	else if (tab->arg & O_FLAG)
 		o_flag(tab, str);
 	else if (tab->arg & P_FLAG)
-		tab->ops.pwd = str;
+	{
+		tab->ops.pwd = (uint8_t *)str;
+		tab->arg ^= P_FLAG;
+	}
 	else if (tab->arg & I_FLAG)
 	{
 		match_flag(str, tab);
@@ -164,7 +190,7 @@ void			parse_argv(int argc, char *argv[])
 		if (match_flag(argv[i], &tab))
 			print_usage(NULL);
 		if ((tab.arg & S_FLAG) || (tab.arg & O_FLAG) || (tab.arg & I_FLAG)
-				|| ((tab.arg & P_FLAG) && (tab.f == des_ecb || tab.f == des))
+				|| ((tab.arg & P_FLAG) && tab.f == des_ecb)
 				|| (tab.arg & K_FLAG) || (tab.arg & V_FLAG))
 			argument_flags(&tab, argv, argc, &i);
 		++i;

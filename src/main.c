@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/06 14:48:56 by glegendr          #+#    #+#             */
-/*   Updated: 2019/07/08 18:28:47 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/07/09 18:40:14 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,6 @@ void			read_file(t_hash *tab, int fd, bool print)
 	t_vec	vec;
 	char	ret[BUFF_SIZE];
 	int		val;
-	(void)print;
 
 	if (fd == -1)
 		return ;

@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/19 17:32:20 by glegendr          #+#    #+#             */
-/*   Updated: 2019/07/08 19:31:55 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/07/09 17:58:31 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@
 typedef struct	s_hash_ops
 {
 	const char	*name;
-	const char	*pwd;
+	uint8_t		*pwd;
 	uint8_t		*salt;
 	uint8_t		*init_vec;
 	uint8_t		*key;
@@ -76,7 +76,6 @@ uint8_t			*sha384(t_hash *a, bool print);
 */
 uint8_t			*base64(t_hash *a, bool print);
 uint8_t			*base64url(t_hash *a, bool print);
-uint8_t			*des(t_hash *a, bool print);
 uint8_t			*des_ecb(t_hash *a, bool print);
 
 /*
@@ -125,7 +124,7 @@ void			generate_base(char *a, bool b);
 void			pc1(uint8_t *str);
 void			pc2(uint32_t *str, uint8_t key[16][6]);
 void			rotate_key(uint8_t *pwd, uint32_t *div_key);
-void			hash_des_message(uint8_t *str, uint8_t div_key[16][6]);
+void			hash_des_message(t_hash *hash, uint8_t div_key[16][6]);
 
 /*
 ** Parse Functions

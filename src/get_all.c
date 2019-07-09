@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/20 16:10:07 by glegendr          #+#    #+#             */
-/*   Updated: 2019/07/08 19:32:26 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/07/09 17:12:17 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 char *const g_tab[NB_HASH] = {"md5", "sha256", "sha512", "sha384", "sha224",
 	"base64", "base64url", "des", "des-ecb"};
 uint8_t *(*const g_hash_fct[NB_HASH])(t_hash *, bool) = {md5, sha256, sha512, sha384,
-	sha224, base64, base64url, des, des_ecb};
+	sha224, base64, base64url, des_ecb, des_ecb};
 
 uint8_t			*(*get_hash_fct(char *name))(t_hash *, bool)
 {
@@ -107,12 +107,12 @@ void			get_help(t_hash *tab)
 	v_append_raw(&vec, s, ft_strlen(s));
 	s = "Specific flags for your function are:\n";
 	v_append_raw(&vec, s, ft_strlen(s));
-	if (tab->f == base64 || tab->f == base64url || tab->f == des || tab->f == des_ecb)
+	if (tab->f == base64 || tab->f == base64url || tab->f == des_ecb)
 	{
 		s = " -d decode hash\n -e encode hash\n";
 		v_append_raw(&vec, s, ft_strlen(s));
 	}
-	if (tab->f == des || tab->f == des_ecb)
+	if (tab->f == des_ecb)
 	{
 		s = " -k key in hex\n -s salt in hex\n -v initialization vector in hex\n";
 		v_append_raw(&vec, s, ft_strlen(s));
