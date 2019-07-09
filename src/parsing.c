@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/20 16:11:40 by glegendr          #+#    #+#             */
-/*   Updated: 2019/07/09 18:46:34 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/07/09 19:00:59 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,9 +30,17 @@ int				add_flag(char flag, t_hash *tab)
 	else if (flag == 's')
 		tab->arg |= S_FLAG;
 	else if (flag == 'd')
+	{
+		if (tab->arg & E_FLAG)
+			print_usage(NULL);
 		tab->arg |= D_FLAG;
+	}
 	else if (flag == 'e')
+	{
+		if (tab->arg & D_FLAG)
+			print_usage(NULL);
 		tab->arg |= E_FLAG;
+	}
 	else if (flag == 'i')
 		tab->arg |= I_FLAG;
 	else if (flag == 'o')
@@ -150,21 +158,21 @@ void			argument_flags(t_hash *tab, char **argv, int argc, int *i)
 	str = argv[*i];
 	if (tab->arg & S_FLAG)
 		s_flag(tab, str);
-	else if (tab->arg & O_FLAG)
+	if (tab->arg & O_FLAG)
 		o_flag(tab, str);
-	else if (tab->arg & P_FLAG)
+	if (tab->arg & P_FLAG)
 	{
 		tab->ops.pwd = (uint8_t *)str;
 		tab->arg ^= P_FLAG;
 	}
-	else if (tab->arg & I_FLAG)
+	if (tab->arg & I_FLAG)
 	{
 		match_flag(str, tab);
 		tab->arg ^= I_FLAG;
 	}
-	else if (tab->arg & K_FLAG)
+	if (tab->arg & K_FLAG)
 		hex_flag(tab, str, K_FLAG);
-	else if (tab->arg & V_FLAG)
+	if (tab->arg & V_FLAG)
 		hex_flag(tab, str, V_FLAG);
 }
 
