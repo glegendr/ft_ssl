@@ -66,7 +66,6 @@ void		create_key(uint8_t *pwd, uint8_t *salt, uint8_t *key, uint8_t *iv)
 		in_u8(md5_ret + 8, iv);
 }
 
-
 uint8_t		*des_ecb(t_hash *hash, bool print)
 {
 	t_ops ops = hash->ops;
@@ -76,12 +75,20 @@ uint8_t		*des_ecb(t_hash *hash, bool print)
 	uint8_t key[8];
 
 	(void)print;
+	if (!(hash->arg & D_FLAG))
+	{
+		unhash_des_message(hash, final_keys);
+		return (NULL);
+	}
+
 	if (!ops.key)
 	{
 		if (!ops.pwd)
 			ops.pwd = get_pwd();
 		create_salt(salt, ops.salt);
 		create_key(ops.pwd, salt, key, NULL);
+		write(1, key, 8);
+		printf("\n");
 		ops.salt = salt;
 	}
 	else
@@ -90,5 +97,12 @@ uint8_t		*des_ecb(t_hash *hash, bool print)
 	rotate_key(key, divided_key);
 	pc2(divided_key, final_keys);
 	hash_des_message(hash, final_keys);
+	return (NULL);
+}
+
+uint8_t		*des_cbc(t_hash *hash, bool print)
+{
+	(void)hash;
+	(void)print;
 	return (NULL);
 }

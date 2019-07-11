@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/19 17:32:20 by glegendr          #+#    #+#             */
-/*   Updated: 2019/07/09 17:58:31 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/07/11 17:52:10 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ typedef struct	s_hash
 
 typedef uint8_t		*(*t_fct)(t_hash *, bool);
 # define BUFF_SIZE 12
-# define NB_HASH 9
+# define NB_HASH 10
 # define P_FLAG 1
 # define Q_FLAG 1 << 1
 # define R_FLAG 1 << 2
@@ -77,6 +77,7 @@ uint8_t			*sha384(t_hash *a, bool print);
 uint8_t			*base64(t_hash *a, bool print);
 uint8_t			*base64url(t_hash *a, bool print);
 uint8_t			*des_ecb(t_hash *a, bool print);
+uint8_t			*des_cbc(t_hash *a, bool print);
 
 /*
 ** Generic Functions
@@ -108,11 +109,13 @@ void			make_512_pseudo_random(uint64_t *a, uint64_t *b,
 										int c, uint64_t d);
 void			binop512(uint64_t *a, uint64_t *b);
 uint64_t		init_s0(uint8_t *ck, int i);
+void			in_u8(uint8_t *in, uint8_t *cpy);
+uint8_t			*get_pwd(void);
 
 /*
 ** Bases Functions
 */
-void			bases(t_hash *a, char *b, int c, int d);
+uint8_t			*bases(t_hash *a, char *b, int c, int d, bool print);
 int				get_index(uint8_t *a, char *b, uint8_t *c, int d);
 int				append_error(t_vec *a);
 void			encript_base(uint8_t *a, char *b, int c, t_vec *d);
@@ -125,6 +128,8 @@ void			pc1(uint8_t *str);
 void			pc2(uint32_t *str, uint8_t key[16][6]);
 void			rotate_key(uint8_t *pwd, uint32_t *div_key);
 void			hash_des_message(t_hash *hash, uint8_t div_key[16][6]);
+void			unhash_des_message(t_hash *hash, uint8_t div_key[16][6]);
+void			create_key(uint8_t *pwd, uint8_t *salt, uint8_t *key, uint8_t *iv);
 
 /*
 ** Parse Functions

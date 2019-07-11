@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/20 15:48:29 by glegendr          #+#    #+#             */
-/*   Updated: 2019/07/08 15:29:29 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/07/11 17:37:53 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,9 +97,7 @@ uint8_t			*base64url(t_hash *tab, bool print)
 {
 	char base[65];
 
-	(void)print;
 	generate_base(base, true);
 	tab->ops.name = "BASE64url";
-	bases(tab, base, 0, 0);
-	return (NULL);
+	return (bases(tab, base, 0, 0, print));
 }

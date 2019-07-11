@@ -236,6 +236,20 @@ uint64_t	divide_message(uint8_t *str, uint8_t fin_keys[16][6])
 	return (end);
 }
 
+void		pkcs5_pad(t_vec *vec)
+{
+	int len;
+	int i;
+
+	i = 0;
+	len = 8 - (v_size(vec) % 8);
+	while (i < len)
+	{
+		v_push_int(vec, len);
+		++i;
+	}
+}
+
 void		hash_des_message(t_hash *hash, uint8_t div_key[16][6])
 {
 	t_ops ops;
@@ -247,33 +261,62 @@ void		hash_des_message(t_hash *hash, uint8_t div_key[16][6])
 	print = v_new(sizeof(uint8_t));
 	ops = hash->ops;
 	i = 0;
-	while (i < v_size(&hash->str))
-	{
-		str = v_raw(v_get(&hash->str, i));
-	//	pad_str
-		ip(str);
-		div_ret = divide_message(str, div_key);
 	if (ops.salt)
 	{
 		v_append_raw(&print, "Salted__", 8);
 		v_append_raw(&print, ops.salt, 8);
 	}
-	for (int y = 0; y < 8; ++y)
-		v_push_int(&print, ((div_ret >> (64 - ( 8 * (y + 1)))) & 0xff));
-	if (hash->arg & A_FLAG)
+	while (i < v_size(&hash->str))
 	{
-		t_hash tmp;
-		t_vec vec;
+		pkcs5_pad(v_get(&hash->str, i));
+		str = v_raw(v_get(&hash->str, i));
+		for (int y = 0; y < v_size(v_get(&hash->str, i)) / 8; ++y)
+		{
+			str += 8 * y;
+			ip(str);
+			div_ret = divide_message(str, div_key);
+			for (int z = 0; z < 8; ++z)
+				v_push_int(&print, ((div_ret >> (64 - ( 8 * (z + 1)))) & 0xff));
+		}
+		if (hash->arg & A_FLAG)
+		{
+			t_hash tmp;
+			t_vec vec;
 
-		vec = v_new(sizeof(t_vec));
-		v_push(&vec, &print);
-		tmp = *hash;
-		tmp.str = vec;
-		tmp.arg |= Q_FLAG;
-		base64(&tmp, true);
-	}
-	else
-		write(ops.fd, v_raw(&print), v_size(&print));
+			vec = v_new(sizeof(t_vec));
+			v_push(&vec, &print);
+			tmp = *hash;
+			tmp.str = vec;
+			tmp.arg |= Q_FLAG;
+			base64(&tmp, true);
+		}
+		else
+			write(ops.fd, v_raw(&print), v_size(&print));
 		++i;
 	}
+}
+
+
+void		unhash_des_message(t_hash *hash, uint8_t div_key[16][6])
+{
+	t_ops ops = hash->ops;
+	t_hash tmp;
+	t_vec vec;
+	uint8_t *str;
+	uint8_t salt[8];
+	uint8_t key[8];
+
+	vec = v_new(sizeof(t_vec));
+	v_push(&vec, v_get(&hash->str, 0));
+	tmp = *hash;
+	tmp.str = vec;
+	tmp.arg |= D_FLAG;
+	str = base64(&tmp, false);
+	in_u8(str + 8, salt);
+	if (!ops.pwd)
+		ops.pwd = get_pwd();
+	create_key(ops.pwd, salt, key, NULL);
+	write(1, key, 8);
+	(void)hash;
+	(void)div_key;
 }

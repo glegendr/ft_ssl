@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/20 16:10:07 by glegendr          #+#    #+#             */
-/*   Updated: 2019/07/09 18:57:23 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/07/11 16:58:51 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,9 +16,8 @@
 #include "ft_ssl.h"
 
 char *const g_tab[NB_HASH] = {"md5", "sha256", "sha512", "sha384", "sha224",
-	"base64", "base64url", "des", "des-ecb"};
-uint8_t *(*const g_hash_fct[NB_HASH])(t_hash *, bool) = {md5, sha256, sha512, sha384,
-	sha224, base64, base64url, des_ecb, des_ecb};
+	"base64", "base64url", "des", "des-ecb", "des-cbc"};
+uint8_t *(*const g_hash_fct[NB_HASH])(t_hash *, bool) = {md5, sha256, sha512, sha384, sha224, base64, base64url, des_cbc, des_ecb, des_cbc};
 
 uint8_t			*(*get_hash_fct(char *name))(t_hash *, bool)
 {
@@ -65,7 +64,8 @@ char			*get_usage(void)
 	" -r reverse the output\n"
 	" -s hash the string -don't work with des, des-ecb-\n"
 	" -i input file  -optional-\n"
-	" -o output file -default: stdout- -can only be used once-\n");
+	" -o output file -default: stdout- -can only be used once-\n"
+	" Try hash_fct -h to get help for the function\n");
 }
 
 void			print_usage(char *name)
