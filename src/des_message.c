@@ -13,15 +13,18 @@ int const g_ip[64] = {
 		61, 53, 45, 37, 29, 21, 13, 5,
 		63, 55, 47, 39, 31, 23, 15, 7 };
 
-void	ip(uint8_t *str)
+void	ip(uint8_t *str, bool rev)
 {
 	int i;
-	uint8_t ret[8];
+	uint8_t ret[8] = {0};
 
 	i = 0;
 	while (i < 64)
 	{
-		bit(ret, i, str, g_ip[i]);
+		if (rev)
+			bit(str, g_ip[i] + 1, ret, i);
+		else
+			bit(ret, i + 1, str, g_ip[i]);
 		++i;
 	}
 	for (i = 0; i < 8; ++i)
@@ -56,13 +59,13 @@ int const g_e_bit[48] = {
 void		e_bit(uint8_t *ret, uint32_t ln)
 {
 	int i;
-	uint8_t str[4];
+	uint8_t str[4] = {0};
 
 	to_bytes32(ln, str);
 	i = 0;
 	while (i < 48)
 	{
-		bit(ret, i, str, g_e_bit[i]);
+		bit(ret, i + 1, str, g_e_bit[i]);
 		++i;
 	}
 }
@@ -182,8 +185,8 @@ uint32_t	p(uint8_t *six)
 
 uint32_t	f(uint32_t ln, uint8_t *key)
 {
-	uint8_t tmp[6];
-	uint8_t six_bit[8];
+	uint8_t tmp[6] = {0};
+	uint8_t six_bit[8] = {0};
 	int i;
 
 	i = 0;
@@ -199,14 +202,14 @@ uint32_t	f(uint32_t ln, uint8_t *key)
 
 int const g_ip1[64] =
 {
-	40,     8,   48,    16,    56,   24,    64,   32,
-	39,     7,   47,    15,    55,   23,    63,   31,
-	38,     6,   46,    14,    54,   22,    62,   30,
-	37,     5,   45,    13,    53,   21,    61,   29,
-	36,     4,   44,    12,    52,   20,    60,   28,
-	35,     3,   43,    11,    51,   19,    59,   27,
-	34,     2,   42,    10,    50,   18,    58,   26,
-	33,     1,   41,     9,    49,   17,    57,   25
+	40, 8, 48, 16, 56, 24, 64, 32,
+	39, 7, 47, 15, 55, 23, 63, 31,
+	38, 6, 46, 14, 54, 22, 62, 30,
+	37, 5, 45, 13, 53, 21, 61, 29,
+	36, 4, 44, 12, 52, 20, 60, 28,
+	35, 3, 43, 11, 51, 19, 59, 27,
+	34, 2, 42, 10, 50, 18, 58, 26,
+	33, 1, 41, 9, 49, 17, 57, 25
 };
 
 uint64_t	divide_message(uint8_t *str, uint8_t fin_keys[16][6])
@@ -227,6 +230,7 @@ uint64_t	divide_message(uint8_t *str, uint8_t fin_keys[16][6])
 		rn = tmp ^ f(ln, fin_keys[i]);
 		++i;
 	}
+
 	tmp = rn;
 	tmp = (tmp << 32) | ln;
 	end = 0;
@@ -273,7 +277,7 @@ void		hash_des_message(t_hash *hash, uint8_t div_key[16][6])
 		for (int y = 0; y < v_size(v_get(&hash->str, i)) / 8; ++y)
 		{
 			str += 8 * y;
-			ip(str);
+			ip(str, false);
 			div_ret = divide_message(str, div_key);
 			for (int z = 0; z < 8; ++z)
 				v_push_int(&print, ((div_ret >> (64 - ( 8 * (z + 1)))) & 0xff));
@@ -303,8 +307,8 @@ void		unhash_des_message(t_hash *hash, uint8_t div_key[16][6])
 	t_hash tmp;
 	t_vec vec;
 	uint8_t *str;
-	uint8_t salt[8];
-	uint8_t key[8];
+	uint8_t salt[8] = {0};
+	uint8_t key[8] = {0};
 
 	vec = v_new(sizeof(t_vec));
 	v_push(&vec, v_get(&hash->str, 0));
@@ -312,11 +316,28 @@ void		unhash_des_message(t_hash *hash, uint8_t div_key[16][6])
 	tmp.str = vec;
 	tmp.arg |= D_FLAG;
 	str = base64(&tmp, false);
-	in_u8(str + 8, salt);
-	if (!ops.pwd)
-		ops.pwd = get_pwd();
-	create_key(ops.pwd, salt, key, NULL);
-	write(1, key, 8);
+	if (!ops.key)
+	{
+		in_u8(str + 8, salt);
+		str += 16;
+		if (!ops.pwd)
+			ops.pwd = get_pwd();
+		create_key(ops.pwd, salt, key, NULL);
+	}
+	else
+		in_u8(ops.key, key);
+
+	uint8_t start[8] = {0};
+	uint32_t ln;
+	uint32_t rn;
+
+	for (int i = 0; i < 64; ++i)
+		bit(start, g_ip1[i], str, i + 1);
+	for (int i = 0; i < 4; ++i)
+		rn = (rn << 8) | start[i];
+	for (int i = 4; i < 8; ++i)
+		ln = (ln << 8) | start[i];
+
 	(void)hash;
 	(void)div_key;
 }

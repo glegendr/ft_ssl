@@ -14,8 +14,10 @@ void		bit(uint8_t *ret, int i, uint8_t *str, int pos)
 		posit = 8;
 	x = 1 << (8 - posit);
 	bit = (str[in_ret] & x) >> (8 - posit);
-	ret[i / 8] = ret[i/8] << 1;
-	ret[i / 8] = ret[i/8] | bit;
+	if ((i % 8) == 0 && i != 0)
+		ret[(i - 1) / 8] |= bit;
+	else
+		ret[i / 8] |= bit << (8 - (i % 8));
 }
 
 void		in_str(uint8_t *str, uint8_t *ret)
@@ -29,33 +31,23 @@ void		in_str(uint8_t *str, uint8_t *ret)
 	str[6] = ret[6];
 }
 
+int const g_pc1[56] =  {
+	57, 49, 41, 33, 25, 17, 9,
+	1, 58, 50, 42, 34, 26, 18,
+	10, 2, 59, 51, 43, 35, 27,
+	19, 11, 3, 60, 52, 44, 36,
+	63, 55, 47, 39, 31, 23, 15,
+	7, 62, 54, 46, 38, 30, 22,
+	14, 6, 61, 53, 45, 37, 29,
+	21, 13, 5, 28, 20, 12, 4
+};
+
 void		pc1(uint8_t *str)
 {
-	uint8_t ret[7];
-	int x;
-	int loop;
+	uint8_t ret[7] = {0};
 
-	loop = 0;
 	for (int i = 0; i < 56; ++i)
-	{
-		if (i == 28)
-			loop = 8;
-		else if (i == 52)
-			loop = -27;
-		if (i < 28)
-		{
-			if (i % 8 == 0)
-				++loop;
-			x = 56 + loop - (i % 8) * 8;
-		}
-		else
-		{
-			if ((i + 4) % 8 == 0)
-				--loop;
-			x = 56 + loop - ((i + 4) % 8) * 8;
-		}
-		bit(ret, i, str, x);
-	}
+		bit(ret, i + 1, str, g_pc1[i]);
 	in_str(str, ret);
 }
 
@@ -93,7 +85,7 @@ void		pc2(uint32_t *str, uint8_t ret[16][6])
 		i = 0;
 		while (i < 48)
 		{
-			bit(ret[y], i, in, g_pc2[i]);
+			bit(ret[y], i + 1, in, g_pc2[i]);
 			++i;
 		}
 		++y;

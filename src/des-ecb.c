@@ -70,25 +70,22 @@ uint8_t		*des_ecb(t_hash *hash, bool print)
 {
 	t_ops ops = hash->ops;
 	uint32_t divided_key[32];
-	uint8_t final_keys[16][6];
+	uint8_t final_keys[16][6] = {{0}};
 	uint8_t salt[8];
 	uint8_t key[8];
 
 	(void)print;
-	if (!(hash->arg & D_FLAG))
+	if (hash->arg & D_FLAG)
 	{
 		unhash_des_message(hash, final_keys);
 		return (NULL);
 	}
-
 	if (!ops.key)
 	{
 		if (!ops.pwd)
 			ops.pwd = get_pwd();
 		create_salt(salt, ops.salt);
 		create_key(ops.pwd, salt, key, NULL);
-		write(1, key, 8);
-		printf("\n");
 		ops.salt = salt;
 	}
 	else
