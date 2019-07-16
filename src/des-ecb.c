@@ -74,12 +74,6 @@ uint8_t		*des_ecb(t_hash *hash, bool print)
 	uint8_t salt[8];
 	uint8_t key[8];
 
-	(void)print;
-	if (hash->arg & D_FLAG)
-	{
-		unhash_des_message(hash, final_keys);
-		return (NULL);
-	}
 	if (!ops.key)
 	{
 		if (!ops.pwd)
@@ -93,8 +87,9 @@ uint8_t		*des_ecb(t_hash *hash, bool print)
 	pc1(key);
 	rotate_key(key, divided_key);
 	pc2(divided_key, final_keys);
-	hash_des_message(hash, final_keys);
-	return (NULL);
+	if (hash->arg & D_FLAG)
+		return (unhash_des_message(hash, final_keys, print));
+	return (hash_des_message(hash, final_keys, print));
 }
 
 uint8_t		*des_cbc(t_hash *hash, bool print)

@@ -13,7 +13,7 @@ int const g_ip[64] = {
 		61, 53, 45, 37, 29, 21, 13, 5,
 		63, 55, 47, 39, 31, 23, 15, 7 };
 
-void	ip(uint8_t *str, bool rev)
+void	ip(uint8_t *str)
 {
 	int i;
 	uint8_t ret[8] = {0};
@@ -21,10 +21,7 @@ void	ip(uint8_t *str, bool rev)
 	i = 0;
 	while (i < 64)
 	{
-		if (rev)
-			bit(str, g_ip[i] + 1, ret, i);
-		else
-			bit(ret, i + 1, str, g_ip[i]);
+		bit(ret, i + 1, str, g_ip[i]);
 		++i;
 	}
 	for (i = 0; i < 8; ++i)
@@ -212,7 +209,7 @@ int const g_ip1[64] =
 	33, 1, 41, 9, 49, 17, 57, 25
 };
 
-uint64_t	divide_message(uint8_t *str, uint8_t fin_keys[16][6])
+uint64_t	divide_message(uint8_t *str, uint8_t fin_keys[16][6], bool rev)
 {
 	uint32_t ln;
 	uint32_t rn;
@@ -227,7 +224,7 @@ uint64_t	divide_message(uint8_t *str, uint8_t fin_keys[16][6])
 	{
 		tmp = ln;
 		ln = rn;
-		rn = tmp ^ f(ln, fin_keys[i]);
+		rn = tmp ^ f(ln, fin_keys[rev ? 15 - i : i]);
 		++i;
 	}
 
@@ -254,7 +251,29 @@ void		pkcs5_pad(t_vec *vec)
 	}
 }
 
-void		hash_des_message(t_hash *hash, uint8_t div_key[16][6])
+uint8_t		*print_des_message(t_hash *hash, t_vec *print, bool rev, bool bp)
+{
+	if (hash->arg & A_FLAG && !rev)
+	{
+		t_hash tmp;
+		t_vec vec;
+
+		vec = v_new(sizeof(t_vec));
+		v_push(&vec, print);
+		tmp = *hash;
+		tmp.str = vec;
+		tmp.arg |= Q_FLAG;
+		return (base64(&tmp, bp));
+	}
+	else if (!bp)
+		return (v_raw(print));
+	else
+		write(hash->ops.fd, v_raw(print), v_size(print));
+	write(1, "\n", 1);
+	return (NULL);
+}
+
+uint8_t		*hash_des_message(t_hash *hash, uint8_t div_key[16][6], bool bp)
 {
 	t_ops ops;
 	int i;
@@ -277,67 +296,59 @@ void		hash_des_message(t_hash *hash, uint8_t div_key[16][6])
 		for (int y = 0; y < v_size(v_get(&hash->str, i)) / 8; ++y)
 		{
 			str += 8 * y;
-			ip(str, false);
-			div_ret = divide_message(str, div_key);
+			ip(str);
+			div_ret = divide_message(str, div_key, false);
 			for (int z = 0; z < 8; ++z)
 				v_push_int(&print, ((div_ret >> (64 - ( 8 * (z + 1)))) & 0xff));
 		}
-		if (hash->arg & A_FLAG)
-		{
-			t_hash tmp;
-			t_vec vec;
-
-			vec = v_new(sizeof(t_vec));
-			v_push(&vec, &print);
-			tmp = *hash;
-			tmp.str = vec;
-			tmp.arg |= Q_FLAG;
-			base64(&tmp, true);
-		}
-		else
-			write(ops.fd, v_raw(&print), v_size(&print));
+		if (!bp)
+			return (print_des_message(hash, &print, false, bp));
+		print_des_message(hash, &print, false, bp);
+		v_reset(&print);
 		++i;
 	}
+	return (NULL);
 }
 
-
-void		unhash_des_message(t_hash *hash, uint8_t div_key[16][6])
+uint8_t		*unhash_des_message(t_hash *hash, uint8_t div_key[16][6], bool bp)
 {
-	t_ops ops = hash->ops;
+	uint64_t mess;
 	t_hash tmp;
 	t_vec vec;
 	uint8_t *str;
-	uint8_t salt[8] = {0};
-	uint8_t key[8] = {0};
+	t_vec print;
+	int i;
 
-	vec = v_new(sizeof(t_vec));
-	v_push(&vec, v_get(&hash->str, 0));
-	tmp = *hash;
-	tmp.str = vec;
-	tmp.arg |= D_FLAG;
-	str = base64(&tmp, false);
-	if (!ops.key)
+	i = 0;
+	print = v_new(sizeof(uint8_t));
+	while (i < v_size(&hash->str))
 	{
-		in_u8(str + 8, salt);
-		str += 16;
-		if (!ops.pwd)
-			ops.pwd = get_pwd();
-		create_key(ops.pwd, salt, key, NULL);
+		if (hash->arg & A_FLAG)
+		{
+			vec = v_new(sizeof(t_vec));
+			v_push(&vec, v_get(&hash->str, i));
+			tmp = *hash;
+			tmp.str = vec;
+			tmp.arg |= D_FLAG;
+			str = base64(&tmp, false);
+		}
+		else
+			str = v_raw(v_get(&hash->str, 0));
+		if (!hash->ops.key)
+			str += 16;
+		for (unsigned long int y = 0; y < (ft_strlen((char *)str)) / 8; ++y)
+		{
+			str += 8 * y;
+			ip(str);
+			mess = divide_message(str, div_key, true);
+			for (int z = 0; z < 8; ++z)
+			v_push_int(&print, ((mess >> (56 - (8 * z))) & 0xff));
+		}
+		if (!bp)
+			return (print_des_message(hash, &print, true, bp));
+		print_des_message(hash, &print, true, bp);
+		v_reset(&print);
+		++i;
 	}
-	else
-		in_u8(ops.key, key);
-
-	uint8_t start[8] = {0};
-	uint32_t ln;
-	uint32_t rn;
-
-	for (int i = 0; i < 64; ++i)
-		bit(start, g_ip1[i], str, i + 1);
-	for (int i = 0; i < 4; ++i)
-		rn = (rn << 8) | start[i];
-	for (int i = 4; i < 8; ++i)
-		ln = (ln << 8) | start[i];
-
-	(void)hash;
-	(void)div_key;
+	return (NULL);
 }
