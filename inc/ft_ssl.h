@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/19 17:32:20 by glegendr          #+#    #+#             */
-/*   Updated: 2019/07/16 17:26:09 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/07/19 16:50:11 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,6 +129,7 @@ void			pc2(uint32_t *str, uint8_t key[16][6]);
 void			rotate_key(uint8_t *pwd, uint32_t *div_key);
 uint8_t			*hash_des_message(t_hash *hash, uint8_t div_key[16][6], bool bp);
 uint8_t			*unhash_des_message(t_hash *hash, uint8_t div_key[16][6], bool bp);
+uint8_t			*hash_cbc_message(t_hash *hash, uint8_t div_key[16][6], bool bp);
 void			create_key(uint8_t *pwd, uint8_t *salt, uint8_t *key, uint8_t *iv);
 
 /*

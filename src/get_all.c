@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/20 16:10:07 by glegendr          #+#    #+#             */
-/*   Updated: 2019/07/11 16:58:51 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/07/19 16:48:29 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,12 +107,12 @@ void			get_help(t_hash *tab)
 	v_append_raw(&vec, s, ft_strlen(s));
 	s = "Specific flags for your function are:\n";
 	v_append_raw(&vec, s, ft_strlen(s));
-	if (tab->f == base64 || tab->f == base64url || tab->f == des_ecb)
+	if (tab->f == base64 || tab->f == base64url || tab->f == des_ecb || tab->f == des_cbc)
 	{
 		s = " -d decode hash\n -e encode hash -optional-\n";
 		v_append_raw(&vec, s, ft_strlen(s));
 	}
-	if (tab->f == des_ecb)
+	if (tab->f == des_ecb || tab->f == des_cbc)
 	{
 		s = " -k key in hex\n -s salt in hex\n -v initialization vector in hex\n -a decode/encode the input/output in base64, depending on the encrypt mode\n -p next arg is your password\n";
 		v_append_raw(&vec, s, ft_strlen(s));

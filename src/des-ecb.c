@@ -94,7 +94,26 @@ uint8_t		*des_ecb(t_hash *hash, bool print)
 
 uint8_t		*des_cbc(t_hash *hash, bool print)
 {
-	(void)hash;
-	(void)print;
-	return (NULL);
+	t_ops ops = hash->ops;
+	uint32_t divided_key[32];
+	uint8_t final_keys[16][6] = {{0}};
+	uint8_t salt[8];
+	uint8_t key[8];
+
+	if (!ops.key)
+	{
+		if (!ops.pwd)
+			ops.pwd = get_pwd();
+		create_salt(salt, ops.salt);
+		create_key(ops.pwd, salt, key, NULL);
+		ops.salt = salt;
+	}
+	else
+		in_u8(ops.key, key);
+	pc1(key);
+	rotate_key(key, divided_key);
+	pc2(divided_key, final_keys);
+//	if (hash->arg & D_FLAG)
+//		return (unhash_cbc_message(hash, final_keys, print));
+	return (hash_cbc_message(hash, final_keys, print));
 }
