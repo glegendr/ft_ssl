@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/19 17:32:20 by glegendr          #+#    #+#             */
-/*   Updated: 2019/07/22 15:14:07 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/07/22 16:25:30 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ typedef struct	s_hash
 
 typedef uint8_t		*(*t_fct)(t_hash *, bool);
 # define BUFF_SIZE 12
-# define NB_HASH 10
+# define NB_HASH 11
 # define P_FLAG 1
 # define Q_FLAG 1 << 1
 # define R_FLAG 1 << 2
@@ -86,6 +86,7 @@ uint8_t			*base64(t_hash *a, bool print);
 uint8_t			*base64url(t_hash *a, bool print);
 uint8_t			*des_ecb(t_hash *a, bool print);
 uint8_t			*des_cbc(t_hash *a, bool print);
+uint8_t			*des_pcbc(t_hash *a, bool print);
 
 /*
 ** Generic Functions
@@ -135,10 +136,8 @@ void			generate_base(char *a, bool b);
 void			pc1(uint8_t *str);
 void			pc2(uint32_t *str, uint8_t key[16][6]);
 void			rotate_key(uint8_t *pwd, uint32_t *div_key);
-uint8_t			*hash_des_message(t_hash *hash, uint8_t div_key[16][6], bool bp);
-uint8_t			*unhash_des_message(t_hash *hash, uint8_t div_key[16][6], bool bp);
-uint8_t			*hash_cbc_message(t_hash *hash, uint8_t div_key[16][6], bool bp);
-uint8_t			*unhash_cbc_message(t_hash *hash, uint8_t div_key[16][6], bool bp);
+uint8_t			*hash_des_message(t_hash *hash, uint8_t div_key[16][6], bool bp, enum des_mode mode);
+uint8_t			*unhash_des_message(t_hash *hash, uint8_t div_key[16][6], bool bp, enum des_mode mode);
 void			create_key(uint8_t *pwd, uint8_t *salt, uint8_t *key, uint8_t *iv);
 
 /*
