@@ -310,6 +310,19 @@ uint8_t		*hash_des_message(t_hash *hash, uint8_t div_key[16][6], bool bp)
 	return (NULL);
 }
 
+uint64_t	xor_message64(uint64_t mess, uint8_t *xor)
+{
+	uint64_t ret;
+
+	ret = 0;
+	for (int i = 0; i < 8; ++i)
+	{
+		ret = ret << 8;
+		ret |= xor[i];
+	}
+	return (ret ^ mess);
+}
+
 void		xor_message(uint8_t *str, uint8_t *xor)
 {
 	for (int i = 0; i < 8; ++i)
@@ -429,10 +442,13 @@ uint8_t		*unhash_cbc_message(t_hash *hash, uint8_t div_key[16][6], bool bp)
 			str += 16;
 		for (unsigned long int y = 0; y < (ft_strlen((char *)str)) / 8; ++y)
 		{
-			xor_message(str + 8 * y, str2);
-			ip(str2);
-			mess = divide_message(str2, div_key, true);
-			to_bytes64(mess, str2);
+			uint8_t tmp[8] = {0};
+
+			in_u8(str + 8 * y, tmp);
+			ip(tmp);
+			mess = divide_message(tmp, div_key, true);
+			mess = xor_message64(mess, str2);
+			str2 = str + 8 * y;
 			for (int z = 0; z < 8; ++z)
 				v_push_int(&print, ((mess >> (56 - (8 * z))) & 0xff));
 		}

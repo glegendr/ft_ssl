@@ -113,7 +113,7 @@ uint8_t		*des_cbc(t_hash *hash, bool print)
 	pc1(key);
 	rotate_key(key, divided_key);
 	pc2(divided_key, final_keys);
-//	if (hash->arg & D_FLAG)
-//		return (unhash_cbc_message(hash, final_keys, print));
+	if (hash->arg & D_FLAG)
+		return (unhash_cbc_message(hash, final_keys, print));
 	return (hash_cbc_message(hash, final_keys, print));
 }
