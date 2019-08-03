@@ -269,7 +269,7 @@ uint8_t		*print_des_message(t_hash *hash, t_vec *print, bool rev, bool bp)
 		return (v_raw(print));
 	else
 		write(hash->ops.fd, v_raw(print), v_size(print));
-	write(1, "\n", 1);
+//	write(1, "\n", 1);
 	return (NULL);
 }
 
@@ -329,6 +329,17 @@ uint8_t		*hash_des_message(t_hash *hash, uint8_t div_key[16][6], bool bp, enum d
 		v_reset(&print);
 		++i;
 	}
+	if (ops.key)
+		free(ops.key);
+	if (ops.salt)
+		free(ops.salt);
+	if (ops.init_vec)
+		free(ops.init_vec);
+	if (ops.pwd)
+		free(ops.pwd);
+	v_del(&print);
+	v_del_all(&hash->folder);
+	v_del_all(&hash->str);
 	return (NULL);
 }
 
@@ -405,5 +416,17 @@ uint8_t		*unhash_des_message(t_hash *hash, uint8_t div_key[16][6], bool bp, enum
 		v_reset(&print);
 		++i;
 	}
+	if (hash->ops.key)
+		free(hash->ops.key);
+	if (hash->ops.salt)
+		free(hash->ops.salt);
+	if (hash->ops.init_vec)
+		free(hash->ops.init_vec);
+//	if (hash->ops.pwd)
+//		free(hash->ops.pwd);
+	v_del(&print);
+	v_del_all(&hash->folder);
+	v_del_all(&hash->str);
+	while (42);
 	return (NULL);
 }
