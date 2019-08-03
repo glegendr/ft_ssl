@@ -332,7 +332,7 @@ uint8_t		*hash_des_message(t_hash *hash, uint8_t div_key[16][6], bool bp, enum d
 	return (NULL);
 }
 
-uint64_t	xor_message64(uint64_t mess, uint8_t *xor, enum des_mode mode, uint8_t *str)
+uint64_t	xor_message64(uint64_t mess, uint8_t *xor, enum des_mode mode, uint8_t *str, int y)
 {
 	uint64_t ret;
 	uint64_t pcbc;
@@ -346,7 +346,7 @@ uint64_t	xor_message64(uint64_t mess, uint8_t *xor, enum des_mode mode, uint8_t 
 		ret = ret << 8;
 		ret |= str[i];
 	}
-	if (mode == PCBC && xor)
+	if (mode == PCBC && y != 0)
 	{
 		for (int i = 0; i < 8; ++i)
 		{
@@ -384,7 +384,7 @@ uint8_t		*unhash_des_message(t_hash *hash, uint8_t div_key[16][6], bool bp, enum
 			str = base64(&tmp, false);
 		}
 		else
-			str = v_raw(v_get(&hash->str, 0));
+			str = v_raw(v_get(&hash->str, i));
 		if (!hash->ops.key)
 			str += 16;
 		for (unsigned long int y = 0; y < (ft_strlen((char *)str)) / 8; ++y)
@@ -394,7 +394,7 @@ uint8_t		*unhash_des_message(t_hash *hash, uint8_t div_key[16][6], bool bp, enum
 			in_u8(str + 8 * y, tmp);
 			ip(tmp);
 			mess = divide_message(tmp, div_key, true);
-			mess = xor_message64(mess, xor, mode, y == 0 ? xor : str + 8 * (y - 1));
+			mess = xor_message64(mess, xor, mode, y == 0 ? xor : str + 8 * (y - 1), y);
 			to_bytes64(mess, xor);
 			for (int z = 0; z < 8; ++z)
 				v_push_int(&print, ((mess >> (56 - (8 * z))) & 0xff));

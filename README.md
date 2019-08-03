@@ -12,12 +12,15 @@ ft_ssl hash_fct [-pqrdea] [-s string] [-i in_file] [-o out_file]
 #### Cifers
 - base64
 - base64url
+- des-ecb
+- des-cbc
+- des-pcbc
 
 ## Generics flags
-- -p echo STDIN to STDOUT and append the checksum to STDOUT -don't work with des, des-ecb-
+- -p echo STDIN to STDOUT and append the checksum to STDOUT -don't work with des functions-
 - -q only print hash
 - -r reverse the output
-- -s hash the string -don't work with des, des-ecb-
+- -s hash the string -don't work with des functions-
 - -i input file  -optional-
 - -o output file -default: stdout- -can only be used once-
 
