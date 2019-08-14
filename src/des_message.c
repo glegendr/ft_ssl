@@ -335,8 +335,6 @@ uint8_t		*hash_des_message(t_hash *hash, uint8_t div_key[16][6], bool bp, enum d
 		free(ops.salt);
 	if (ops.init_vec)
 		free(ops.init_vec);
-	if (ops.pwd)
-		free(ops.pwd);
 	v_del(&print);
 	v_del_all(&hash->folder);
 	v_del_all(&hash->str);

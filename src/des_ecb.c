@@ -7,15 +7,19 @@
 
 uint8_t *get_pwd(void)
 {
-	uint8_t *ret;
+	uint8_t *cmp;
+	char *ret;
 
-	ret = (uint8_t *)ft_strdup(getpass("enter des-ecb encryption password"));
-	if (ft_strcmp((char *)ret, getpass("Verifying - enter des-ecb encryption password")))
+	cmp = (uint8_t *)ft_strdup(getpass("enter des encryption password"));
+	if (ft_strcmp((char *)cmp,
+		(ret = getpass("Verifying - enter des encryption password"))))
 	{
 		write(2, "Verify failure\nbad password read\n", 34);
+		free(cmp);
 		exit(1);
 	}
-	return ret;
+	free(cmp);
+	return ((uint8_t *)ret);
 }
 
 void		in_u8(uint8_t *cpy, uint8_t *in)
@@ -64,6 +68,8 @@ void		create_key(uint8_t *pwd, uint8_t *salt, uint8_t *key, uint8_t *iv)
 	in_u8(md5_ret, key);
 	if (iv)
 		in_u8(md5_ret + 8, iv);
+	free(md5_ret);
+	v_del_all(&ret_vec);
 }
 
 uint8_t		*des_ecb(t_hash *hash, bool print)
