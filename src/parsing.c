@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/20 16:11:40 by glegendr          #+#    #+#             */
-/*   Updated: 2019/08/03 16:58:49 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/08/14 07:13:42 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,8 +90,6 @@ static int		match_flag(char *flag, t_hash *tab)
 	}
 	return (0);
 }
-
-#include <stdio.h>
 
 static void		hex_flag(t_hash *hash, char *str, int flag)
 {

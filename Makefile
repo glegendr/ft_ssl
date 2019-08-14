@@ -8,11 +8,11 @@ CFLAG+= -Wall
 #CFLAG+= -fsanitize=address
 SRCNAME= main parsing get_all md5 pad_message sha256 sha224 sha512 sha384 generic base64 base64_url des_ecb des_key des_message
 
-LIBS= ./pods/libvec/libvec.a ./pods/libft/libft.a ./pods/ft_printf/libftprintf.a
+LIBS= ./pods/libvec/libvec.a ./pods/libft/libft.a
 
-CC_LIBS= make -C ./pods/libvec/; make -C ./pods/libft/; make -C ./pods/ft_printf/
+CC_LIBS= make -C ./pods/libvec/; make -C ./pods/libft/;
 
-INC_DIR_LIBS= -I ./pods/libvec/inc/ -I ./pods/libft/inc -I ./pods/ft_printf/inc
+INC_DIR_LIBS= -I ./pods/libvec/inc/ -I ./pods/libft/inc
 
 INC_DIR=./inc/
 

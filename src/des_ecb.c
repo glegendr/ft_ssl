@@ -1,14 +1,23 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   des_ecb.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2019/08/14 07:23:21 by glegendr          #+#    #+#             */
+/*   Updated: 2019/08/14 07:51:44 by glegendr         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "ft_ssl.h"
 #include <libft.h>
+#include <des.h>
 
-
-#include <ft_printf.h>
-#include <stdio.h>
-
-uint8_t *get_pwd(void)
+uint8_t		*get_pwd(void)
 {
-	uint8_t *cmp;
-	char *ret;
+	uint8_t	*cmp;
+	char	*ret;
 
 	cmp = (uint8_t *)ft_strdup(getpass("enter des encryption password"));
 	if (ft_strcmp((char *)cmp,
@@ -47,13 +56,12 @@ void		create_salt(uint8_t *salt, uint8_t *ops_salt)
 	read(fd, salt, 8);
 }
 
-
 void		create_key(uint8_t *pwd, uint8_t *salt, uint8_t *key, uint8_t *iv)
 {
-	t_hash concat;
-	t_vec concat_vec;
-	t_vec ret_vec;
-	uint8_t *md5_ret;
+	t_hash	concat;
+	t_vec	concat_vec;
+	t_vec	ret_vec;
+	uint8_t	*md5_ret;
 
 	ret_vec = v_new(sizeof(t_vec));
 	concat_vec = v_new(sizeof(uint8_t));
@@ -72,14 +80,15 @@ void		create_key(uint8_t *pwd, uint8_t *salt, uint8_t *key, uint8_t *iv)
 	v_del_all(&ret_vec);
 }
 
-uint8_t		*des_ecb(t_hash *hash, bool print)
+uint8_t		*core_des(t_hash *hash, bool print, enum des_mode mode)
 {
-	t_ops ops = hash->ops;
+	t_ops ops;
 	uint32_t divided_key[32];
 	uint8_t final_keys[16][6] = {{0}};
 	uint8_t salt[8];
 	uint8_t key[8];
 
+	ops = hash->ops;
 	if (!ops.key)
 	{
 		if (!ops.pwd)
@@ -94,58 +103,21 @@ uint8_t		*des_ecb(t_hash *hash, bool print)
 	rotate_key(key, divided_key);
 	pc2(divided_key, final_keys);
 	if (hash->arg & D_FLAG)
-		return (unhash_des_message(hash, final_keys, print, ECB));
-	return (hash_des_message(hash, final_keys, print, ECB));
+		return (unhash_des_message(hash, final_keys, print, mode));
+	return (hash_des_message(hash, final_keys, print, mode));
+}
+
+uint8_t		*des_ecb(t_hash *hash, bool print)
+{
+	return (core_des(hash, print, ECB));
 }
 
 uint8_t		*des_cbc(t_hash *hash, bool print)
 {
-	t_ops ops = hash->ops;
-	uint32_t divided_key[32];
-	uint8_t final_keys[16][6] = {{0}};
-	uint8_t salt[8];
-	uint8_t key[8];
-
-	if (!ops.key)
-	{
-		if (!ops.pwd)
-			ops.pwd = get_pwd();
-		create_salt(salt, ops.salt);
-		create_key(ops.pwd, salt, key, NULL);
-		ops.salt = salt;
-	}
-	else
-		in_u8(ops.key, key);
-	pc1(key);
-	rotate_key(key, divided_key);
-	pc2(divided_key, final_keys);
-	if (hash->arg & D_FLAG)
-		return (unhash_des_message(hash, final_keys, print, CBC));
-	return (hash_des_message(hash, final_keys, print, CBC));
+	return (core_des(hash, print, CBC));
 }
 
 uint8_t		*des_pcbc(t_hash *hash, bool print)
 {
-	t_ops ops = hash->ops;
-	uint32_t divided_key[32];
-	uint8_t final_keys[16][6] = {{0}};
-	uint8_t salt[8];
-	uint8_t key[8];
-
-	if (!ops.key)
-	{
-		if (!ops.pwd)
-			ops.pwd = get_pwd();
-		create_salt(salt, ops.salt);
-		create_key(ops.pwd, salt, key, NULL);
-		ops.salt = salt;
-	}
-	else
-		in_u8(ops.key, key);
-	pc1(key);
-	rotate_key(key, divided_key);
-	pc2(divided_key, final_keys);
-	if (hash->arg & D_FLAG)
-		return (unhash_des_message(hash, final_keys, print, PCBC));
-	return (hash_des_message(hash, final_keys, print, PCBC));
+	return (core_des(hash, print, PCBC));
 }

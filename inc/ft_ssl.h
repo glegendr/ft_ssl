@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/19 17:32:20 by glegendr          #+#    #+#             */
-/*   Updated: 2019/07/22 16:25:30 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/08/14 08:02:06 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,14 +34,6 @@ typedef struct	s_hash_ops
 	void		(*digest)(uint64_t *a, uint8_t *b);
 	int			fd;
 }				t_ops;
-
-enum des_mode
-{
-	ECB = 0,
-	CBC = 1,
-	PCBC  = 2
-};
-
 
 typedef struct	s_hash
 {
@@ -129,16 +121,6 @@ int				get_index(uint8_t *a, char *b, uint8_t *c, int d);
 int				append_error(t_vec *a);
 void			encript_base(uint8_t *a, char *b, int c, t_vec *d);
 void			generate_base(char *a, bool b);
-
-/*
-** DES Functions
-*/
-void			pc1(uint8_t *str);
-void			pc2(uint32_t *str, uint8_t key[16][6]);
-void			rotate_key(uint8_t *pwd, uint32_t *div_key);
-uint8_t			*hash_des_message(t_hash *hash, uint8_t div_key[16][6], bool bp, enum des_mode mode);
-uint8_t			*unhash_des_message(t_hash *hash, uint8_t div_key[16][6], bool bp, enum des_mode mode);
-void			create_key(uint8_t *pwd, uint8_t *salt, uint8_t *key, uint8_t *iv);
 
 /*
 ** Parse Functions

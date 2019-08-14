@@ -1,15 +1,28 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   des_key.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2019/08/14 07:17:26 by glegendr          #+#    #+#             */
+/*   Updated: 2019/08/14 07:50:45 by glegendr         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "ft_ssl.h"
 #include <libft.h>
+#include <des.h>
 
 void		bit(uint8_t *ret, int i, uint8_t *str, int pos)
 {
-	uint8_t x;
-	int posit;
-	int bit;
-	int in_ret;
+	uint8_t	x;
+	int		posit;
+	int		bit;
+	int		in_ret;
 
 	posit = pos - pos / 8 * 8;
-	in_ret = ((posit == 0 ? pos - 1: pos) / 8);
+	in_ret = ((posit == 0 ? pos - 1 : pos) / 8);
 	if (posit == 0)
 		posit = 8;
 	x = 1 << (8 - posit);
@@ -31,35 +44,19 @@ void		in_str(uint8_t *str, uint8_t *ret)
 	str[6] = ret[6];
 }
 
-int const g_pc1[56] =  {
-	57, 49, 41, 33, 25, 17, 9,
-	1, 58, 50, 42, 34, 26, 18,
-	10, 2, 59, 51, 43, 35, 27,
-	19, 11, 3, 60, 52, 44, 36,
-	63, 55, 47, 39, 31, 23, 15,
-	7, 62, 54, 46, 38, 30, 22,
-	14, 6, 61, 53, 45, 37, 29,
-	21, 13, 5, 28, 20, 12, 4
-};
-
 void		pc1(uint8_t *str)
 {
-	uint8_t ret[7] = {0};
+	uint8_t	ret[7] = {0};
+	int		i;
 
-	for (int i = 0; i < 56; ++i)
+	i = 0;
+	while (i < 56)
+	{
 		bit(ret, i + 1, str, g_pc1[i]);
+		++i;
+	}
 	in_str(str, ret);
 }
-
-int const g_pc2[48] = {
-		14, 17, 11, 24, 1, 5,
-		3, 28, 15, 6, 21, 10,
-		23, 19, 12, 4, 26, 8,
-		16, 7,  27, 20, 13, 2,
-		41, 52, 31, 37, 47, 55,
-		30, 40, 51, 45, 33, 48,
-		44, 49, 39, 56, 34, 53,
-		46, 42, 50, 36, 29, 32 };
 
 void		def_in(uint8_t *in, uint32_t cn, uint32_t dn)
 {
@@ -74,9 +71,9 @@ void		def_in(uint8_t *in, uint32_t cn, uint32_t dn)
 
 void		pc2(uint32_t *str, uint8_t ret[16][6])
 {
-	int i;
-	int y;
-	uint8_t in[7];
+	int		i;
+	int		y;
+	uint8_t	in[7];
 
 	y = 0;
 	while (y < 16)
@@ -92,12 +89,11 @@ void		pc2(uint32_t *str, uint8_t ret[16][6])
 	}
 }
 
-
-uint32_t		u8_to_b28(uint8_t *val, bool first)
+uint32_t	u8_to_b28(uint8_t *val, bool first)
 {
-	int i;
-	uint32_t bytes;
-	uint8_t *str;
+	int			i;
+	uint32_t	bytes;
+	uint8_t		*str;
 
 	i = 0;
 	str = val;
@@ -125,23 +121,26 @@ uint32_t		u8_to_b28(uint8_t *val, bool first)
 
 void		rotate_key(uint8_t *pwd, uint32_t *div_key)
 {
-	uint32_t c0;
-	uint32_t d0;
-	int x;
+	uint32_t	c0;
+	uint32_t	d0;
+	int			x;
+	int			i;
 
+	i = 0;
 	c0 = u8_to_b28(pwd, true);
 	d0 = u8_to_b28(pwd + 3, false);
-
 	x = 1;
-	for (int i = 0; i < 16; ++i)
+	while (i < 16)
 	{
 		if (i == 2 || i == 9)
 			x = 2;
 		else if (i == 8 || i == 15)
 			x = 1;
 		div_key[i] = (ROTL(i == 0 ? c0 : div_key[i - 1], x, 28) & 0xfffffff);
+		++i;
 	}
-	for (int i = 0; i < 16; ++i)
+	i = 0;
+	while (i < 16)
 	{
 		if (i == 2 || i == 9)
 			x = 2;
@@ -149,5 +148,6 @@ void		rotate_key(uint8_t *pwd, uint32_t *div_key)
 			x = 1;
 		div_key[i + 16] = (ROTL(i == 0 ? d0 : div_key[i + 15], x, 28)
 							& 0xfffffff);
+		++i;
 	}
 }
