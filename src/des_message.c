@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/14 07:33:06 by glegendr          #+#    #+#             */
-/*   Updated: 2019/08/14 08:41:17 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/08/22 16:01:00 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,9 @@
 void		ip(uint8_t *str)
 {
 	int		i;
-	uint8_t	ret[8] = {0};
+	uint8_t	ret[8];
 
+	ft_bzero(ret, 8 * sizeof(uint8_t));
 	i = 0;
 	while (i < 64)
 	{
@@ -51,8 +52,9 @@ uint32_t	u8_to_b32(uint8_t *val)
 void		e_bit(uint8_t *ret, uint32_t ln)
 {
 	int		i;
-	uint8_t	str[4] = {0};
+	uint8_t	str[4];
 
+	ft_bzero(str, 4 * sizeof(uint8_t));
 	to_bytes32(ln, str);
 	i = 0;
 	while (i < 48)
@@ -113,10 +115,12 @@ uint32_t	p(uint8_t *six)
 
 uint32_t	f(uint32_t ln, uint8_t *key)
 {
-	uint8_t	tmp[6] = {0};
-	uint8_t	six_bit[8] = {0};
+	uint8_t	tmp[6];
+	uint8_t	six_bit[8];
 	int		i;
 
+	ft_bzero(tmp, 6 * sizeof(uint8_t));
+	ft_bzero(six_bit, 8 * sizeof(uint8_t));
 	i = 0;
 	e_bit(tmp, ln);
 	while (i < 6)
@@ -231,47 +235,39 @@ void		clean_des(t_hash *hash, t_vec *print)
 	v_del(print);
 	v_del_all(&hash->folder);
 	v_del_all(&hash->str);
-
 }
 
-uint8_t		*hash_des_message(t_hash *hash, uint8_t div_key[16][6], bool bp, enum des_mode mode)
+#define PUSH_SALT(p, h) {v_append_raw(p, "Salted__", 8); v_append_raw(p, h, 8);}
+
+#include <stdio.h>
+
+uint8_t		*hash_des_message(t_hash *hash, uint8_t div_key[16][6], bool bp,
+								enum des_mode mode)
 {
-	t_ops		ops;
-	int			i;
-	uint64_t	div_ret;
 	uint8_t		*str;
 	t_vec		print;
-	uint8_t		xor[8] = {0};
+	uint8_t		xor[8];
+	int			y;
 
-	i = 0;
+	y = 0;
 	print = v_new(sizeof(uint8_t));
-	ops = hash->ops;
 	if (mode != ECB)
-		in_u8(ops.init_vec, xor);
-	if (ops.salt)
+		in_u8(hash->ops.init_vec, xor);
+	if (hash->ops.salt)
+		PUSH_SALT(&print, hash->ops.salt);
+	pkcs5_pad(v_get(&hash->str, 0));
+	str = v_raw(v_get(&hash->str, 0));
+	while (y < v_size(v_get(&hash->str, 0)) / 8)
 	{
-		v_append_raw(&print, "Salted__", 8);
-		v_append_raw(&print, ops.salt, 8);
+		xor_message(str, xor, mode, y++);
+		ip(xor);
+		to_bytes64(divide_message(xor, div_key, false), xor);
+		v_append_raw(&print, xor, 8);
 	}
-	while (i < v_size(&hash->str))
-	{
-		pkcs5_pad(v_get(&hash->str, i));
-		str = v_raw(v_get(&hash->str, i));
-		for (int y = 0; y < v_size(v_get(&hash->str, i)) / 8; ++y)
-		{
-			xor_message(str, xor, mode, y);
-			ip(xor);
-			div_ret = divide_message(xor, div_key, false);
-			to_bytes64(div_ret, xor);
-			for (int z = 0; z < 8; ++z)
-				v_push_int(&print, ((div_ret >> (64 - (8 * (z + 1)))) & 0xff));
-		}
-		if (!bp)
-			return (print_des_message(hash, &print, false, bp));
-		print_des_message(hash, &print, false, bp);
-		v_reset(&print);
-		++i;
-	}
+	if (!bp)
+		return (print_des_message(hash, &print, false, bp));
+	printf("\n%i\n", v_size(&print));
+	print_des_message(hash, &print, false, bp);
 	clean_des(hash, &print);
 	return (NULL);
 }
@@ -303,54 +299,78 @@ uint64_t	xor_message64(uint64_t mess, uint8_t *xor, enum des_mode mode,
 	return (ret ^ mess);
 }
 
+
+uint8_t		*unhash_base64(t_hash *hash, int *len)
+{
+	t_hash		tmp;
+	t_vec		vec;
+	uint8_t		*ret;
+
+	vec = v_new(sizeof(t_vec));
+	v_push(&vec, v_get(&hash->str, 0));
+	tmp = *hash;
+	tmp.str = vec;
+	tmp.arg |= D_FLAG;
+	ret = base64(&tmp, false);
+	*len = tmp.ops.message_len;
+	return (ret);
+}
+
+void		found_pad(t_vec *print)
+{
+	uint8_t tmp;
+
+	tmp = *(uint8_t *)v_get(print, v_size(print) - 1);
+	if (tmp > 8)
+		return ;
+	while (tmp > 0)
+	{
+		v_del_last(print);
+		--tmp;
+	}
+}
+
 uint8_t		*unhash_des_message(t_hash *hash, uint8_t div_key[16][6],
 								bool bp, enum des_mode mode)
 {
 	uint64_t	mess;
-	t_hash		tmp;
-	t_vec		vec;
 	uint8_t		*str;
-	uint8_t		xor[8] = {0};
+	uint8_t		xor[8];
 	t_vec		print;
-	int			i;
+	int			len;
 
-	i = 0;
+	ft_bzero(xor, 8 * sizeof(uint8_t));
 	if (hash->ops.init_vec)
 		in_u8(hash->ops.init_vec, xor);
 	print = v_new(sizeof(uint8_t));
-	while (i < v_size(&hash->str))
+	if (hash->arg & A_FLAG)
+		str = unhash_base64(hash, &len);
+	else
 	{
-		if (hash->arg & A_FLAG)
-		{
-			vec = v_new(sizeof(t_vec));
-			v_push(&vec, v_get(&hash->str, i));
-			tmp = *hash;
-			tmp.str = vec;
-			tmp.arg |= D_FLAG;
-			str = base64(&tmp, false);
-		}
-		else
-			str = v_raw(v_get(&hash->str, i));
-		if (!hash->ops.key)
-			str += 16;
-		for (unsigned long int y = 0; y < (ft_strlen((char *)str)) / 8; ++y)
-		{
-			uint8_t tmp[8] = {0};
-
-			in_u8(str + 8 * y, tmp);
-			ip(tmp);
-			mess = divide_message(tmp, div_key, true);
-			mess = xor_message64(mess, xor, mode, y == 0 ? xor : str + 8 * (y - 1), y);
-			to_bytes64(mess, xor);
-			for (int z = 0; z < 8; ++z)
-				v_push_int(&print, ((mess >> (56 - (8 * z))) & 0xff));
-		}
-		if (!bp)
-			return (print_des_message(hash, &print, true, bp));
-		print_des_message(hash, &print, true, bp);
-		v_reset(&print);
-		++i;
+		str = v_raw(v_get(&hash->str, 0));
+		len = v_size(v_get(&hash->str, 0));
 	}
+	if (!hash->ops.key)
+	{
+		str += 16;
+//		len -= 20;
+	}
+	printf("%i\n", len);
+	for (int y = 0; y < len / 8; ++y)
+	{
+		uint8_t tmp[8] = {0};
+
+		in_u8(str + 8 * y, tmp);
+		ip(tmp);
+		mess = divide_message(tmp, div_key, true);
+		mess = xor_message64(mess, xor, mode, y == 0 ? xor : str + 8 * (y - 1), y);
+		to_bytes64(mess, xor);
+		v_append_raw(&print, xor, 8);
+	}
+	found_pad(&print);
+	if (!bp)
+		return (print_des_message(hash, &print, true, bp));
+	print_des_message(hash, &print, true, bp);
 	clean_des(hash, &print);
 	return (NULL);
 }

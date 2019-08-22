@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/19 16:23:20 by glegendr          #+#    #+#             */
-/*   Updated: 2019/08/03 17:46:06 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/08/22 15:34:44 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,8 @@ int				decript_base(t_vec *vec, char *base, int *z, t_vec *print)
 	return (0);
 }
 
+#include <stdio.h>
+
 uint8_t			*bases(t_hash *tab, char *base, int i, int z, bool print_b)
 {
 	t_vec	print;
@@ -92,7 +94,7 @@ uint8_t			*bases(t_hash *tab, char *base, int i, int z, bool print_b)
 		tab->ops.message_len = v_size(&print);
 		if (!print_b)
 		{
-			v_push_int(&print, '\0');
+			tab->ops.message_len = v_size(&print);
 			return ((uint8_t *)v_raw(&print));
 		}
 		print_hash(&print, tab, i, tab->ops);
