@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/20 15:48:29 by glegendr          #+#    #+#             */
-/*   Updated: 2019/07/11 17:37:53 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/08/26 12:55:59 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,21 +67,24 @@ void			encript_base(uint8_t *raw, char *base, int len, t_vec *print)
 	v_push_int(print, base[ret[3]]);
 }
 
-int				get_index(uint8_t *raw, char *base, uint8_t *index, int i)
+int				get_index(uint8_t *raw, char *base, uint8_t *index, int *i)
 {
 	int y;
 
 	y = 0;
 	while (y < 65)
 	{
-		if (raw[i] == base[y])
+		if (raw[*i] == base[y])
 		{
-			index[i] = y;
+			if (y == 64)
+				*i = 4;
+			else
+				index[*i] = y;
 			break ;
 		}
 		++y;
 	}
-	if (index[i] == 255 && raw[i] != '\n' && raw[i] != '\0')
+	if (index[*i] == 255 && raw[*i] != '\n' && raw[*i] != '\0')
 		return (1);
 	return (0);
 }

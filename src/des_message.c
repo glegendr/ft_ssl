@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/14 07:33:06 by glegendr          #+#    #+#             */
-/*   Updated: 2019/08/22 16:01:00 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/08/26 13:01:37 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -266,7 +266,6 @@ uint8_t		*hash_des_message(t_hash *hash, uint8_t div_key[16][6], bool bp,
 	}
 	if (!bp)
 		return (print_des_message(hash, &print, false, bp));
-	printf("\n%i\n", v_size(&print));
 	print_des_message(hash, &print, false, bp);
 	clean_des(hash, &print);
 	return (NULL);
@@ -350,12 +349,6 @@ uint8_t		*unhash_des_message(t_hash *hash, uint8_t div_key[16][6],
 		str = v_raw(v_get(&hash->str, 0));
 		len = v_size(v_get(&hash->str, 0));
 	}
-	if (!hash->ops.key)
-	{
-		str += 16;
-//		len -= 20;
-	}
-	printf("%i\n", len);
 	for (int y = 0; y < len / 8; ++y)
 	{
 		uint8_t tmp[8] = {0};
@@ -368,9 +361,16 @@ uint8_t		*unhash_des_message(t_hash *hash, uint8_t div_key[16][6],
 		v_append_raw(&print, xor, 8);
 	}
 	found_pad(&print);
+	if (!hash->ops.key)
+	{
+		print.private_content += 16;
+		print.private_elem_nb -= 16;
+	}
 	if (!bp)
 		return (print_des_message(hash, &print, true, bp));
 	print_des_message(hash, &print, true, bp);
+	if (!hash->ops.key)
+		print.private_content -= 16;
 	clean_des(hash, &print);
 	return (NULL);
 }

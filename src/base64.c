@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/19 16:23:20 by glegendr          #+#    #+#             */
-/*   Updated: 2019/08/22 15:34:44 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/08/26 13:03:57 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,17 +15,18 @@
 #include <libft.h>
 #include "ft_ssl.h"
 
+#include <stdio.h>
 void			append_ret(uint8_t *ret, uint8_t *index, t_vec *print, int i)
 {
+	if (i == 5)
+		i = 3;
 	if (i > 0)
 		ret[0] = (index[0] << 2) | ((index[1] & 0x30) >> 4);
 	if (i > 1)
 		ret[1] = ((index[1] & 0xf) << 4) | ((index[2] & 0x3c) >> 2);
 	if (i > 2)
 		ret[2] = ((index[2] & 0x3) << 6) | index[3];
-	if (ret[2] == '@')
-		ret[2] = '\0';
-	v_append_raw(print, ret, 3);
+	v_append_raw(print, ret, i - 1);
 }
 
 void			init_tabs(uint8_t *ret, uint8_t *index)
@@ -60,15 +61,15 @@ int				decript_base(t_vec *vec, char *base, int *z, t_vec *print)
 		}
 		if (*z >= len)
 			break ;
-		if (get_index(raw, base, index, i))
+		if (get_index(raw, base, index, &i))
 			return (append_error(print));
 		++i;
 	}
-	append_ret(ret, index, print, i);
+	if (*z < len)
+		append_ret(ret, index, print, i);
 	return (0);
 }
 
-#include <stdio.h>
 
 uint8_t			*bases(t_hash *tab, char *base, int i, int z, bool print_b)
 {

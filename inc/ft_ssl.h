@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/19 17:32:20 by glegendr          #+#    #+#             */
-/*   Updated: 2019/08/14 08:02:06 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/08/26 12:53:06 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,7 +117,7 @@ uint8_t			*get_pwd(void);
 ** Bases Functions
 */
 uint8_t			*bases(t_hash *a, char *b, int c, int d, bool print);
-int				get_index(uint8_t *a, char *b, uint8_t *c, int d);
+int				get_index(uint8_t *a, char *b, uint8_t *c, int *d);
 int				append_error(t_vec *a);
 void			encript_base(uint8_t *a, char *b, int c, t_vec *d);
 void			generate_base(char *a, bool b);
