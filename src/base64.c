@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/19 16:23:20 by glegendr          #+#    #+#             */
-/*   Updated: 2019/08/26 13:03:57 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/08/26 14:07:14 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 #include <libft.h>
 #include "ft_ssl.h"
 
-#include <stdio.h>
 void			append_ret(uint8_t *ret, uint8_t *index, t_vec *print, int i)
 {
 	if (i == 5)
@@ -46,36 +45,35 @@ int				decript_base(t_vec *vec, char *base, int *z, t_vec *print)
 	uint8_t	index[4];
 	int		i;
 	uint8_t	*raw;
-	int		len;
 
-	len = v_size(vec);
 	raw = (uint8_t *)v_raw(vec) + *z;
 	init_tabs(ret, index);
 	i = 0;
-	while (i < 4 && *z + i < len)
+	while (i < 4 && *z + i < v_size(vec))
 	{
-		while (ft_isspace(raw[i]) && *z < len)
+		while (ft_isspace(raw[i]) && *z < v_size(vec))
 		{
 			++raw;
 			++(*z);
 		}
-		if (*z >= len)
+		if (*z >= v_size(vec))
 			break ;
 		if (get_index(raw, base, index, &i))
 			return (append_error(print));
 		++i;
 	}
-	if (*z < len)
+	if (*z < v_size(vec))
 		append_ret(ret, index, print, i);
 	return (0);
 }
 
-
-uint8_t			*bases(t_hash *tab, char *base, int i, int z, bool print_b)
+uint8_t			*bases(t_hash *tab, char *base, int z, bool print_b)
 {
 	t_vec	print;
 	t_vec	*vec;
+	int		i;
 
+	i = 0;
 	print = v_new(sizeof(char));
 	while (i < v_size(&tab->str))
 	{
@@ -94,13 +92,9 @@ uint8_t			*bases(t_hash *tab, char *base, int i, int z, bool print_b)
 		}
 		tab->ops.message_len = v_size(&print);
 		if (!print_b)
-		{
-			tab->ops.message_len = v_size(&print);
 			return ((uint8_t *)v_raw(&print));
-		}
-		print_hash(&print, tab, i, tab->ops);
+		print_hash(&print, tab, i++, tab->ops);
 		v_reset(&print);
-		++i;
 	}
 	v_del(&print);
 	return (NULL);
@@ -112,5 +106,5 @@ uint8_t			*base64(t_hash *tab, bool print)
 
 	generate_base(base, false);
 	tab->ops.name = "BASE64";
-	return (bases(tab, base, 0, 0, print));
+	return (bases(tab, base, 0, print));
 }

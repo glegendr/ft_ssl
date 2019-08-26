@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/19 16:13:33 by glegendr          #+#    #+#             */
-/*   Updated: 2019/08/22 13:35:32 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/08/26 14:05:12 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,8 +109,8 @@ static void	encript(t_vec *ck, t_ops ops, uint8_t *ret, int loop)
 
 uint8_t		*copy_ret(uint8_t *ret, int len)
 {
-	uint8_t *cpy;
-	int i;
+	uint8_t	*cpy;
+	int		i;
 
 	i = 0;
 	if ((cpy = (uint8_t *)malloc(len * sizeof(uint8_t))) == NULL)

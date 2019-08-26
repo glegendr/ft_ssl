@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/14 07:23:21 by glegendr          #+#    #+#             */
-/*   Updated: 2019/08/14 07:51:44 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/08/26 13:25:49 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,14 +80,16 @@ void		create_key(uint8_t *pwd, uint8_t *salt, uint8_t *key, uint8_t *iv)
 	v_del_all(&ret_vec);
 }
 
-uint8_t		*core_des(t_hash *hash, bool print, enum des_mode mode)
+uint8_t		*core_des(t_hash *hash, bool print, enum des_mode mode, int i)
 {
-	t_ops ops;
-	uint32_t divided_key[32];
-	uint8_t final_keys[16][6] = {{0}};
-	uint8_t salt[8];
-	uint8_t key[8];
+	t_ops		ops;
+	uint32_t	divided_key[32];
+	uint8_t		final_keys[16][6];
+	uint8_t		salt[8];
+	uint8_t		key[8];
 
+	while (i < 16)
+		ft_bzero(final_keys[i++], 6 * sizeof(uint8_t));
 	ops = hash->ops;
 	if (!ops.key)
 	{
@@ -109,15 +111,15 @@ uint8_t		*core_des(t_hash *hash, bool print, enum des_mode mode)
 
 uint8_t		*des_ecb(t_hash *hash, bool print)
 {
-	return (core_des(hash, print, ECB));
+	return (core_des(hash, print, ECB, 0));
 }
 
 uint8_t		*des_cbc(t_hash *hash, bool print)
 {
-	return (core_des(hash, print, CBC));
+	return (core_des(hash, print, CBC, 0));
 }
 
 uint8_t		*des_pcbc(t_hash *hash, bool print)
 {
-	return (core_des(hash, print, PCBC));
+	return (core_des(hash, print, PCBC, 0));
 }

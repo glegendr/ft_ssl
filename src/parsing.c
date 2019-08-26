@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/20 16:11:40 by glegendr          #+#    #+#             */
-/*   Updated: 2019/08/14 07:13:42 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/08/26 14:11:18 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,10 +93,10 @@ static int		match_flag(char *flag, t_hash *tab)
 
 static void		hex_flag(t_hash *hash, char *str, int flag)
 {
-	uint8_t *key;
-	int len;
-	int i;
-	char in;
+	uint8_t	*key;
+	int		len;
+	int		i;
+	char	in;
 
 	if (!(key = malloc(sizeof(uint8_t) * 8)))
 		return ;

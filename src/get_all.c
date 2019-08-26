@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/20 16:10:07 by glegendr          #+#    #+#             */
-/*   Updated: 2019/08/03 17:13:32 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/08/26 13:22:03 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,8 @@
 
 char *const g_tab[NB_HASH] = {"md5", "sha256", "sha512", "sha384", "sha224",
 	"base64", "base64url", "des", "des-ecb", "des-cbc", "des-pcbc"};
-uint8_t *(*const g_hash_fct[NB_HASH])(t_hash *, bool) = {md5, sha256, sha512, sha384, sha224, base64, base64url, des_cbc, des_ecb, des_cbc, des_pcbc};
+uint8_t *(*const g_hash_fct[NB_HASH])(t_hash *, bool) = {md5, sha256, sha512,
+	sha384, sha224, base64, base64url, des_cbc, des_ecb, des_cbc, des_pcbc};
 
 uint8_t			*(*get_hash_fct(char *name))(t_hash *, bool)
 {
@@ -59,7 +60,8 @@ static char		*get_all_hash(void)
 char			*get_usage(void)
 {
 	return ("Generics flags are:\n"
-	" -p echo STDIN to STDOUT and append the checksum to STDOUT -don't work with des, des-ecb-\n"
+	" -p echo STDIN to STDOUT and append the checksum to STDOUT -don't"
+	"work with des, des-ecb-\n"
 	" -q only print hash\n"
 	" -r reverse the output\n"
 	" -s hash the string -don't work with des, des-ecb-\n"
@@ -107,14 +109,17 @@ void			get_help(t_hash *tab)
 	v_append_raw(&vec, s, ft_strlen(s));
 	s = "Specific flags for your function are:\n";
 	v_append_raw(&vec, s, ft_strlen(s));
-	if (tab->f == base64 || tab->f == base64url || tab->f == des_ecb || tab->f == des_cbc || tab->f == des_pcbc)
+	if (tab->f == base64 || tab->f == base64url || tab->f == des_ecb ||
+		tab->f == des_cbc || tab->f == des_pcbc)
 	{
 		s = " -d decode hash\n -e encode hash -optional-\n";
 		v_append_raw(&vec, s, ft_strlen(s));
 	}
 	if (tab->f == des_ecb || tab->f == des_cbc || tab->f == des_pcbc)
 	{
-		s = " -k key in hex\n -s salt in hex\n -v initialization vector in hex\n -a decode/encode the input/output in base64, depending on the encrypt mode\n -p next arg is your password\n";
+		s = " -k key in hex\n -s salt in hex\n -v initialization vector"
+			"in hex\n -a decode/encode the input/output in base64, depending on"
+			"the encrypt mode\n -p next arg is your password\n";
 		v_append_raw(&vec, s, ft_strlen(s));
 	}
 	write(2, (char *)v_raw(&vec), v_size(&vec));

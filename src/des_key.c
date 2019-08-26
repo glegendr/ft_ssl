@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/14 07:17:26 by glegendr          #+#    #+#             */
-/*   Updated: 2019/08/14 07:50:45 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/08/26 13:53:28 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,10 +46,11 @@ void		in_str(uint8_t *str, uint8_t *ret)
 
 void		pc1(uint8_t *str)
 {
-	uint8_t	ret[7] = {0};
+	uint8_t	ret[7];
 	int		i;
 
 	i = 0;
+	ft_bzero(ret, 7 * sizeof(uint8_t));
 	while (i < 56)
 	{
 		bit(ret, i + 1, str, g_pc1[i]);
@@ -108,8 +109,7 @@ uint32_t	u8_to_b28(uint8_t *val, bool first)
 	{
 		if (!(!first && i == 0))
 			bytes = bytes << 8;
-		bytes = bytes | str[i];
-		++i;
+		bytes = bytes | str[i++];
 	}
 	if (first)
 	{
@@ -126,28 +126,17 @@ void		rotate_key(uint8_t *pwd, uint32_t *div_key)
 	int			x;
 	int			i;
 
-	i = 0;
 	c0 = u8_to_b28(pwd, true);
 	d0 = u8_to_b28(pwd + 3, false);
-	x = 1;
-	while (i < 16)
-	{
-		if (i == 2 || i == 9)
-			x = 2;
-		else if (i == 8 || i == 15)
-			x = 1;
-		div_key[i] = (ROTL(i == 0 ? c0 : div_key[i - 1], x, 28) & 0xfffffff);
-		++i;
-	}
 	i = 0;
-	while (i < 16)
+	x = 1;
+	while (i < 32)
 	{
-		if (i == 2 || i == 9)
+		if (i == 2 || i == 9 || i == 16 + 2 || i == 16 + 9)
 			x = 2;
-		else if (i == 8 || i == 15)
+		else if (i == 8 || i == 15 || i == 16 + 8 || i == 16 + 15)
 			x = 1;
-		div_key[i + 16] = (ROTL(i == 0 ? d0 : div_key[i + 15], x, 28)
-							& 0xfffffff);
+		div_key[i] = DEFKEY(i < 16 ? c0 : d0);
 		++i;
 	}
 }

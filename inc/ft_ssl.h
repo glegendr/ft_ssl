@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/19 17:32:20 by glegendr          #+#    #+#             */
-/*   Updated: 2019/08/26 12:53:06 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/08/26 13:53:19 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,7 @@ typedef uint8_t		*(*t_fct)(t_hash *, bool);
 # define ROTL(x, c, size) (((x) << (c)) | ((x) >> (size - (c))))
 # define ROTR(x, n, size) ((x >> n) | (x << (size - n)))
 # define SHR(x, n) (x >> n)
+# define DEFKEY(a) (ROTL((i % 16 == 0) ? a : div_key[i - 1], x, 28) & 0xfffffff)
 
 /*
 ** All Hash Functions
@@ -116,7 +117,7 @@ uint8_t			*get_pwd(void);
 /*
 ** Bases Functions
 */
-uint8_t			*bases(t_hash *a, char *b, int c, int d, bool print);
+uint8_t			*bases(t_hash *a, char *b, int c, bool print);
 int				get_index(uint8_t *a, char *b, uint8_t *c, int *d);
 int				append_error(t_vec *a);
 void			encript_base(uint8_t *a, char *b, int c, t_vec *d);
