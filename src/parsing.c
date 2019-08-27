@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/20 16:11:40 by glegendr          #+#    #+#             */
-/*   Updated: 2019/08/26 14:11:18 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/08/27 22:30:00 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,64 +15,10 @@
 #include <fcntl.h>
 #include "ft_ssl.h"
 
-int				add_flag(char flag, t_hash *tab)
-{
-	if (flag == 'p')
-	{
-		if (tab->ops.pwd)
-			print_usage(NULL);
-		tab->arg |= P_FLAG;
-	}
-	else if (flag == 'q')
-		tab->arg |= Q_FLAG;
-	else if (flag == 'r')
-		tab->arg |= R_FLAG;
-	else if (flag == 's')
-		tab->arg |= S_FLAG;
-	else if (flag == 'd')
-	{
-		if (tab->arg & E_FLAG)
-			print_usage(NULL);
-		tab->arg |= D_FLAG;
-	}
-	else if (flag == 'e')
-	{
-		if (tab->arg & D_FLAG)
-			print_usage(NULL);
-		tab->arg |= E_FLAG;
-	}
-	else if (flag == 'i')
-		tab->arg |= I_FLAG;
-	else if (flag == 'o')
-	{
-		if (tab->ops.fd != 1)
-			print_usage(NULL);
-		tab->arg |= O_FLAG;
-	}
-	else if (flag == 'k')
-	{
-		if (tab->ops.key)
-			print_usage(NULL);
-		tab->arg |= K_FLAG;
-	}
-	else if (flag == 'v')
-	{
-		if (tab->ops.init_vec)
-			print_usage(NULL);
-		tab->arg |= V_FLAG;
-	}
-	else if (flag == 'a')
-		tab->arg |= A_FLAG;
-	else if (flag == 'h')
-		get_help(tab);
-	else
-		return (1);
-	return (0);
-}
-
 static int		match_flag(char *flag, t_hash *tab)
 {
-	int i;
+	int		i;
+	void	(*f)(t_hash *);
 
 	if (!flag || !flag[1])
 		return (1);
@@ -85,8 +31,9 @@ static int		match_flag(char *flag, t_hash *tab)
 	i = 1;
 	while (flag[i])
 	{
-		if (add_flag(flag[i++], tab))
-			return (1);
+		f = get_flag_fct(flag[i]);
+		f(tab);
+		++i;
 	}
 	return (0);
 }
@@ -196,12 +143,14 @@ void			parse_argv(int argc, char *argv[])
 		if (match_flag(argv[i], &tab))
 			print_usage(NULL);
 		if ((tab.arg & S_FLAG) || (tab.arg & O_FLAG) || (tab.arg & I_FLAG)
-				|| ((tab.arg & P_FLAG) && (tab.f == des_ecb || tab.f == des_pcbc || tab.f == des_cbc))
+				|| ((tab.arg & P_FLAG) && (tab.f == des_ecb
+						|| tab.f == des_pcbc || tab.f == des_cbc))
 				|| (tab.arg & K_FLAG) || (tab.arg & V_FLAG))
 			argument_flags(&tab, argv, argc, &i);
 		++i;
 	}
-	if (!v_size(&tab.folder) || ((tab.arg & P_FLAG) && (tab.f != des_ecb && tab.f != des_cbc && tab.f != des_pcbc)))
+	if (!v_size(&tab.folder) || ((tab.arg & P_FLAG)
+				&& (tab.f != des_ecb && tab.f != des_cbc && tab.f != des_pcbc)))
 	{
 		read_file(&tab, 0, (tab.arg & P_FLAG) ? true : false);
 		into_vec(&tab.folder, NULL);

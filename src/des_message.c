@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/14 07:33:06 by glegendr          #+#    #+#             */
-/*   Updated: 2019/08/26 14:36:07 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/08/27 22:25:41 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -329,8 +329,7 @@ void		found_pad(t_vec *print)
 	}
 }
 
-# define DEL_SALT() print.private_content += 16;print.private_elem_nb -= 16
-# define TEST       enum des_mode mode, uint8_t *str, t_vec *print
+# define DEL_SALT() {print.private_content += 16;print.private_elem_nb -= 16;}
 
 void		launch_unhash(t_hash *hash, int len, uint8_t div_key[16][6],
 							enum des_mode mode, uint8_t *str, t_vec *print)
@@ -375,9 +374,7 @@ uint8_t		*unhash_des_message(t_hash *hash, uint8_t div_key[16][6],
 	launch_unhash(hash, len, div_key, mode, str, &print);
 	found_pad(&print);
 	if (!hash->ops.key)
-	{
-//		DEL_SALT();
-	}
+		DEL_SALT();
 	if (!bp)
 		return (print_des_message(hash, &print, true, bp));
 	print_des_message(hash, &print, true, bp);

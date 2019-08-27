@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/19 17:32:20 by glegendr          #+#    #+#             */
-/*   Updated: 2019/08/26 13:53:19 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/08/27 22:24:19 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,8 +45,10 @@ typedef struct	s_hash
 }				t_hash;
 
 typedef uint8_t		*(*t_fct)(t_hash *, bool);
+typedef void		(*t_flag)(t_hash *);
 # define BUFF_SIZE 12
 # define NB_HASH 11
+# define NB_FLAGS 12
 # define P_FLAG 1
 # define Q_FLAG 1 << 1
 # define R_FLAG 1 << 2
@@ -132,5 +134,21 @@ int				open_file(char *argv, int flag, int perm);
 void			into_vec(t_vec *to_push, char *str);
 void			o_flag(t_hash *tab, char *argv);
 t_fct			get_hash_fct(char *name);
+t_flag			get_flag_fct(char flag);
 void			get_help(t_hash *tab);
+
+/*
+** Flag Functions
+*/
+void			p_fct(t_hash *hash);
+void			q_fct(t_hash *hash);
+void			r_fct(t_hash *hash);
+void			s_fct(t_hash *hash);
+void			d_fct(t_hash *hash);
+void			e_fct(t_hash *hash);
+void			i_fct(t_hash *hash);
+void			o_fct(t_hash *hash);
+void			k_fct(t_hash *hash);
+void			v_fct(t_hash *hash);
+void			a_fct(t_hash *hash);
 #endif
