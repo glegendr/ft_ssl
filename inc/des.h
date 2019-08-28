@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/14 07:47:05 by glegendr          #+#    #+#             */
-/*   Updated: 2019/08/14 08:41:09 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/08/28 08:24:02 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,13 @@ enum	des_mode
 	CBC = 1,
 	PCBC = 2,
 };
+
+typedef struct		s_norm
+{
+	enum des_mode	mode;
+	uint8_t			*str;
+	int				len;
+}					t_norm;
 
 static int const g_ip[64] = {
 	58, 50, 42, 34, 26, 18, 10, 2,

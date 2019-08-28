@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/14 07:23:21 by glegendr          #+#    #+#             */
-/*   Updated: 2019/08/26 13:25:49 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/08/28 09:30:38 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,18 +29,6 @@ uint8_t		*get_pwd(void)
 	}
 	free(cmp);
 	return ((uint8_t *)ret);
-}
-
-void		in_u8(uint8_t *cpy, uint8_t *in)
-{
-	in[0] = cpy[0];
-	in[1] = cpy[1];
-	in[2] = cpy[2];
-	in[3] = cpy[3];
-	in[4] = cpy[4];
-	in[5] = cpy[5];
-	in[6] = cpy[6];
-	in[7] = cpy[7];
 }
 
 void		create_salt(uint8_t *salt, uint8_t *ops_salt)
@@ -112,11 +100,6 @@ uint8_t		*core_des(t_hash *hash, bool print, enum des_mode mode, int i)
 uint8_t		*des_ecb(t_hash *hash, bool print)
 {
 	return (core_des(hash, print, ECB, 0));
-}
-
-uint8_t		*des_cbc(t_hash *hash, bool print)
-{
-	return (core_des(hash, print, CBC, 0));
 }
 
 uint8_t		*des_pcbc(t_hash *hash, bool print)

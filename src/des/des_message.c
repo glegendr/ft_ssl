@@ -6,13 +6,14 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/14 07:33:06 by glegendr          #+#    #+#             */
-/*   Updated: 2019/08/27 22:25:41 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/08/28 08:20:01 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_ssl.h"
 #include <libft.h>
 #include <des.h>
+#define DEL_SALT() { print.private_content += 16; print.private_elem_nb -= 16; }
 
 void		ip(uint8_t *str)
 {
@@ -269,8 +270,17 @@ uint8_t		*hash_des_message(t_hash *hash, uint8_t div_key[16][6], bool bp,
 	return (NULL);
 }
 
-uint64_t	xor_message64(uint64_t mess, uint8_t *xor, enum des_mode mode,
-							uint8_t *str, int y)
+t_norm		concat_norm(enum des_mode mode, uint8_t *str, int len)
+{
+	t_norm norm;
+
+	norm.mode = mode;
+	norm.str = str;
+	norm.len = len;
+	return (norm);
+}
+
+uint64_t	xor_message64(uint64_t mess, uint8_t *xor, t_norm norm)
 {
 	uint64_t	ret;
 	uint64_t	pcbc;
@@ -279,14 +289,14 @@ uint64_t	xor_message64(uint64_t mess, uint8_t *xor, enum des_mode mode,
 	pcbc = 0;
 	ret = 0;
 	i = 0;
-	if (mode == ECB)
+	if (norm.mode == ECB)
 		return (mess);
 	while (i < 8)
 	{
 		ret = ret << 8;
-		ret |= str[i++];
+		ret |= norm.str[i++];
 	}
-	if (mode == PCBC && y != 0)
+	if (norm.mode == PCBC && norm.len != 0)
 	{
 		i = 0;
 		while (i < 8)
@@ -329,10 +339,8 @@ void		found_pad(t_vec *print)
 	}
 }
 
-# define DEL_SALT() {print.private_content += 16;print.private_elem_nb -= 16;}
-
-void		launch_unhash(t_hash *hash, int len, uint8_t div_key[16][6],
-							enum des_mode mode, uint8_t *str, t_vec *print)
+void		launch_unhash(t_hash *hash, t_vec *print, uint8_t div_key[16][6],
+							t_norm norm)
 {
 	uint8_t		xor[8];
 	uint64_t	mess;
@@ -344,12 +352,13 @@ void		launch_unhash(t_hash *hash, int len, uint8_t div_key[16][6],
 	if (hash->ops.init_vec)
 		in_u8(hash->ops.init_vec, xor);
 	y = 0;
-	while (y < len / 8)
+	while (y < norm.len / 8)
 	{
-		in_u8(str + 8 * y, tmp);
+		in_u8(norm.str + 8 * y, tmp);
 		ip(tmp);
 		mess = divide_message(tmp, div_key, true);
-		mess = xor_message64(mess, xor, mode, y == 0 ? xor : str + 8 * (y - 1), y);
+		mess = xor_message64(mess, xor, concat_norm(norm.mode,
+							y == 0 ? xor : norm.str + 8 * (y - 1), y));
 		to_bytes64(mess, xor);
 		v_append_raw(print, xor, 8);
 		++y;
@@ -371,7 +380,7 @@ uint8_t		*unhash_des_message(t_hash *hash, uint8_t div_key[16][6],
 		str = v_raw(v_get(&hash->str, 0));
 		len = v_size(v_get(&hash->str, 0));
 	}
-	launch_unhash(hash, len, div_key, mode, str, &print);
+	launch_unhash(hash, &print, div_key, concat_norm(mode, str, len));
 	found_pad(&print);
 	if (!hash->ops.key)
 		DEL_SALT();

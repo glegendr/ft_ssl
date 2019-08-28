@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/19 16:23:20 by glegendr          #+#    #+#             */
-/*   Updated: 2019/08/26 14:07:14 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/08/28 09:14:35 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,9 @@
 #include <stdint.h>
 #include <libft.h>
 #include "ft_ssl.h"
+#define C_VEC v_get(&tab->str, i)
+#define RET_DEL v_del(&print); return (NULL)
+#define PRINT_RES print_hash(&print, tab, i++, tab->ops); v_reset(&print)
 
 void			append_ret(uint8_t *ret, uint8_t *index, t_vec *print, int i)
 {
@@ -70,34 +73,30 @@ int				decript_base(t_vec *vec, char *base, int *z, t_vec *print)
 uint8_t			*bases(t_hash *tab, char *base, int z, bool print_b)
 {
 	t_vec	print;
-	t_vec	*vec;
 	int		i;
 
 	i = 0;
 	print = v_new(sizeof(char));
 	while (i < v_size(&tab->str))
 	{
-		vec = v_get(&tab->str, i);
-		while (z < v_size(vec))
+		while (z < v_size(C_VEC))
 		{
 			if (tab->arg & D_FLAG)
 			{
-				if (decript_base(vec, base, &z, &print))
+				if (decript_base(C_VEC, base, &z, &print))
 					break ;
 				++z;
 			}
 			else
-				encript_base(v_raw(vec) + z, base, v_size(vec) - z, &print);
+				encript_base(v_raw(C_VEC) + z, base, v_size(C_VEC) - z, &print);
 			z += 3;
 		}
 		tab->ops.message_len = v_size(&print);
 		if (!print_b)
 			return ((uint8_t *)v_raw(&print));
-		print_hash(&print, tab, i++, tab->ops);
-		v_reset(&print);
+		PRINT_RES;
 	}
-	v_del(&print);
-	return (NULL);
+	RET_DEL;
 }
 
 uint8_t			*base64(t_hash *tab, bool print)

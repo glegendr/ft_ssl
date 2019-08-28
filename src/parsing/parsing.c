@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/20 16:11:40 by glegendr          #+#    #+#             */
-/*   Updated: 2019/08/27 22:30:00 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/08/28 08:07:13 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #include <libft.h>
 #include <fcntl.h>
 #include "ft_ssl.h"
+#define IS_DES(f) (f == des_ecb || f == des_cbc || f == des_pcbc)
 
 static int		match_flag(char *flag, t_hash *tab)
 {
@@ -38,28 +39,21 @@ static int		match_flag(char *flag, t_hash *tab)
 	return (0);
 }
 
-static void		hex_flag(t_hash *hash, char *str, int flag)
+void			hex_to_u8(char *str, int len, uint8_t *key, int i)
 {
-	uint8_t	*key;
-	int		len;
-	int		i;
-	char	in;
+	int in;
 
-	if (!(key = malloc(sizeof(uint8_t) * 8)))
-		return ;
-	i = 0;
-	len = ft_strlen(str);
 	while (i < 16)
 	{
 		if (i < len)
 		{
 			in = str[i];
 			if (in >= 'a' && in <= 'f')
-				in -= 97 - 10;
+				in -= 'a' - 10;
 			else if (in >= 'A' && in <= 'F')
-				in -= 65 - 10;
+				in -= 'A' - 10;
 			else if (in >= '0' && in <= '9')
-				in -= 48;
+				in -= '0';
 			else
 			{
 				write(2, "non-hex digit\n", 14);
@@ -72,6 +66,19 @@ static void		hex_flag(t_hash *hash, char *str, int flag)
 		key[i / 2] = key[i / 2] | in;
 		++i;
 	}
+}
+
+static void		hex_flag(t_hash *hash, char *str, int flag)
+{
+	uint8_t	*key;
+	int		len;
+	int		i;
+
+	if (!(key = malloc(sizeof(uint8_t) * 8)))
+		return ;
+	i = 0;
+	len = ft_strlen(str);
+	hex_to_u8(str, len, key, 0);
 	if (flag == K_FLAG)
 		hash->ops.key = key;
 	else if (flag == V_FLAG)
@@ -121,6 +128,19 @@ void			argument_flags(t_hash *tab, char **argv, int argc, int *i)
 		hex_flag(tab, str, V_FLAG);
 }
 
+void			init_hash(t_hash *tab, char *fct)
+{
+	tab->f = get_hash_fct(fct);
+	tab->arg = 0;
+	tab->folder = v_new(sizeof(t_vec));
+	tab->str = v_new(sizeof(t_vec));
+	tab->ops.fd = 1;
+	tab->ops.pwd = NULL;
+	tab->ops.salt = NULL;
+	tab->ops.init_vec = NULL;
+	tab->ops.key = NULL;
+}
+
 void			parse_argv(int argc, char *argv[])
 {
 	t_hash	tab;
@@ -128,29 +148,19 @@ void			parse_argv(int argc, char *argv[])
 
 	if (argc < 2)
 		print_usage(NULL);
-	tab.f = get_hash_fct(argv[1]);
-	tab.arg = 0;
-	tab.folder = v_new(sizeof(t_vec));
-	tab.str = v_new(sizeof(t_vec));
-	tab.ops.fd = 1;
-	tab.ops.pwd = NULL;
-	tab.ops.salt = NULL;
-	tab.ops.init_vec = NULL;
-	tab.ops.key = NULL;
+	init_hash(&tab, argv[1]);
 	i = 2;
 	while (i < argc)
 	{
 		if (match_flag(argv[i], &tab))
 			print_usage(NULL);
 		if ((tab.arg & S_FLAG) || (tab.arg & O_FLAG) || (tab.arg & I_FLAG)
-				|| ((tab.arg & P_FLAG) && (tab.f == des_ecb
-						|| tab.f == des_pcbc || tab.f == des_cbc))
+				|| ((tab.arg & P_FLAG) && IS_DES(tab.f))
 				|| (tab.arg & K_FLAG) || (tab.arg & V_FLAG))
 			argument_flags(&tab, argv, argc, &i);
 		++i;
 	}
-	if (!v_size(&tab.folder) || ((tab.arg & P_FLAG)
-				&& (tab.f != des_ecb && tab.f != des_cbc && tab.f != des_pcbc)))
+	if (!v_size(&tab.folder) || ((tab.arg & P_FLAG) && !IS_DES(tab.f)))
 	{
 		read_file(&tab, 0, (tab.arg & P_FLAG) ? true : false);
 		into_vec(&tab.folder, NULL);
