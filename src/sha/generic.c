@@ -6,41 +6,12 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/19 16:13:33 by glegendr          #+#    #+#             */
-/*   Updated: 2019/08/26 14:05:12 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/08/28 12:10:01 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_ssl.h"
 #include <libft.h>
-
-void		print_hash(t_vec *ret, t_hash *hash, int i, t_ops ops)
-{
-	t_vec vec;
-	t_vec *folder;
-
-	vec = v_new(sizeof(char));
-	if ((folder = v_get(&hash->folder, i)) && !v_raw(folder))
-		v_append_raw(&vec, v_raw(ret), v_size(ret));
-	else
-	{
-		if (!(hash->arg & R_FLAG) && !(hash->arg & Q_FLAG))
-		{
-			v_append_raw(&vec, (void *)ops.name, ft_strlen(ops.name));
-			v_push_int(&vec, '(');
-			v_append_raw(&vec, v_raw(folder), v_size(folder));
-			v_append_raw(&vec, ")= ", 3);
-		}
-		v_append_raw(&vec, v_raw(ret), v_size(ret));
-		if ((hash->arg & R_FLAG) && !(hash->arg & Q_FLAG))
-		{
-			v_push_int(&vec, ' ');
-			v_append_raw(&vec, v_raw(folder), v_size(folder));
-		}
-	}
-	v_push_int(&vec, '\n');
-	write(ops.fd, v_raw(&vec), v_size(&vec));
-	v_del(&vec);
-}
 
 static void	transform_hash(uint8_t *ret, t_hash *hash, int i, t_ops ops)
 {

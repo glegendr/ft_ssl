@@ -6,14 +6,14 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/14 07:47:05 by glegendr          #+#    #+#             */
-/*   Updated: 2019/08/28 08:24:02 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/08/28 12:21:05 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef DES_H
 # define DES_H
 
-enum	des_mode
+enum				e_des_mode
 {
 	ECB = 0,
 	CBC = 1,
@@ -22,7 +22,7 @@ enum	des_mode
 
 typedef struct		s_norm
 {
-	enum des_mode	mode;
+	enum e_des_mode	mode;
 	uint8_t			*str;
 	int				len;
 }					t_norm;
@@ -144,13 +144,25 @@ static int const g_pc2[48] = {
 	44, 49, 39, 56, 34, 53,
 	46, 42, 50, 36, 29, 32 };
 
-void	pc1(uint8_t *str);
-void	pc2(uint32_t *str, uint8_t key[16][6]);
-void	rotate_key(uint8_t *pwd, uint32_t *div_key);
-uint8_t	*hash_des_message(t_hash *hash, uint8_t div_key[16][6],
-							bool bp, enum des_mode mode);
-uint8_t	*unhash_des_message(t_hash *hash, uint8_t div_key[16][6],
-							bool bp, enum des_mode mode);
-void	create_key(uint8_t *pwd, uint8_t *salt, uint8_t *key, uint8_t *iv);
+void				pc1(uint8_t *str);
+void				pc2(uint32_t *str, uint8_t key[16][6]);
+void				rotate_key(uint8_t *pwd, uint32_t *div_key);
+uint8_t				*hash_des_message(t_hash *hash, uint8_t div_key[16][6],
+							bool bp, enum e_des_mode mode);
+uint8_t				*unhash_des_message(t_hash *hash, uint8_t div_key[16][6],
+							bool bp, enum e_des_mode mode);
+void				create_key(uint8_t *pwd, uint8_t *salt, uint8_t *key,
+								uint8_t *iv);
+uint8_t				*core_des(t_hash *hash, bool print, enum e_des_mode mode,
+								int i);
+uint32_t			u8_to_b32(uint8_t *val);
+uint32_t			f(uint32_t ln, uint8_t *key);
+void				ip(uint8_t *str);
+void				clean_des(t_hash *hash, t_vec *print);
+void				u8_to_u6(uint8_t *six, uint8_t *eight);
+uint64_t			divide_message(uint8_t *str, uint8_t fin_keys[16][6],
+									bool rev);
+uint8_t				*print_des_message(t_hash *hash, t_vec *print, bool rev,
+										bool bp);
 
 #endif

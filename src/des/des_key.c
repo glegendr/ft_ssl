@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/14 07:17:26 by glegendr          #+#    #+#             */
-/*   Updated: 2019/08/26 13:53:28 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/08/28 09:45:41 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,17 +33,6 @@ void		bit(uint8_t *ret, int i, uint8_t *str, int pos)
 		ret[i / 8] |= bit << (8 - (i % 8));
 }
 
-void		in_str(uint8_t *str, uint8_t *ret)
-{
-	str[0] = ret[0];
-	str[1] = ret[1];
-	str[2] = ret[2];
-	str[3] = ret[3];
-	str[4] = ret[4];
-	str[5] = ret[5];
-	str[6] = ret[6];
-}
-
 void		pc1(uint8_t *str)
 {
 	uint8_t	ret[7];
@@ -56,18 +45,7 @@ void		pc1(uint8_t *str)
 		bit(ret, i + 1, str, g_pc1[i]);
 		++i;
 	}
-	in_str(str, ret);
-}
-
-void		def_in(uint8_t *in, uint32_t cn, uint32_t dn)
-{
-	in[0] = (cn & 0xff00000) >> 20;
-	in[1] = (cn & 0xff000) >> 12;
-	in[2] = (cn & 0xff0) >> 4;
-	in[3] = ((cn & 0xf) << 4) | ((dn & 0xf000000) >> 24);
-	in[4] = (dn & 0xff0000) >> 16;
-	in[5] = (dn & 0xff00) >> 8;
-	in[6] = dn & 0xff;
+	in_u8(ret, str);
 }
 
 void		pc2(uint32_t *str, uint8_t ret[16][6])
@@ -79,7 +57,13 @@ void		pc2(uint32_t *str, uint8_t ret[16][6])
 	y = 0;
 	while (y < 16)
 	{
-		def_in(in, str[y], str[y + 16]);
+		in[0] = (str[y] & 0xff00000) >> 20;
+		in[1] = (str[y] & 0xff000) >> 12;
+		in[2] = (str[y] & 0xff0) >> 4;
+		in[3] = ((str[y] & 0xf) << 4) | ((str[y + 16] & 0xf000000) >> 24);
+		in[4] = (str[y + 16] & 0xff0000) >> 16;
+		in[5] = (str[y + 16] & 0xff00) >> 8;
+		in[6] = str[y + 16] & 0xff;
 		i = 0;
 		while (i < 48)
 		{

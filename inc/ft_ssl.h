@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/19 17:32:20 by glegendr          #+#    #+#             */
-/*   Updated: 2019/08/28 08:24:11 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/08/28 12:13:47 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,6 +94,9 @@ void			to_bytes32(uint32_t a, uint8_t *b);
 void			to_bytes64(uint64_t a, uint8_t *c);
 void			to_bytes32_endian(uint32_t a, uint8_t *b);
 void			bit(uint8_t *ret, int i, uint8_t *str, int pos);
+char			*get_usage(void);
+void			get_help(t_hash *tab);
+char			*get_all_hash(void);
 
 /*
 ** MD5 Functions
@@ -132,7 +135,6 @@ void			parse_argv(int argc, char **argv);
 void			read_file(t_hash *tab, int fd, bool print);
 int				open_file(char *argv, int flag, int perm);
 void			into_vec(t_vec *to_push, char *str);
-void			o_flag(t_hash *tab, char *argv);
 t_fct			get_hash_fct(char *name);
 t_flag			get_flag_fct(char flag);
 void			get_help(t_hash *tab);
@@ -151,4 +153,7 @@ void			o_fct(t_hash *hash);
 void			k_fct(t_hash *hash);
 void			v_fct(t_hash *hash);
 void			a_fct(t_hash *hash);
+void			s_flag(t_hash *tab, char *str);
+void			o_flag(t_hash *tab, char *str);
+void			hex_flag(t_hash *tab, char *str, int flag);
 #endif

@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/14 07:23:21 by glegendr          #+#    #+#             */
-/*   Updated: 2019/08/28 09:30:38 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/08/28 12:18:34 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ void		create_key(uint8_t *pwd, uint8_t *salt, uint8_t *key, uint8_t *iv)
 	v_del_all(&ret_vec);
 }
 
-uint8_t		*core_des(t_hash *hash, bool print, enum des_mode mode, int i)
+uint8_t		*core_des(t_hash *hash, bool print, enum e_des_mode mode, int i)
 {
 	t_ops		ops;
 	uint32_t	divided_key[32];
@@ -100,9 +100,4 @@ uint8_t		*core_des(t_hash *hash, bool print, enum des_mode mode, int i)
 uint8_t		*des_ecb(t_hash *hash, bool print)
 {
 	return (core_des(hash, print, ECB, 0));
-}
-
-uint8_t		*des_pcbc(t_hash *hash, bool print)
-{
-	return (core_des(hash, print, PCBC, 0));
 }

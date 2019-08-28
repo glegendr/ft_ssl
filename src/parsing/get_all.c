@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/20 16:10:07 by glegendr          #+#    #+#             */
-/*   Updated: 2019/08/27 22:28:40 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/08/28 11:52:59 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ void			(*get_flag_fct(char flag))(t_hash *)
 	return (g_flag_fct[id]);
 }
 
-static char		*get_all_hash(void)
+char			*get_all_hash(void)
 {
 	t_vec	vec;
 	char	*ret;
@@ -90,35 +90,6 @@ char			*get_usage(void)
 	" Try hash_fct -h to get help for the function\n");
 }
 
-void			print_usage(char *name)
-{
-	t_vec	vec;
-	char	*s;
-
-	if (!name)
-		write(2,
-		"usage: ft_ssl command [command opts] [command args]\n"
-		"ft_ssl -h for more help\n", 76);
-	else
-	{
-		vec = v_new(sizeof(char));
-		s = "ft_ssl: Error: '";
-		v_append_raw(&vec, s, ft_strlen(s));
-		v_append_raw(&vec, name, ft_strlen(name));
-		s = "' is an invalid command\n"
-			"Usage: ft_ssl hash_fct [-pqrde] [-s string] [-i in_file]"
-			" [-o out_file]\nAllowed hash_fct are:\n";
-		v_append_raw(&vec, s, ft_strlen(s));
-		s = get_all_hash();
-		v_append_raw(&vec, s, ft_strlen(s));
-		s = get_usage();
-		v_append_raw(&vec, s, ft_strlen(s));
-		write(2, (char *)v_raw(&vec), v_size(&vec));
-		v_del(&vec);
-	}
-	exit(1);
-}
-
 void			get_help(t_hash *tab)
 {
 	t_vec	vec;
@@ -145,20 +116,4 @@ void			get_help(t_hash *tab)
 	write(2, (char *)v_raw(&vec), v_size(&vec));
 	v_del(&vec);
 	exit(1);
-}
-
-uint64_t		init_s0(uint8_t *ck, int i)
-{
-	uint64_t	s0;
-	int			y;
-
-	y = 0;
-	s0 = 0;
-	while (y < 8)
-	{
-		s0 = s0 << 8;
-		s0 = s0 + ck[i * 8 + y];
-		++y;
-	}
-	return (s0);
 }

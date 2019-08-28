@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/06 14:48:56 by glegendr          #+#    #+#             */
-/*   Updated: 2019/07/11 14:00:38 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/08/28 12:07:16 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,18 +70,6 @@ void			into_vec(t_vec *to_push, char *str)
 		vec = v_new_null(sizeof(char));
 		v_push_first(to_push, &vec);
 	}
-}
-
-void			o_flag(t_hash *tab, char *argv)
-{
-	int fd;
-
-	fd = open_file(argv, O_RDWR | O_CREAT | O_TRUNC,
-					S_IRUSR | S_IWUSR | S_IWGRP | S_IROTH);
-	if (fd == -1)
-		print_usage(NULL);
-	tab->ops.fd = fd;
-	tab->arg ^= O_FLAG;
 }
 
 int				main(int argc, char *argv[])

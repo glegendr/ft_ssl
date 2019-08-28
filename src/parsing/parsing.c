@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/20 16:11:40 by glegendr          #+#    #+#             */
-/*   Updated: 2019/08/28 08:07:13 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/08/28 12:01:35 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,67 +37,6 @@ static int		match_flag(char *flag, t_hash *tab)
 		++i;
 	}
 	return (0);
-}
-
-void			hex_to_u8(char *str, int len, uint8_t *key, int i)
-{
-	int in;
-
-	while (i < 16)
-	{
-		if (i < len)
-		{
-			in = str[i];
-			if (in >= 'a' && in <= 'f')
-				in -= 'a' - 10;
-			else if (in >= 'A' && in <= 'F')
-				in -= 'A' - 10;
-			else if (in >= '0' && in <= '9')
-				in -= '0';
-			else
-			{
-				write(2, "non-hex digit\n", 14);
-				exit(1);
-			}
-		}
-		else
-			in = 0;
-		key[i / 2] = key[i / 2] << 4;
-		key[i / 2] = key[i / 2] | in;
-		++i;
-	}
-}
-
-static void		hex_flag(t_hash *hash, char *str, int flag)
-{
-	uint8_t	*key;
-	int		len;
-	int		i;
-
-	if (!(key = malloc(sizeof(uint8_t) * 8)))
-		return ;
-	i = 0;
-	len = ft_strlen(str);
-	hex_to_u8(str, len, key, 0);
-	if (flag == K_FLAG)
-		hash->ops.key = key;
-	else if (flag == V_FLAG)
-		hash->ops.init_vec = key;
-	else
-		hash->ops.salt = key;
-	hash->arg ^= flag;
-}
-
-static void		s_flag(t_hash *tab, char *str)
-{
-	if (tab->f != des_ecb)
-	{
-		into_vec(&tab->folder, str);
-		into_vec(&tab->str, str);
-		tab->arg ^= S_FLAG;
-		return ;
-	}
-	hex_flag(tab, str, S_FLAG);
 }
 
 void			argument_flags(t_hash *tab, char **argv, int argc, int *i)
@@ -168,4 +107,20 @@ void			parse_argv(int argc, char *argv[])
 	if ((tab.f == des_cbc || tab.f == des_pcbc) && !tab.ops.init_vec)
 		print_usage(NULL);
 	tab.f(&tab, true);
+}
+
+uint64_t		init_s0(uint8_t *ck, int i)
+{
+	uint64_t	s0;
+	int			y;
+
+	y = 0;
+	s0 = 0;
+	while (y < 8)
+	{
+		s0 = s0 << 8;
+		s0 = s0 + ck[i * 8 + y];
+		++y;
+	}
+	return (s0);
 }
