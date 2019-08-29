@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/19 16:23:20 by glegendr          #+#    #+#             */
-/*   Updated: 2019/08/28 09:14:35 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/08/29 18:03:39 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 #include <libft.h>
 #include "ft_ssl.h"
 #define C_VEC v_get(&tab->str, i)
-#define RET_DEL v_del(&print); return (NULL)
+#define RET_DEL(a, b) clean_des(a, b); return (NULL)
 #define PRINT_RES print_hash(&print, tab, i++, tab->ops); v_reset(&print)
 
 void			append_ret(uint8_t *ret, uint8_t *index, t_vec *print, int i)
@@ -70,6 +70,8 @@ int				decript_base(t_vec *vec, char *base, int *z, t_vec *print)
 	return (0);
 }
 
+#include <stdio.h>
+
 uint8_t			*bases(t_hash *tab, char *base, int z, bool print_b)
 {
 	t_vec	print;
@@ -96,7 +98,7 @@ uint8_t			*bases(t_hash *tab, char *base, int z, bool print_b)
 			return ((uint8_t *)v_raw(&print));
 		PRINT_RES;
 	}
-	RET_DEL;
+	RET_DEL(tab, &print);
 }
 
 uint8_t			*base64(t_hash *tab, bool print)

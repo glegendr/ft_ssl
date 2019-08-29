@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/19 17:32:20 by glegendr          #+#    #+#             */
-/*   Updated: 2019/08/28 12:13:47 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/08/29 17:16:54 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,7 @@ typedef void		(*t_flag)(t_hash *);
 # define ROTR(x, n, size) ((x >> n) | (x << (size - n)))
 # define SHR(x, n) (x >> n)
 # define DEFKEY(a) (ROTL((i % 16 == 0) ? a : div_key[i - 1], x, 28) & 0xfffffff)
+# define CLEAN_AND_PRINT(a, b) { clean_des(a, NULL); print_usage(b); }
 
 /*
 ** All Hash Functions
@@ -97,6 +98,7 @@ void			bit(uint8_t *ret, int i, uint8_t *str, int pos);
 char			*get_usage(void);
 void			get_help(t_hash *tab);
 char			*get_all_hash(void);
+void			clean_des(t_hash *hash, t_vec *print);
 
 /*
 ** MD5 Functions
@@ -117,7 +119,6 @@ void			make_512_pseudo_random(uint64_t *a, uint64_t *b,
 void			binop512(uint64_t *a, uint64_t *b);
 uint64_t		init_s0(uint8_t *ck, int i);
 void			in_u8(uint8_t *in, uint8_t *cpy);
-uint8_t			*get_pwd(void);
 
 /*
 ** Bases Functions

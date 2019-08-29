@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/28 11:32:37 by glegendr          #+#    #+#             */
-/*   Updated: 2019/08/28 11:39:35 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/08/29 13:42:37 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ void		o_flag(t_hash *tab, char *argv)
 	fd = open_file(argv, O_RDWR | O_CREAT | O_TRUNC,
 			S_IRUSR | S_IWUSR | S_IWGRP | S_IROTH);
 	if (fd == -1)
-		print_usage(NULL);
+		CLEAN_AND_PRINT(tab, NULL);
 	tab->ops.fd = fd;
 	tab->arg ^= O_FLAG;
 }

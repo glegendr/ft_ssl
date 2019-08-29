@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/14 07:23:21 by glegendr          #+#    #+#             */
-/*   Updated: 2019/08/28 12:18:34 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/08/29 17:21:29 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,19 +16,20 @@
 
 uint8_t		*get_pwd(void)
 {
-	uint8_t	*cmp;
+	char	*cmp;
 	char	*ret;
 
-	cmp = (uint8_t *)ft_strdup(getpass("enter des encryption password"));
+	cmp = ft_strdup(getpass("enter des encryption password"));
 	if (ft_strcmp((char *)cmp,
 		(ret = getpass("Verifying - enter des encryption password"))))
 	{
 		write(2, "Verify failure\nbad password read\n", 34);
 		free(cmp);
+		free(ret);
 		exit(1);
 	}
-	free(cmp);
-	return ((uint8_t *)ret);
+	free(ret);
+	return ((uint8_t *)cmp);
 }
 
 void		create_salt(uint8_t *salt, uint8_t *ops_salt)
@@ -60,6 +61,9 @@ void		create_key(uint8_t *pwd, uint8_t *salt, uint8_t *key, uint8_t *iv)
 	concat.folder = v_new_null(sizeof(uint8_t));
 	concat.str = ret_vec;
 	concat.ops.fd = 0;
+	concat.ops.key = NULL;
+	concat.ops.salt = NULL;
+	concat.ops.init_vec = NULL;
 	md5_ret = md5(&concat, false);
 	in_u8(md5_ret, key);
 	if (iv)

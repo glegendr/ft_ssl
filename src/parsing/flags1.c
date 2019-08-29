@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/27 22:11:35 by glegendr          #+#    #+#             */
-/*   Updated: 2019/08/28 11:40:38 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/08/29 13:42:00 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 void		p_fct(t_hash *tab)
 {
 	if (tab->ops.pwd)
-		print_usage(NULL);
+		CLEAN_AND_PRINT(tab, NULL);
 	tab->arg |= P_FLAG;
 }
 
@@ -37,6 +37,6 @@ void		s_fct(t_hash *tab)
 void		d_fct(t_hash *tab)
 {
 	if (tab->arg & E_FLAG)
-		print_usage(NULL);
+		CLEAN_AND_PRINT(tab, NULL);
 	tab->arg |= D_FLAG;
 }

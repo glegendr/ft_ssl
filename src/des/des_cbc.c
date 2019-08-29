@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/28 09:27:21 by glegendr          #+#    #+#             */
-/*   Updated: 2019/08/28 11:10:37 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/08/29 17:29:36 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,20 +50,27 @@ void		u8_to_u6(uint8_t *six, uint8_t *eight)
 	}
 }
 
+#include <stdio.h>
+
 void		clean_des(t_hash *hash, t_vec *print)
 {
 	t_ops ops;
 
-	ops = hash->ops;
-	if (ops.key)
-		free(ops.key);
-	if (ops.salt)
-		free(ops.salt);
-	if (ops.init_vec)
-		free(ops.init_vec);
-	v_del(print);
-	v_del_all(&hash->folder);
-	v_del_all(&hash->str);
+	if (hash)
+	{
+		ops = hash->ops;
+		if (ops.key)
+			free(ops.key);
+		if (ops.salt)
+			free(ops.salt);
+		if (ops.init_vec)
+			free(ops.init_vec);
+		v_del_all(&hash->folder);
+		v_del_all(&hash->str);
+		hash = NULL;
+	}
+	if (print)
+		v_del(print);
 }
 
 uint8_t		*des_cbc(t_hash *hash, bool print)

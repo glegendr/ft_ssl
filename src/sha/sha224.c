@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/30 20:49:14 by glegendr          #+#    #+#             */
-/*   Updated: 2019/07/08 15:21:46 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/08/29 14:07:53 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,6 +85,7 @@ uint8_t			*sha224(t_hash *tab, bool print)
 {
 	t_ops ops;
 
+	ops = tab->ops;
 	ops.name = "SHA224";
 	ops.endian = false;
 	ops.loop = 64;

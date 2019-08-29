@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/19 16:13:33 by glegendr          #+#    #+#             */
-/*   Updated: 2019/08/28 12:10:01 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/08/29 13:52:25 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,7 +104,7 @@ uint8_t		*launch_hash(t_hash *hash, bool print)
 	ops = hash->ops;
 	i = 0;
 	if (!v_get(&hash->str, 0))
-		print_usage(NULL);
+		CLEAN_AND_PRINT(hash, NULL);
 	while (i < v_size(&hash->str))
 	{
 		final_len = pad_message(v_get(&hash->str, i), ops.endian,
@@ -115,7 +115,6 @@ uint8_t		*launch_hash(t_hash *hash, bool print)
 		transform_hash(ret, hash, i, ops);
 		++i;
 	}
-	v_del_all(&hash->folder);
-	v_del_all(&hash->str);
+	clean_des(hash, NULL);
 	return (NULL);
 }

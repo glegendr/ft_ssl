@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/28 12:06:00 by glegendr          #+#    #+#             */
-/*   Updated: 2019/08/28 12:10:45 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/08/29 11:23:00 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,7 @@ void		print_usage(char *name)
 		v_append_raw(&vec, s, ft_strlen(s));
 		s = get_all_hash();
 		v_append_raw(&vec, s, ft_strlen(s));
+		free(s);
 		s = get_usage();
 		v_append_raw(&vec, s, ft_strlen(s));
 		write(2, (char *)v_raw(&vec), v_size(&vec));

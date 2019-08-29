@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/28 11:32:09 by glegendr          #+#    #+#             */
-/*   Updated: 2019/08/28 11:40:58 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/08/29 13:42:20 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 void		e_fct(t_hash *tab)
 {
 	if (tab->arg & D_FLAG)
-		print_usage(NULL);
+		CLEAN_AND_PRINT(tab, NULL);
 	tab->arg |= E_FLAG;
 }
 
@@ -27,20 +27,20 @@ void		i_fct(t_hash *tab)
 void		o_fct(t_hash *tab)
 {
 	if (tab->ops.fd != 1)
-		print_usage(NULL);
+		CLEAN_AND_PRINT(tab, NULL);
 	tab->arg |= O_FLAG;
 }
 
 void		k_fct(t_hash *tab)
 {
 	if (tab->ops.key)
-		print_usage(NULL);
+		CLEAN_AND_PRINT(tab, NULL);
 	tab->arg |= K_FLAG;
 }
 
 void		v_fct(t_hash *tab)
 {
 	if (tab->ops.init_vec)
-		print_usage(NULL);
+		CLEAN_AND_PRINT(tab, NULL);
 	tab->arg |= V_FLAG;
 }

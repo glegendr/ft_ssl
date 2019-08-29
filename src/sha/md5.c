@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/16 18:27:36 by glegendr          #+#    #+#             */
-/*   Updated: 2019/07/08 16:58:23 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/08/29 14:07:33 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,6 +78,7 @@ uint8_t			*md5(t_hash *tab, bool print)
 {
 	t_ops ops;
 
+	ops = tab->ops;
 	ops.name = "MD5";
 	ops.endian = true;
 	ops.loop = 0;

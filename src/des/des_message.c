@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/14 07:33:06 by glegendr          #+#    #+#             */
-/*   Updated: 2019/08/28 12:17:39 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/08/29 18:12:40 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,19 +57,29 @@ void		pkcs5_pad(t_vec *vec)
 	}
 }
 
+#include <stdio.h>
+
 uint8_t		*print_des_message(t_hash *hash, t_vec *print, bool rev, bool bp)
 {
 	t_hash	tmp;
 	t_vec	vec;
+	uint8_t	*base_ret;
 
-	if (hash->arg & A_FLAG && !rev)
+	if ((hash->arg & A_FLAG) && !rev)
 	{
 		vec = v_new(sizeof(t_vec));
 		v_push(&vec, print);
-		tmp = *hash;
+		tmp.folder = v_new_null(sizeof(t_vec));
 		tmp.str = vec;
+		tmp.arg = hash->arg;
+		tmp.ops.key = NULL;
+		tmp.ops.salt = NULL;
+		tmp.ops.init_vec = NULL;
+		tmp.ops.fd = hash->ops.fd;
 		tmp.arg |= Q_FLAG;
-		return (base64(&tmp, bp));
+		base_ret = base64(&tmp, bp);
+		*print = v_new_null(sizeof(char));
+		return (base_ret);
 	}
 	else if (!bp)
 		return (v_raw(print));

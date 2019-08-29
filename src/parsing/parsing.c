@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/20 16:11:40 by glegendr          #+#    #+#             */
-/*   Updated: 2019/08/28 12:01:35 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/08/29 16:58:56 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ void			argument_flags(t_hash *tab, char **argv, int argc, int *i)
 
 	*i += 1;
 	if (*i >= argc)
-		print_usage(NULL);
+		CLEAN_AND_PRINT(tab, NULL);
 	str = argv[*i];
 	if (tab->arg & S_FLAG)
 		s_flag(tab, str);
@@ -92,7 +92,7 @@ void			parse_argv(int argc, char *argv[])
 	while (i < argc)
 	{
 		if (match_flag(argv[i], &tab))
-			print_usage(NULL);
+			CLEAN_AND_PRINT(&tab, NULL);
 		if ((tab.arg & S_FLAG) || (tab.arg & O_FLAG) || (tab.arg & I_FLAG)
 				|| ((tab.arg & P_FLAG) && IS_DES(tab.f))
 				|| (tab.arg & K_FLAG) || (tab.arg & V_FLAG))
@@ -105,7 +105,7 @@ void			parse_argv(int argc, char *argv[])
 		into_vec(&tab.folder, NULL);
 	}
 	if ((tab.f == des_cbc || tab.f == des_pcbc) && !tab.ops.init_vec)
-		print_usage(NULL);
+		CLEAN_AND_PRINT(&tab, NULL);
 	tab.f(&tab, true);
 }
 

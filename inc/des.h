@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/14 07:47:05 by glegendr          #+#    #+#             */
-/*   Updated: 2019/08/28 12:21:05 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/08/29 11:06:36 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -158,7 +158,6 @@ uint8_t				*core_des(t_hash *hash, bool print, enum e_des_mode mode,
 uint32_t			u8_to_b32(uint8_t *val);
 uint32_t			f(uint32_t ln, uint8_t *key);
 void				ip(uint8_t *str);
-void				clean_des(t_hash *hash, t_vec *print);
 void				u8_to_u6(uint8_t *six, uint8_t *eight);
 uint64_t			divide_message(uint8_t *str, uint8_t fin_keys[16][6],
 									bool rev);

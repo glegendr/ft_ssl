@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/20 16:10:07 by glegendr          #+#    #+#             */
-/*   Updated: 2019/08/28 11:52:59 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/08/29 15:57:10 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,10 +81,10 @@ char			*get_usage(void)
 {
 	return ("Generics flags are:\n"
 	" -p echo STDIN to STDOUT and append the checksum to STDOUT -don't"
-	"work with des, des-ecb-\n"
+	"work with des-\n"
 	" -q only print hash\n"
 	" -r reverse the output\n"
-	" -s hash the string -don't work with des, des-ecb-\n"
+	" -s hash the string -don't work with des-\n"
 	" -i input file  -optional-\n"
 	" -o output file -default: stdout- -can only be used once-\n"
 	" Try hash_fct -h to get help for the function\n");
@@ -114,6 +114,6 @@ void			get_help(t_hash *tab)
 		v_append_raw(&vec, s, ft_strlen(s));
 	}
 	write(2, (char *)v_raw(&vec), v_size(&vec));
-	v_del(&vec);
+	clean_des(tab, &vec);
 	exit(1);
 }
