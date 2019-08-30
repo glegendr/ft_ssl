@@ -1,42 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   flags1.c                                           :+:      :+:    :+:   */
+/*   des.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/08/27 22:11:35 by glegendr          #+#    #+#             */
-/*   Updated: 2019/08/30 13:36:58 by glegendr         ###   ########.fr       */
+/*   Created: 2019/08/30 14:02:19 by glegendr          #+#    #+#             */
+/*   Updated: 2019/08/30 14:02:24 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <ft_ssl.h>
+#include "ft_ssl.h"
+#include <des.h>
 
-void		p_fct(t_hash *tab)
+uint8_t		*des_ecb(t_hash *hash, bool print)
 {
-	if (tab->ops.pwd && IS_DES(tab->f))
-		CLEAN_AND_PRINT(tab, NULL);
-	tab->arg |= P_FLAG;
+	return (core_des(hash, print, ECB, 0));
 }
 
-void		q_fct(t_hash *tab)
+uint8_t		*des_cbc(t_hash *hash, bool print)
 {
-	tab->arg |= Q_FLAG;
+	return (core_des(hash, print, CBC, 0));
 }
 
-void		r_fct(t_hash *tab)
+uint8_t		*des_pcbc(t_hash *hash, bool print)
 {
-	tab->arg |= R_FLAG;
-}
-
-void		s_fct(t_hash *tab)
-{
-	tab->arg |= S_FLAG;
-}
-
-void		d_fct(t_hash *tab)
-{
-	if (tab->arg & E_FLAG)
-		CLEAN_AND_PRINT(tab, NULL);
-	tab->arg |= D_FLAG;
+	return (core_des(hash, print, PCBC, 0));
 }

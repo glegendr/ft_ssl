@@ -6,14 +6,12 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/20 16:10:07 by glegendr          #+#    #+#             */
-/*   Updated: 2019/08/29 15:57:10 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/08/30 14:07:22 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <vector.h>
 #include <libft.h>
-#include <fcntl.h>
-#include "ft_ssl.h"
+#include <ft_ssl.h>
 
 char *const g_tab[NB_HASH] = {"md5", "sha256", "sha512", "sha384", "sha224",
 	"base64", "base64url", "des", "des-ecb", "des-cbc", "des-pcbc"};

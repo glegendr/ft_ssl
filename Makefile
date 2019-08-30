@@ -22,12 +22,13 @@ SRCNAME= main						\
 		 sha/generic				\
 		 des/base64					\
 		 des/base64_url				\
-		 des/des_ecb				\
+		 des/des					\
 		 des/des_key				\
 		 des/des_message			\
-		 des/des_cbc				\
+		 des/des_unhash_message		\
 		 des/des_binary_operations	\
-		 des/des_unhash_message
+		 des/des_utils				\
+		 des/manage_key
 
 LIBS= ./pods/libvec/libvec.a ./pods/libft/libft.a
 

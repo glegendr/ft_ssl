@@ -6,14 +6,12 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/20 15:48:29 by glegendr          #+#    #+#             */
-/*   Updated: 2019/08/26 13:11:23 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/08/30 14:08:54 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <unistd.h>
 #include <stdint.h>
-#include <libft.h>
-#include "ft_ssl.h"
+#include <ft_ssl.h>
 
 void			generate_base(char *base, bool url)
 {

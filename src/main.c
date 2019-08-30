@@ -6,14 +6,13 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/06 14:48:56 by glegendr          #+#    #+#             */
-/*   Updated: 2019/08/28 12:07:16 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/08/30 14:13:02 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <vector.h>
 #include <libft.h>
 #include <fcntl.h>
-#include "ft_ssl.h"
+#include <ft_ssl.h>
 
 void			read_file(t_hash *tab, int fd, bool print)
 {

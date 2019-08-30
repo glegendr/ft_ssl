@@ -6,15 +6,12 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/16 18:27:36 by glegendr          #+#    #+#             */
-/*   Updated: 2019/08/29 14:07:33 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/08/30 14:14:34 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <unistd.h>
-#include <stdint.h>
-#include <libft.h>
-#include "ft_ssl.h"
-#include "md5.h"
+#include <ft_ssl.h>
+#include <md5.h>
 
 static void		digest(uint64_t *h, uint8_t *ret)
 {
@@ -81,7 +78,6 @@ uint8_t			*md5(t_hash *tab, bool print)
 	ops = tab->ops;
 	ops.name = "MD5";
 	ops.endian = true;
-	ops.loop = 0;
 	ops.message_len = 16;
 	ops.encodage_len = 64;
 	ops.init_h = init_h;

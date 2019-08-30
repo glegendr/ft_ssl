@@ -6,15 +6,11 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/20 16:11:40 by glegendr          #+#    #+#             */
-/*   Updated: 2019/08/29 16:58:56 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/08/30 14:10:26 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <vector.h>
-#include <libft.h>
-#include <fcntl.h>
-#include "ft_ssl.h"
-#define IS_DES(f) (f == des_ecb || f == des_cbc || f == des_pcbc)
+#include <ft_ssl.h>
 
 static int		match_flag(char *flag, t_hash *tab)
 {
@@ -51,7 +47,7 @@ void			argument_flags(t_hash *tab, char **argv, int argc, int *i)
 		s_flag(tab, str);
 	if (tab->arg & O_FLAG)
 		o_flag(tab, str);
-	if (tab->arg & P_FLAG)
+	if ((tab->arg & P_FLAG) && IS_DES(tab->f))
 	{
 		tab->ops.pwd = (uint8_t *)str;
 		tab->arg ^= P_FLAG;
@@ -80,6 +76,8 @@ void			init_hash(t_hash *tab, char *fct)
 	tab->ops.key = NULL;
 }
 
+#define IS_FLG(b) (tab.arg & b)
+
 void			parse_argv(int argc, char *argv[])
 {
 	t_hash	tab;
@@ -93,15 +91,15 @@ void			parse_argv(int argc, char *argv[])
 	{
 		if (match_flag(argv[i], &tab))
 			CLEAN_AND_PRINT(&tab, NULL);
-		if ((tab.arg & S_FLAG) || (tab.arg & O_FLAG) || (tab.arg & I_FLAG)
-				|| ((tab.arg & P_FLAG) && IS_DES(tab.f))
-				|| (tab.arg & K_FLAG) || (tab.arg & V_FLAG))
+		if (IS_FLG(S_FLAG) || IS_FLG(O_FLAG) || IS_FLG(I_FLAG)
+				|| (IS_FLG(P_FLAG) && IS_DES(tab.f))
+				|| IS_FLG(K_FLAG) || IS_FLG(V_FLAG))
 			argument_flags(&tab, argv, argc, &i);
 		++i;
 	}
-	if (!v_size(&tab.folder) || ((tab.arg & P_FLAG) && !IS_DES(tab.f)))
+	if (!v_size(&tab.folder) || (IS_FLG(P_FLAG) && !IS_DES(tab.f)))
 	{
-		read_file(&tab, 0, (tab.arg & P_FLAG) ? true : false);
+		read_file(&tab, 0, (IS_FLG(P_FLAG) && !IS_DES(tab.f)) ? true : false);
 		into_vec(&tab.folder, NULL);
 	}
 	if ((tab.f == des_cbc || tab.f == des_pcbc) && !tab.ops.init_vec)

@@ -1,17 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   des_cbc.c                                          :+:      :+:    :+:   */
+/*   des_utils.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/08/28 09:27:21 by glegendr          #+#    #+#             */
-/*   Updated: 2019/08/29 17:29:36 by glegendr         ###   ########.fr       */
+/*   Created: 2019/08/30 14:00:33 by glegendr          #+#    #+#             */
+/*   Updated: 2019/08/30 14:00:40 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_ssl.h"
-#include <libft.h>
 #include <des.h>
 
 void		in_u8(uint8_t *cpy, uint8_t *in)
@@ -50,8 +49,6 @@ void		u8_to_u6(uint8_t *six, uint8_t *eight)
 	}
 }
 
-#include <stdio.h>
-
 void		clean_des(t_hash *hash, t_vec *print)
 {
 	t_ops ops;
@@ -71,14 +68,4 @@ void		clean_des(t_hash *hash, t_vec *print)
 	}
 	if (print)
 		v_del(print);
-}
-
-uint8_t		*des_cbc(t_hash *hash, bool print)
-{
-	return (core_des(hash, print, CBC, 0));
-}
-
-uint8_t		*des_pcbc(t_hash *hash, bool print)
-{
-	return (core_des(hash, print, PCBC, 0));
 }

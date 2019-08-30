@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/19 17:32:20 by glegendr          #+#    #+#             */
-/*   Updated: 2019/08/29 17:16:54 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/08/30 14:16:20 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,6 @@ typedef struct	s_hash_ops
 	uint8_t		*init_vec;
 	uint8_t		*key;
 	bool		endian;
-	int			loop;
 	int			message_len;
 	int			encodage_len;
 	void		(*init_h)(uint64_t *a);
@@ -65,6 +64,7 @@ typedef void		(*t_flag)(t_hash *);
 # define SHR(x, n) (x >> n)
 # define DEFKEY(a) (ROTL((i % 16 == 0) ? a : div_key[i - 1], x, 28) & 0xfffffff)
 # define CLEAN_AND_PRINT(a, b) { clean_des(a, NULL); print_usage(b); }
+# define IS_DES(f) (f == des_ecb || f == des_cbc || f == des_pcbc)
 
 /*
 ** All Hash Functions

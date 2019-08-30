@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   des_ecb.c                                          :+:      :+:    :+:   */
+/*   manage_key.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/08/14 07:23:21 by glegendr          #+#    #+#             */
-/*   Updated: 2019/08/29 17:21:29 by glegendr         ###   ########.fr       */
+/*   Created: 2019/08/30 14:17:00 by glegendr          #+#    #+#             */
+/*   Updated: 2019/08/30 14:17:27 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 #include <libft.h>
 #include <des.h>
 
-uint8_t		*get_pwd(void)
+static uint8_t	*get_pwd(void)
 {
 	char	*cmp;
 	char	*ret;
@@ -32,20 +32,23 @@ uint8_t		*get_pwd(void)
 	return ((uint8_t *)cmp);
 }
 
-void		create_salt(uint8_t *salt, uint8_t *ops_salt)
+static void		create_salt(uint8_t *salt, uint8_t *ops_salt)
 {
 	int fd;
 
 	if (ops_salt)
 	{
 		in_u8(ops_salt, salt);
+		free(ops_salt);
+		ops_salt = NULL;
 		return ;
 	}
 	fd = open_file("/dev/random", 0, 0);
 	read(fd, salt, 8);
 }
 
-void		create_key(uint8_t *pwd, uint8_t *salt, uint8_t *key, uint8_t *iv)
+static void		create_key(uint8_t *pwd, uint8_t *salt,
+							uint8_t *key, uint8_t *iv)
 {
 	t_hash	concat;
 	t_vec	concat_vec;
@@ -72,36 +75,44 @@ void		create_key(uint8_t *pwd, uint8_t *salt, uint8_t *key, uint8_t *iv)
 	v_del_all(&ret_vec);
 }
 
-uint8_t		*core_des(t_hash *hash, bool print, enum e_des_mode mode, int i)
+static void		manage_key(t_ops *ops, uint8_t *key)
 {
-	t_ops		ops;
+	uint8_t		*salt;
+	bool		free_me;
+
+	if (!(salt = malloc(sizeof(uint8_t) * 8)))
+		return ;
+	free_me = false;
+	if (!ops->key)
+	{
+		if (!ops->pwd)
+		{
+			ops->pwd = get_pwd();
+			free_me = true;
+		}
+		create_salt(salt, ops->salt);
+		create_key(ops->pwd, salt, key, NULL);
+		ops->salt = salt;
+		if (free_me)
+			free(ops->pwd);
+	}
+	else
+		in_u8(ops->key, key);
+}
+
+uint8_t			*core_des(t_hash *hash, bool print, enum e_des_mode mode, int i)
+{
 	uint32_t	divided_key[32];
 	uint8_t		final_keys[16][6];
-	uint8_t		salt[8];
 	uint8_t		key[8];
 
 	while (i < 16)
 		ft_bzero(final_keys[i++], 6 * sizeof(uint8_t));
-	ops = hash->ops;
-	if (!ops.key)
-	{
-		if (!ops.pwd)
-			ops.pwd = get_pwd();
-		create_salt(salt, ops.salt);
-		create_key(ops.pwd, salt, key, NULL);
-		ops.salt = salt;
-	}
-	else
-		in_u8(ops.key, key);
+	manage_key(&hash->ops, key);
 	pc1(key);
 	rotate_key(key, divided_key);
 	pc2(divided_key, final_keys);
 	if (hash->arg & D_FLAG)
 		return (unhash_des_message(hash, final_keys, print, mode));
 	return (hash_des_message(hash, final_keys, print, mode));
-}
-
-uint8_t		*des_ecb(t_hash *hash, bool print)
-{
-	return (core_des(hash, print, ECB, 0));
 }

@@ -6,12 +6,11 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/19 16:44:12 by glegendr          #+#    #+#             */
-/*   Updated: 2019/08/29 14:08:16 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/08/30 14:15:01 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ft_ssl.h"
-#include <libft.h>
+#include <ft_ssl.h>
 
 static void		digest(uint64_t *h, uint8_t *ret)
 {
@@ -99,7 +98,6 @@ uint8_t			*sha256(t_hash *tab, bool print)
 	ops = tab->ops;
 	ops.name = "SHA256";
 	ops.endian = false;
-	ops.loop = 64;
 	ops.message_len = 32;
 	ops.encodage_len = 64;
 	ops.init_h = init_h;

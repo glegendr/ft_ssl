@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/14 07:47:05 by glegendr          #+#    #+#             */
-/*   Updated: 2019/08/29 11:06:36 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/08/30 14:17:46 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -151,8 +151,6 @@ uint8_t				*hash_des_message(t_hash *hash, uint8_t div_key[16][6],
 							bool bp, enum e_des_mode mode);
 uint8_t				*unhash_des_message(t_hash *hash, uint8_t div_key[16][6],
 							bool bp, enum e_des_mode mode);
-void				create_key(uint8_t *pwd, uint8_t *salt, uint8_t *key,
-								uint8_t *iv);
 uint8_t				*core_des(t_hash *hash, bool print, enum e_des_mode mode,
 								int i);
 uint32_t			u8_to_b32(uint8_t *val);

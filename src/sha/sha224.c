@@ -6,11 +6,11 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/30 20:49:14 by glegendr          #+#    #+#             */
-/*   Updated: 2019/08/29 14:07:53 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/08/30 14:14:52 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ft_ssl.h"
+#include <ft_ssl.h>
 
 uint32_t g_k256[64] = {
 	0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1,
@@ -88,7 +88,6 @@ uint8_t			*sha224(t_hash *tab, bool print)
 	ops = tab->ops;
 	ops.name = "SHA224";
 	ops.endian = false;
-	ops.loop = 64;
 	ops.message_len = 28;
 	ops.encodage_len = 64;
 	ops.init_h = init_h;

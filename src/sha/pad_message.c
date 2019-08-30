@@ -6,14 +6,11 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/20 15:59:30 by glegendr          #+#    #+#             */
-/*   Updated: 2019/07/09 19:31:25 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/08/30 14:11:39 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <unistd.h>
-#include <stdint.h>
-#include <libft.h>
-#include "ft_ssl.h"
+#include <ft_ssl.h>
 
 static void		push_original_len(t_vec *tab,
 								uint64_t original_len, bool endian, int mult)

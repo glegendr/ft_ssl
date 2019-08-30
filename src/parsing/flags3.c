@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/28 11:32:37 by glegendr          #+#    #+#             */
-/*   Updated: 2019/08/29 13:42:37 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/08/30 11:45:50 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ void		o_flag(t_hash *tab, char *argv)
 
 void		s_flag(t_hash *tab, char *str)
 {
-	if (tab->f != des_ecb)
+	if (!IS_DES(tab->f))
 	{
 		into_vec(&tab->folder, str);
 		into_vec(&tab->str, str);

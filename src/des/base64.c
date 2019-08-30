@@ -6,14 +6,12 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/19 16:23:20 by glegendr          #+#    #+#             */
-/*   Updated: 2019/08/29 18:03:39 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/08/30 14:08:35 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <unistd.h>
-#include <stdint.h>
 #include <libft.h>
-#include "ft_ssl.h"
+#include <ft_ssl.h>
 #define C_VEC v_get(&tab->str, i)
 #define RET_DEL(a, b) clean_des(a, b); return (NULL)
 #define PRINT_RES print_hash(&print, tab, i++, tab->ops); v_reset(&print)
@@ -69,8 +67,6 @@ int				decript_base(t_vec *vec, char *base, int *z, t_vec *print)
 		append_ret(ret, index, print, i);
 	return (0);
 }
-
-#include <stdio.h>
 
 uint8_t			*bases(t_hash *tab, char *base, int z, bool print_b)
 {

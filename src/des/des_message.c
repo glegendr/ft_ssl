@@ -6,13 +6,13 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/14 07:33:06 by glegendr          #+#    #+#             */
-/*   Updated: 2019/08/29 18:12:40 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/08/30 14:09:29 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ft_ssl.h"
-#include <libft.h>
+#include <ft_ssl.h>
 #include <des.h>
+#include <unistd.h>
 #define DEL_SALT() { print.private_content += 16; print.private_elem_nb -= 16; }
 #define PUSH_SALT(p, h) {v_append_raw(p, "Salted__", 8); v_append_raw(p, h, 8);}
 
@@ -56,8 +56,6 @@ void		pkcs5_pad(t_vec *vec)
 		++i;
 	}
 }
-
-#include <stdio.h>
 
 uint8_t		*print_des_message(t_hash *hash, t_vec *print, bool rev, bool bp)
 {

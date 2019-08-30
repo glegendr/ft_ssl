@@ -6,11 +6,11 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/19 16:13:33 by glegendr          #+#    #+#             */
-/*   Updated: 2019/08/29 13:52:25 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/08/30 14:11:14 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ft_ssl.h"
+#include <ft_ssl.h>
 #include <libft.h>
 
 static void	transform_hash(uint8_t *ret, t_hash *hash, int i, t_ops ops)
