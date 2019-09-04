@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/19 16:13:33 by glegendr          #+#    #+#             */
-/*   Updated: 2019/08/30 14:11:14 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/09/04 14:12:54 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,6 +65,9 @@ static void	encript(t_vec *ck, t_ops ops, uint8_t *ret, int loop)
 	uint64_t	tmp[8];
 	int			y;
 
+	ft_bzero(m, sizeof(uint64_t) * 80);
+	ft_bzero(h, sizeof(uint64_t) * 8);
+	ft_bzero(tmp, sizeof(uint64_t) * 8);
 	y = 0;
 	ops.init_h(h);
 	while (y < loop)

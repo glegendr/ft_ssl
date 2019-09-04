@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/20 15:59:30 by glegendr          #+#    #+#             */
-/*   Updated: 2019/08/30 14:11:39 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/09/04 14:13:18 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,18 +35,11 @@ static void		push_original_len(t_vec *tab,
 
 int				pad_message(t_vec *tab, bool endian, int mod)
 {
-	int		len;
 	int		original_len;
 
 	original_len = v_size(tab);
-	len = original_len + 1;
-	while (len % mod)
-		++len;
-	if (original_len + 8 >= len)
-		len += mod;
-	len -= mod / 8;
 	v_push_int(tab, (char)128);
-	while (v_size(tab) < len)
+	while ((v_size(tab) + (mod / 8)) % mod)
 		v_push_int(tab, 0);
 	push_original_len(tab, (uint64_t)original_len * 8, endian, mod / 8);
 	return (v_size(tab));

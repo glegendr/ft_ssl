@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/19 16:44:12 by glegendr          #+#    #+#             */
-/*   Updated: 2019/08/30 14:15:01 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/09/04 12:52:13 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,10 @@ void			binop256(uint64_t *init, uint64_t *m)
 	tmp[6] = init[6];
 	tmp[7] = init[7];
 	while (i < 64)
-		make_256_pseudo_random(tmp, m, i++, 0);
+	{
+		make_256_pseudo_random(tmp, m, i, 0);
+		++i;
+	}
 	init[0] = tmp[0];
 	init[1] = tmp[1];
 	init[2] = tmp[2];
