@@ -6,11 +6,33 @@ CFLAG+= -Werror
 CFLAG+= -Wextra
 CFLAG+= -Wall
 #CFLAG+= -fsanitize=address
-SRCNAME= main parsing get_all md5 pad_message sha256 sha224 sha512 sha384 generic base64 base64_url
+SRCNAME= main						\
+		 print_mess					\
+		 parsing/parsing			\
+		 parsing/get_all			\
+		 parsing/flags1				\
+		 parsing/flags2				\
+		 parsing/flags3				\
+		 sha/md5					\
+		 sha/pad_message			\
+		 sha/sha256					\
+		 sha/sha224					\
+		 sha/sha512					\
+		 sha/sha384					\
+		 sha/generic				\
+		 des/base64					\
+		 des/base64_url				\
+		 des/des					\
+		 des/des_key				\
+		 des/des_message			\
+		 des/des_unhash_message		\
+		 des/des_binary_operations	\
+		 des/des_utils				\
+		 des/manage_key
 
 LIBS= ./pods/libvec/libvec.a ./pods/libft/libft.a
 
-CC_LIBS= make -C ./pods/libvec/; make -C ./pods/libft/
+CC_LIBS= make -C ./pods/libvec/; make -C ./pods/libft/;
 
 INC_DIR_LIBS= -I ./pods/libvec/inc/ -I ./pods/libft/inc
 
@@ -39,7 +61,7 @@ $(OBJDIR)%.o: $(SRCDIR)%.c
 	@(echo "\033[32m$@\033[00m")
 
 $(OBJDIR):
-	@mkdir -p $(OBJDIR)
+	@mkdir -p $(OBJDIR) $(OBJDIR)/parsing $(OBJDIR)/des $(OBJDIR)/sha
 
 clean:
 	@rm -rf $(OBJ) $(OBJDIR)
