@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/20 16:11:40 by glegendr          #+#    #+#             */
-/*   Updated: 2019/09/09 16:26:30 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/09/24 18:19:55 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,10 +19,10 @@ static int		match_flag(char *flag, t_hash *tab)
 
 	if (!flag)
 		return (1);
-	else if (flag[0] != '-' || !flag[1])
+	else if (flag[0] != '-' || !flag[1] || tab->arg & I_FLAG)
 	{
-		read_file(tab, open_file(flag, 0, 0), false);
-		into_vec(&tab->folder, flag);
+		if (read_file(tab, open_file(flag, 0, 0), false) == 0)
+			into_vec(&tab->folder, flag);
 		return (0);
 	}
 	i = 1;

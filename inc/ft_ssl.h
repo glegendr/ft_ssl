@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/19 17:32:20 by glegendr          #+#    #+#             */
-/*   Updated: 2019/08/30 14:16:20 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/09/24 18:18:50 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,7 +133,7 @@ void			generate_base(char *a, bool b);
 ** Parse Functions
 */
 void			parse_argv(int argc, char **argv);
-void			read_file(t_hash *tab, int fd, bool print);
+int				read_file(t_hash *tab, int fd, bool print);
 int				open_file(char *argv, int flag, int perm);
 void			into_vec(t_vec *to_push, char *str);
 t_fct			get_hash_fct(char *name);
