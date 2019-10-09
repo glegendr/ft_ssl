@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/19 17:32:20 by glegendr          #+#    #+#             */
-/*   Updated: 2019/09/24 18:18:50 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/10/09 21:05:49 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,7 @@ typedef void		(*t_flag)(t_hash *);
 # define BUFF_SIZE 12
 # define NB_HASH 11
 # define NB_FLAGS 12
+# define NB_LONG_FLAGS 14
 # define P_FLAG 1
 # define Q_FLAG 1 << 1
 # define R_FLAG 1 << 2
@@ -59,6 +60,7 @@ typedef void		(*t_flag)(t_hash *);
 # define A_FLAG 1 << 8
 # define K_FLAG 1 << 9
 # define V_FLAG 1 << 10
+# define STR_FLAG 1 << 11
 # define ROTL(x, c, size) (((x) << (c)) | ((x) >> (size - (c))))
 # define ROTR(x, n, size) ((x >> n) | (x << (size - n)))
 # define SHR(x, n) (x >> n)
@@ -138,6 +140,7 @@ int				open_file(char *argv, int flag, int perm);
 void			into_vec(t_vec *to_push, char *str);
 t_fct			get_hash_fct(char *name);
 t_flag			get_flag_fct(char flag);
+t_flag			get_long_flag_fct(char *flag);
 void			get_help(t_hash *tab);
 
 /*
@@ -157,4 +160,6 @@ void			a_fct(t_hash *hash);
 void			s_flag(t_hash *tab, char *str);
 void			o_flag(t_hash *tab, char *str);
 void			hex_flag(t_hash *tab, char *str, int flag);
+void			print_fct(t_hash *tab);
+void			string_fct(t_hash *tab);
 #endif

@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/20 16:11:40 by glegendr          #+#    #+#             */
-/*   Updated: 2019/09/24 18:19:55 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/10/09 21:11:40 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,12 @@ static int		match_flag(char *flag, t_hash *tab)
 		return (0);
 	}
 	i = 1;
+	if (flag[i] == '-')
+	{
+		f = get_long_flag_fct(flag + 2);
+		f(tab);
+		return (0);
+	}
 	while (flag[i])
 	{
 		f = get_flag_fct(flag[i]);
@@ -43,7 +49,7 @@ void			argument_flags(t_hash *tab, char **argv, int argc, int *i)
 	if (*i >= argc)
 		CLEAN_AND_PRINT(tab, NULL);
 	str = argv[*i];
-	if (tab->arg & S_FLAG)
+	if (tab->arg & S_FLAG || tab->arg & STR_FLAG)
 		s_flag(tab, str);
 	if (tab->arg & O_FLAG)
 		o_flag(tab, str);
@@ -91,19 +97,19 @@ void			parse_argv(int argc, char *argv[])
 	{
 		if (match_flag(argv[i], &tab))
 			CLEAN_AND_PRINT(&tab, NULL);
-		if (IS_FLG(S_FLAG) || IS_FLG(O_FLAG) || IS_FLG(I_FLAG)
+		if (IS_FLG(S_FLAG) || IS_FLG(O_FLAG) || IS_FLG(I_FLAG) || IS_FLG(STR_FLAG)
 				|| (IS_FLG(P_FLAG) && IS_DES(tab.f))
 				|| IS_FLG(K_FLAG) || IS_FLG(V_FLAG))
 			argument_flags(&tab, argv, argc, &i);
 		++i;
 	}
+	if ((tab.f == des_cbc || tab.f == des_pcbc) && !tab.ops.init_vec)
+		CLEAN_AND_PRINT(&tab, NULL);
 	if (!v_size(&tab.folder) || (IS_FLG(P_FLAG) && !IS_DES(tab.f)))
 	{
 		read_file(&tab, 0, (IS_FLG(P_FLAG) && !IS_DES(tab.f)) ? true : false);
 		into_vec(&tab.folder, NULL);
 	}
-	if ((tab.f == des_cbc || tab.f == des_pcbc) && !tab.ops.init_vec)
-		CLEAN_AND_PRINT(&tab, NULL);
 	tab.f(&tab, true);
 }
 

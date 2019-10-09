@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/28 11:32:37 by glegendr          #+#    #+#             */
-/*   Updated: 2019/08/30 11:45:50 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/10/09 21:06:29 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,11 +33,14 @@ void		o_flag(t_hash *tab, char *argv)
 
 void		s_flag(t_hash *tab, char *str)
 {
-	if (!IS_DES(tab->f))
+	if (!IS_DES(tab->f) || tab->arg & STR_FLAG)
 	{
 		into_vec(&tab->folder, str);
 		into_vec(&tab->str, str);
-		tab->arg ^= S_FLAG;
+		if (tab->arg & STR_FLAG)
+			tab->arg ^= STR_FLAG;
+		else
+			tab->arg ^= S_FLAG;
 		return ;
 	}
 	hex_flag(tab, str, S_FLAG);
@@ -90,4 +93,16 @@ void		hex_flag(t_hash *hash, char *str, int flag)
 	else
 		hash->ops.salt = key;
 	hash->arg ^= flag;
+}
+
+void		print_fct(t_hash *tab)
+{
+	if (IS_DES(tab->f))
+		CLEAN_AND_PRINT(tab, NULL);
+	tab->arg |= P_FLAG;
+}
+
+void		string_fct(t_hash *tab)
+{
+	tab->arg ^= STR_FLAG;
 }

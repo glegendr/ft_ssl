@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/28 12:06:00 by glegendr          #+#    #+#             */
-/*   Updated: 2019/08/30 14:10:45 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/10/09 19:52:29 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,13 +57,13 @@ void		print_usage(char *name)
 		v_append_raw(&vec, s, ft_strlen(s));
 		v_append_raw(&vec, name, ft_strlen(name));
 		s = "' is an invalid command\n"
-			"Usage: ft_ssl hash_fct [-pqrde] [-s string] [-i in_file]"
+			"Usage: ft_ssl hash_fct [-h] [-i in_file]"
 			" [-o out_file]\nAllowed hash_fct are:\n";
 		v_append_raw(&vec, s, ft_strlen(s));
 		s = get_all_hash();
 		v_append_raw(&vec, s, ft_strlen(s));
 		free(s);
-		s = get_usage();
+		s = "Try hash_fct -h to get help for the function\n";
 		v_append_raw(&vec, s, ft_strlen(s));
 		write(2, (char *)v_raw(&vec), v_size(&vec));
 		v_del(&vec);

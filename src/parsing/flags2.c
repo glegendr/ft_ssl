@@ -6,7 +6,7 @@
 /*   By: glegendr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/28 11:32:09 by glegendr          #+#    #+#             */
-/*   Updated: 2019/08/29 13:42:20 by glegendr         ###   ########.fr       */
+/*   Updated: 2019/10/09 21:22:55 by glegendr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 void		e_fct(t_hash *tab)
 {
-	if (tab->arg & D_FLAG)
+	if (tab->arg & E_FLAG || (!IS_DES(tab->f) && tab->f != base64 && tab->f != base64url))
 		CLEAN_AND_PRINT(tab, NULL);
 	tab->arg |= E_FLAG;
 }
@@ -33,14 +33,14 @@ void		o_fct(t_hash *tab)
 
 void		k_fct(t_hash *tab)
 {
-	if (tab->ops.key)
+	if (tab->ops.key || !IS_DES(tab->f))
 		CLEAN_AND_PRINT(tab, NULL);
 	tab->arg |= K_FLAG;
 }
 
 void		v_fct(t_hash *tab)
 {
-	if (tab->ops.init_vec)
+	if (tab->ops.init_vec || !IS_DES(tab->f))
 		CLEAN_AND_PRINT(tab, NULL);
 	tab->arg |= V_FLAG;
 }
