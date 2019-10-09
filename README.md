@@ -1,7 +1,4 @@
 # ft_ssl
-## Usage
-
-ft_ssl hash_fct [-pqrdea] [-s string] [-i in_file] [-o out_file]
 ## Allowed hash functions and cifers functions
 #### Hashs
 - md5
@@ -16,23 +13,36 @@ ft_ssl hash_fct [-pqrdea] [-s string] [-i in_file] [-o out_file]
 - des-cbc
 - des-pcbc
 
-## Generics flags
-- -p echo STDIN to STDOUT and append the checksum to STDOUT -don't work with des functions-
-- -q only print hash
-- -r reverse the output
-- -s hash the string -don't work with des functions-
-- -i input file  -optional-
-- -o output file -default: stdout- -can only be used once-
+## Hash functions flags
+- -p, --stdin &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- echo STDIN to STDOUT and append the checksum to STDOUT
+- -q, --quiet &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- only print hash
+- -r, --reverse &nbsp;&nbsp;&nbsp;&nbsp;- reverse the output
+- -s, --string &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- the next argument is the string to hash
+- -i, --input &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- input file  -optional-
+- -o, --output &nbsp;&nbsp;&nbsp;&nbsp;- output file -default: stdout- -can be used once-
+- -h, --help &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- get help on this function
 
-## Bases flags
-- -d decode hash
-- -e encode hash
+## Cifers functions flags
+### Bases flags
+- -p, --stdin &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- echo STDIN to STDOUT and append the checksum to STDOUT
+- -q, --quiet &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- only print hash
+- -r, --reverse &nbsp;&nbsp;&nbsp;&nbsp;- reverse the output
+- -s, --string &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- the next argument is the string to hash
+- -d, --decrypt &nbsp;&nbsp;- decode hash
+- -e, --encrypt &nbsp;&nbsp;- encode hash -optional-
+- -i, --input &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- input file  -optional-
+- -o, --output &nbsp;&nbsp;&nbsp;&nbsp;- output file -default: stdout- -can be used once-
+- -h, --help &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- get help on this function
 
-## Des flags
-- -d decode hash
-- -e encode hash
-- -p next arg is your password
-- -k next arg is your key in hex
-- -s next arg is your salt in hex
-- -v next arg is your initialization vector in hex
-- -a decode/encode the input/output in base64, depending on the encrypt mode
+### Des flags
+- -p, --password&nbsp;- the next argument is your pasword
+- -k, --key &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- the next argument is your key in hexa
+- -s, --salt &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- the next argument is your salt in hexa
+- -v, --initvector&nbsp;&nbsp;- the next argument is your initialization vector -MANDATORY FOR DES, DES-CBC AND DES-PCBC-
+- -a, --base64 &nbsp;&nbsp;&nbsp;&nbsp;- decode/encode the input/output in base64, depending on the encrypt mode
+- &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--string &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- the next argument is the string to hash
+- -d, --decrypt &nbsp;&nbsp;&nbsp;- decode hash
+- -e, --encrypt &nbsp;&nbsp;&nbsp;- encode hash -optional-
+- -i, --input &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- input file  -optional-
+- -o, --output &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- output file -default: stdout- -can be used once-
+- -h, --help &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- get help on this function
