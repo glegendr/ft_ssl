@@ -1,12 +1,12 @@
 # ft_ssl
-## Allowed hash functions and cifers functions
+## Allowed hash functions and ciphers functions
 #### Hashs
 - md5
 - sha256
 - sha512
 - sha384
 - sha224
-#### Cifers
+#### Ciphers
 - base64
 - base64url
 - des-ecb
@@ -22,7 +22,7 @@
 - -o, --output &nbsp;&nbsp;&nbsp;&nbsp;- output file -default: stdout- -can be used once-
 - -h, --help &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- get help on this function
 
-## Cifers functions flags
+## Ciphers functions flags
 ### Bases flags
 - -p, --stdin &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- echo STDIN to STDOUT and append the checksum to STDOUT
 - -q, --quiet &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- only print hash
